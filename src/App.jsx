@@ -95,10 +95,15 @@ function App() {
   }, [user, profile?.profile_completed]);
 
   const fetchExams = async () => {
-    const { data, error } = await supabase
-      .from('exams')
-      .select('*, questions(*)');
-    if (data) setExams(data);
+    try {
+      const { data, error } = await supabase
+        .from('exams')
+        .select('*');
+      if (data) setExams(data);
+      if (error) console.error('Fetch Exams Error:', error);
+    } catch (err) {
+      console.error('Fetch Exams Exception:', err);
+    }
   };
 
   const addExam = async (newExam) => {
