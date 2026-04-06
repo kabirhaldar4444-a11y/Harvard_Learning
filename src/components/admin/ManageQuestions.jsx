@@ -91,34 +91,48 @@ const ManageQuestions = ({ exam, onBack }) => {
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
         
         const questionsToInsert = jsonData.map(row => {
-          // Map headers: Question, Option A, Option B, Option C, Option D, Answer, Explanation
-          const questionText = row['Question'] || row['question'];
-          const optA = row['Option A'] || row['option_a'];
-          const optB = row['Option B'] || row['option_b'];
-          const optC = row['Option C'] || row['option_c'];
-          const optD = row['Option D'] || row['option_d'];
-          const rawAnswer = row['Answer'] || row['answer'];
-          const explanation = row['Explanation'] || row['explanation'] || '';
+          // New supported format: question | opt1 | opt2 | opt3 | opt4 | correct_option | description
+          // Also supports old format: Question | Option A | Option B | Option C | Option D | Answer | Explanation
+          
+          const questionText = row['question'] || row['Question'];
+          const opt1 = row['opt1'] || row['Option A'];
+          const opt2 = row['opt2'] || row['Option B'];
+          const opt3 = row['opt3'] || row['Option C'];
+          const opt4 = row['opt4'] || row['Option D'];
+          const rawAnswer = row['correct_option'] || row['Answer'] || row['answer'];
+          const explanation = row['description'] || row['Explanation'] || row['explanation'] || '';
 
-          if (!questionText || !optA || !optB || !optC || !optD) return null;
+          const options = [opt1, opt2, opt3, opt4];
 
-          // Map Answer (A/B/C/D or 0/1/2/3)
+          if (!questionText || options.some(o => o === undefined || o === null)) return null;
+
+          // Map Answer (A/B/C/D, 0/1/2/3, or full text)
           let correctIdx = 0;
-          if (typeof rawAnswer === 'string') {
-            const cleanAns = rawAnswer.trim().toUpperCase();
-            if (cleanAns === 'A') correctIdx = 0;
-            else if (cleanAns === 'B') correctIdx = 1;
-            else if (cleanAns === 'C') correctIdx = 2;
-            else if (cleanAns === 'D') correctIdx = 3;
-            else correctIdx = parseInt(cleanAns) || 0;
-          } else {
-            correctIdx = parseInt(rawAnswer) || 0;
+          if (rawAnswer !== undefined && rawAnswer !== null) {
+            const cleanAns = String(rawAnswer).trim();
+            const upperAns = cleanAns.toUpperCase();
+
+            if (upperAns === 'A' || upperAns === '1' || cleanAns === opt1) correctIdx = 0;
+            else if (upperAns === 'B' || upperAns === '2' || cleanAns === opt2) correctIdx = 1;
+            else if (upperAns === 'C' || upperAns === '3' || cleanAns === opt3) correctIdx = 2;
+            else if (upperAns === 'D' || upperAns === '4' || cleanAns === opt4) correctIdx = 3;
+            else {
+              // Try to find exact match in options
+              const matchIdx = options.findIndex(opt => String(opt).trim().toLowerCase() === cleanAns.toLowerCase());
+              if (matchIdx !== -1) {
+                correctIdx = matchIdx;
+              } else {
+                correctIdx = parseInt(cleanAns) || 0;
+                // Clamp to 0-3
+                if (correctIdx < 0 || correctIdx > 3) correctIdx = 0;
+              }
+            }
           }
 
           return {
             exam_id: exam.id,
             question_text: questionText,
-            options: [optA, optB, optC, optD],
+            options: options,
             correct_option: correctIdx,
             explanation: explanation
           };
@@ -255,13 +269,20 @@ const ManageQuestions = ({ exam, onBack }) => {
               Excel Format (.xlsx)
             </h4>
             <div className="space-y-2 text-xs font-medium" style={{ color: 'var(--text-light)' }}>
-              <p>Required Column Headers (Exact spelling):</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {['Question', 'Option A', 'Option B', 'Option C', 'Option D', 'Answer', 'Explanation'].map(h => (
-                  <span key={h} className="px-2 py-1 rounded bg-black/10 dark:bg-white/10 text-xs font-bold font-mono">{h}</span>
-                ))}
+              <p>Supported Column Headers (Any of these sets):</p>
+              <div className="flex flex-col gap-3 mt-2">
+                <div className="flex flex-wrap gap-2 text-[10px]">
+                  {['question', 'opt1', 'opt2', 'opt3', 'opt4', 'correct_option', 'description'].map(h => (
+                    <span key={h} className="px-2 py-1 rounded bg-blue-500/10 text-blue-500 font-bold font-mono">{h}</span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2 text-[10px]">
+                  {['Question', 'Option A', 'Option B', 'Option C', 'Option D', 'Answer', 'Explanation'].map(h => (
+                    <span key={h} className="px-2 py-1 rounded bg-slate-500/10 text-slate-500 font-bold font-mono">{h}</span>
+                  ))}
+                </div>
               </div>
-              <p className="mt-2 text-[11px] opacity-70">* Answer string must strictly equal A, B, C, or D.</p>
+              <p className="mt-2 text-[11px] opacity-70">* Answer can be A/B/C/D, 0-3, or exact option text.</p>
             </div>
           </div>
         </div>

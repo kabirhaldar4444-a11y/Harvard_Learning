@@ -37,28 +37,6 @@ const AuthLayout = ({ children, title, subtitle }) => {
 
           {children}
 
-          {/* SaaS Style Toggle */}
-          <div className="mt-10 flex p-1 rounded-full border w-full" style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--glass-border)' }}>
-            <button
-              onClick={() => navigate('/login')}
-              className={`flex-1 py-3 px-4 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-400 ${
-                !isAdmin ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30 scale-100' : 'hover:opacity-80 scale-95'
-              }`}
-              style={{ color: !isAdmin ? 'white' : 'var(--text-light)' }}
-            >
-              Candidate
-            </button>
-            <button
-              onClick={() => navigate('/admin/login')}
-              className={`flex-1 py-3 px-4 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-400 ${
-                isAdmin ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30 scale-100' : 'hover:opacity-80 scale-95'
-              }`}
-              style={{ color: isAdmin ? 'white' : 'var(--text-light)' }}
-            >
-              Admin
-            </button>
-          </div>
-          
           {/* Footer branding */}
           <div className="mt-8 pt-6 border-t flex justify-center" style={{ borderColor: 'var(--glass-border)' }}>
             <p className="text-[9px] font-bold tracking-[0.2em] uppercase" style={{ color: 'var(--text-light)', opacity: 0.5 }}>

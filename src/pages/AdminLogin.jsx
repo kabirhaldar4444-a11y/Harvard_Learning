@@ -21,9 +21,23 @@ const AdminLogin = ({ onLoginSuccess }) => {
 
     if (error) {
       console.error(error.message);
+      // You might want to add a toast here
     } else {
-      await onLoginSuccess();
-      navigate('/admin');
+      // Check if the user is an admin
+      const user = data.user;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile?.role === 'admin' || user.email === 'info@elitetoolistic.com') {
+        await onLoginSuccess();
+        navigate('/admin');
+      } else {
+        await supabase.auth.signOut();
+        alert('Access Denied: You do not have administrative privileges.');
+      }
     }
     setLoading(false);
   };

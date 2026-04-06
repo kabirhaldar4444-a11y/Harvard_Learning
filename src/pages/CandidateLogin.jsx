@@ -23,8 +23,26 @@ const CandidateLogin = ({ onLoginSuccess }) => {
       console.error(error.message);
       // Optional: Add alert or error state here if needed
     } else {
-      await onLoginSuccess();
-      navigate('/');
+      // Check if the user is a candidate
+      const user = data.user;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile?.role === 'candidate' && user.email !== 'info@elitetoolistic.com') {
+        await onLoginSuccess();
+        navigate('/');
+      } else if (user.email === 'info@elitetoolistic.com' || profile?.role === 'admin') {
+        // Redirect admin to admin portal
+        await onLoginSuccess();
+        navigate('/admin');
+      } else {
+        // Handle undefined profiles or other roles
+        await onLoginSuccess();
+        navigate('/');
+      }
     }
     setLoading(false);
   };

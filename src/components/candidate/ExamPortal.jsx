@@ -18,7 +18,15 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
   const answersRef = React.useRef(answers);
   useEffect(() => {
     answersRef.current = answers;
-  }, [answers]);
+    // Save answers and index to localStorage
+    if (exam?.id) {
+      localStorage.setItem(`exam_progress_${exam.id}`, JSON.stringify({
+        answers,
+        currentQuestionIndex,
+        timeLeft
+      }));
+    }
+  }, [answers, currentQuestionIndex, timeLeft, exam.id]);
 
   const [confirmedSignal, setConfirmedSignal] = useState(0);
 
@@ -30,6 +38,14 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
   }, [submitSignal]);
 
   useEffect(() => {
+    // Load persisted state on mount
+    const savedProgress = localStorage.getItem(`exam_progress_${exam.id}`);
+    if (savedProgress) {
+      const { answers: savedAnswers, currentQuestionIndex: savedIndex, timeLeft: savedTime } = JSON.parse(savedProgress);
+      if (savedAnswers) setAnswers(savedAnswers);
+      if (savedIndex !== undefined) setCurrentQuestionIndex(savedIndex);
+      if (savedTime !== undefined) setTimeLeft(savedTime);
+    }
     fetchQuestions();
   }, [exam.id]);
 
@@ -138,6 +154,7 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
     }
 
     setIsSubmitted(true);
+    localStorage.removeItem(`exam_progress_${exam.id}`);
     toast('Your exam has been submitted successfully!', 'success');
   };
 

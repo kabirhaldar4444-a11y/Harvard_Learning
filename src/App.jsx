@@ -31,7 +31,9 @@ function App() {
       
       if (currentUser) {
         setUser(currentUser);
-        await fetchProfile(currentUser.id);
+        // Special case for admin email
+        const isAdminEmail = currentUser.email === 'info@elitetoolistic.com';
+        await fetchProfile(currentUser.id, isAdminEmail, currentUser.email);
       } else {
         setUser(null);
         setProfile(null);
@@ -49,7 +51,7 @@ function App() {
     checkAuth();
   }, []);
 
-  const fetchProfile = async (userId) => {
+  const fetchProfile = async (userId, isAdminEmail = false, email = '') => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -58,9 +60,30 @@ function App() {
         .single();
       
       if (data) {
-        setProfile(data);
+        // If it's the admin email but role is not admin, update it
+        if (isAdminEmail && data.role !== 'admin') {
+          const { data: updatedData } = await supabase
+            .from('profiles')
+            .update({ role: 'admin', profile_completed: true })
+            .eq('id', userId)
+            .select()
+            .single();
+          if (updatedData) setProfile(updatedData);
+        } else {
+          setProfile(data);
+        }
       } else if (error) {
-        console.error('Profile Fetch Error:', error.message);
+        // Profile not found, create one if it's the admin email
+        if (isAdminEmail && error.code === 'PGRST116') {
+          const { data: newData } = await supabase
+            .from('profiles')
+            .insert([{ id: userId, email: email, role: 'admin', full_name: 'Administrator', profile_completed: true }])
+            .select()
+            .single();
+          if (newData) setProfile(newData);
+        } else {
+          console.error('Profile Fetch Error:', error.message);
+        }
       }
     } catch (err) {
       console.error('Profile Fetch Exception:', err);
