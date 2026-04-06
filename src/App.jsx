@@ -146,7 +146,8 @@ function App() {
 
   return (
     <div className="premium-container relative min-h-screen">
-      {!isLoginRoute && (
+      {/* Header commented out for debugging */}
+      {/* {!isLoginRoute && (
         <Header 
           isAdmin={profile?.role === 'admin'} 
           isCandidate={profile?.role === 'candidate'}
@@ -154,7 +155,7 @@ function App() {
           onLogout={handleLogout}
           onSubmitExam={() => setSubmitSignal(prev => prev + 1)}
         />
-      )}
+      )} */}
       <main className={isLoginRoute ? 'p-0 max-w-none' : ''}>
         <Routes>
           <Route path="/login" element={

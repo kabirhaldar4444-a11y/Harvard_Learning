@@ -1,10 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App.jsx'
+import { AlertProvider } from './components/common/AlertProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <div style={{ padding: '50px', background: 'white', minHeight: '100vh', color: 'black' }}>
-    <h1 style={{ fontSize: '4rem' }}>If you see this, React is working!</h1>
-    <p>We are isolating the issue in App.jsx.</p>
-  </div>
+  <StrictMode>
+    <BrowserRouter>
+      <AlertProvider>
+        <App />
+      </AlertProvider>
+    </BrowserRouter>
+  </StrictMode>,
 )
