@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #3b82f6;
+  --secondary-color: #8b5cf6;
+  --accent-color: #a855f7;
+}
+
+[data-theme='dark'] {
+  --bg-gradient: linear-gradient(135deg, #020617 0%, #1e1b4b 100%);
+  --blob-opacity: 0.2;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-dark: #f8fafc;
+  --text-light: #64748b;
+  --card-bg: rgba(15, 23, 42, 0.6);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --logo-island-bg: #ffffff;
+}
+
+[data-theme='light'] {
+  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --blob-opacity: 0.1;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --text-dark: #1e293b;
+  --text-light: #475569;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --input-bg: rgba(0, 0, 0, 0.03);
+  --input-border: rgba(0, 0, 0, 0.1);
+  --logo-island-bg: #ffffff;
+}
+
+/* Base resets & typography */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.4);
+}
+
+/* Glassmorphism Classes */
+.glass-navbar {
+  @apply sticky top-0 z-50;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.glass-card-saas {
+  @apply backdrop-blur-md rounded-2xl shadow-xl transition-all duration-300;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Input Styles */
+.input-premium {
+  @apply rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all duration-300;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-dark);
+}
+
+/* Animation Utilities */
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* Premium Button Utility */
+.btn-premium {
+  @apply rounded-full px-8 py-4 font-black tracking-wide flex items-center justify-center gap-2 transition-all duration-300 shadow-lg active:scale-95;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  border: none;
+}
+
+.btn-premium:hover {
+  @apply scale-[1.03] shadow-xl;
+  filter: brightness(1.1);
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+}
