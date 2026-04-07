@@ -22,72 +22,44 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const checkAuth = async () => {
+  const validateUser = async () => {
     try {
-      setLoading(true);
-      const { data, error } = await supabase.auth.getUser();
-      const currentUser = data?.user;
-      
-      if (currentUser) {
-        setUser(currentUser);
-        // Special case for admin email
-        const isAdminEmail = currentUser.email === 'info@elitetoolistic.com';
-        await fetchProfile(currentUser.id, isAdminEmail, currentUser.email);
-      } else {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
         setUser(null);
         setProfile(null);
+        setLoading(false);
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (error || !profile) {
+        console.error('Session validation failed:', error);
+        await supabase.auth.signOut();
+        setUser(null);
+        setProfile(null);
+      } else {
+        setUser(user);
+        setProfile(profile);
       }
     } catch (err) {
-      console.error('Auth Check Error:', err);
-      setUser(null);
-      setProfile(null);
+      console.error('Auth Guard Exception:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    checkAuth();
+    validateUser();
   }, []);
 
-  const fetchProfile = async (userId, isAdminEmail = false, email = '') => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (data) {
-        // If it's the admin email but role is not admin, update it
-        if (isAdminEmail && data.role !== 'admin') {
-          const { data: updatedData } = await supabase
-            .from('profiles')
-            .update({ role: 'admin', profile_completed: true })
-            .eq('id', userId)
-            .select()
-            .single();
-          if (updatedData) setProfile(updatedData);
-        } else {
-          setProfile(data);
-        }
-      } else if (error) {
-        // Profile not found, create one if it's the admin email
-        if (isAdminEmail && error.code === 'PGRST116') {
-          const { data: newData } = await supabase
-            .from('profiles')
-            .insert([{ id: userId, email: email, role: 'admin', full_name: 'Administrator', profile_completed: true }])
-            .select()
-            .single();
-          if (newData) setProfile(newData);
-        } else {
-          console.error('Profile Fetch Error:', error.message);
-        }
-      }
-    } catch (err) {
-      console.error('Profile Fetch Exception:', err);
-    }
-  };
+  const checkAuth = () => validateUser();
 
   useEffect(() => {
     if (user) fetchExams();

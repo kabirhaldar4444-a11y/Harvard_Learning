@@ -14,37 +14,63 @@ const CandidateLogin = ({ onLoginSuccess }) => {
     e.preventDefault();
     setLoading(true);
     
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    try {
+      // STEP 1: Authenticate
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-    if (error) {
-      console.error(error.message);
-      // Optional: Add alert or error state here if needed
-    } else {
-      // Check if the user is a candidate
-      const user = data.user;
-      const { data: profile } = await supabase
+      if (error) {
+        alert("Invalid email or password");
+        return;
+      }
+
+      // STEP 2: WAIT (CRITICAL - DO NOT REMOVE)
+      await new Promise(res => setTimeout(res, 300));
+
+      // STEP 3: Get user (NOT session)
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        await supabase.auth.signOut();
+        alert("Authentication failed. Please try again.");
+        return;
+      }
+
+      // STEP 4: Fetch profile safely (NO .single())
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('role')
+        .select('*')
         .eq('id', user.id)
-        .single();
-      
-      if (profile?.role === 'candidate' && user.email !== 'info@elitetoolistic.com') {
+        .maybeSingle();
+
+      // STEP 5: Validate profile
+      if (profileError || !profile) {
+        console.error('Profile fetch error:', profileError);
+        await supabase.auth.signOut();
+        alert("Account not found or access denied");
+        return;
+      }
+
+      // STEP 6: Redirect
+      if (profile.role === 'candidate') {
         await onLoginSuccess();
         navigate('/');
-      } else if (user.email === 'info@elitetoolistic.com' || profile?.role === 'admin') {
-        // Redirect admin to admin portal
+      } else if (profile.role === 'admin' || user.email === 'info@elitetoolistic.com') {
+        // Admin logged into candidate page - allow and redirect to admin
         await onLoginSuccess();
         navigate('/admin');
       } else {
-        // Handle undefined profiles or other roles
-        await onLoginSuccess();
-        navigate('/');
+        await supabase.auth.signOut();
+        alert("Access restricted: Invalid account role.");
       }
+    } catch (err) {
+      console.error('Final Candidate Login Error:', err);
+      alert("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
