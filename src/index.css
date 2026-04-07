@@ -111,8 +111,13 @@ body {
 }
 
 select option {
-  background-color: var(--card-bg);
-  color: var(--text-dark);
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+}
+
+[data-theme='dark'] select option {
+  background-color: #1e1b4b !important;
+  color: #f8fafc !important;
 }
 
 /* Ensure visibility for all dropdowns globally */

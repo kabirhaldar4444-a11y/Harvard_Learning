@@ -87,52 +87,100 @@ const ManageQuestions = ({ exam, onBack }) => {
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
-        // Convert to JSON with header mapping
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-        
-        const questionsToInsert = jsonData.map(row => {
-          // New supported format: question | opt1 | opt2 | opt3 | opt4 | correct_option | description
-          // Also supports old format: Question | Option A | Option B | Option C | Option D | Answer | Explanation
-          
-          const questionText = row['question'] || row['Question'];
-          const opt1 = row['opt1'] || row['Option A'];
-          const opt2 = row['opt2'] || row['Option B'];
-          const opt3 = row['opt3'] || row['Option C'];
-          const opt4 = row['opt4'] || row['Option D'];
-          const rawAnswer = row['correct_option'] || row['Answer'] || row['answer'];
-          const explanation = row['description'] || row['Explanation'] || row['explanation'] || '';
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        if (jsonData.length < 2) throw new Error('Excel file is empty or missing data rows');
 
-          const options = [opt1, opt2, opt3, opt4];
+        const headers = jsonData[0].map(h => String(h).trim().toLowerCase());
+        const rows = jsonData.slice(1);
 
-          if (!questionText || options.some(o => o === undefined || o === null)) return null;
+        // 1. Intelligent Column Mapping
+        const findColumn = (keywords) => {
+          return headers.findIndex(h => keywords.some(k => h.includes(k)));
+        };
 
-          // Map Answer (A/B/C/D, 0/1/2/3, or full text)
+        const colIdx = {
+          question: findColumn(['question', 'ques', 'text']),
+          options: [
+            findColumn(['opt1', 'option a', ' a', 'opt_1']),
+            findColumn(['opt2', 'option b', ' b', 'opt_2']),
+            findColumn(['opt3', 'option c', ' c', 'opt_3']),
+            findColumn(['opt4', 'option d', ' d', 'opt_4'])
+          ],
+          answer: findColumn(['correct', 'answer', 'ans', 'right']),
+          explanation: findColumn(['explanation', 'description', 'desc', 'solution', 'sol'])
+        };
+
+        // Fallback for options if direct keywords fail (Case 2: a, b, c, d columns)
+        if (colIdx.options.some(idx => idx === -1)) {
+          colIdx.options = [
+            headers.findIndex(h => h === 'a' || h === '1'),
+            headers.findIndex(h => h === 'b' || h === '2'),
+            headers.findIndex(h => h === 'c' || h === '3'),
+            headers.findIndex(h => h === 'd' || h === '4')
+          ];
+        }
+
+        let successCount = 0;
+        let skipCount = 0;
+
+        const questionsToInsert = rows.map((row, rIdx) => {
+          const rawQuestion = row[colIdx.question];
+          const rawOptions = colIdx.options.map(idx => row[idx]);
+          const rawAnswer = row[colIdx.answer];
+          const rawExp = colIdx.explanation !== -1 ? row[colIdx.explanation] : '';
+
+          // Data Cleaning & Validation
+          const questionText = String(rawQuestion || '').trim();
+          const options = rawOptions.map(opt => String(opt || '').trim());
+          const explanation = String(rawExp || '').trim();
+
+          if (!questionText || options.filter(o => o).length < 2) {
+            skipCount++;
+            return null;
+          }
+
+          // 2. Multi-Case Correct Answer Detection
           let correctIdx = 0;
           if (rawAnswer !== undefined && rawAnswer !== null) {
             const cleanAns = String(rawAnswer).trim();
             const upperAns = cleanAns.toUpperCase();
 
-            if (upperAns === 'A' || upperAns === '1' || cleanAns === opt1) correctIdx = 0;
-            else if (upperAns === 'B' || upperAns === '2' || cleanAns === opt2) correctIdx = 1;
-            else if (upperAns === 'C' || upperAns === '3' || cleanAns === opt3) correctIdx = 2;
-            else if (upperAns === 'D' || upperAns === '4' || cleanAns === opt4) correctIdx = 3;
+            // Case A & E: Letters (A/B/C/D) or Numeric (1/2/3/4)
+            if (upperAns === 'A' || upperAns === '1') correctIdx = 0;
+            else if (upperAns === 'B' || upperAns === '2') correctIdx = 1;
+            else if (upperAns === 'C' || upperAns === '3') correctIdx = 2;
+            else if (upperAns === 'D' || upperAns === '4') correctIdx = 3;
             else {
-              // Try to find exact match in options
-              const matchIdx = options.findIndex(opt => String(opt).trim().toLowerCase() === cleanAns.toLowerCase());
-              if (matchIdx !== -1) {
-                correctIdx = matchIdx;
+              // Case C: Prefixed Format ("A. Answer")
+              const prefixMatch = cleanAns.match(/^([A-D])[.\)]/i);
+              if (prefixMatch) {
+                const letter = prefixMatch[1].toUpperCase();
+                correctIdx = ['A', 'B', 'C', 'D'].indexOf(letter);
               } else {
-                correctIdx = parseInt(cleanAns) || 0;
-                // Clamp to 0-3
-                if (correctIdx < 0 || correctIdx > 3) correctIdx = 0;
+                // Case B: Full Text Match (Case-Insensitive)
+                const matchIdx = options.findIndex(opt => 
+                  opt.toLowerCase() === cleanAns.toLowerCase()
+                );
+                
+                if (matchIdx !== -1) {
+                  correctIdx = matchIdx;
+                } else {
+                  // Fallback: Check if Answer string is contained within an option or vice versa
+                  const softMatchIdx = options.findIndex(opt => 
+                    opt.toLowerCase().includes(cleanAns.toLowerCase()) || 
+                    cleanAns.toLowerCase().includes(opt.toLowerCase())
+                  );
+                  correctIdx = softMatchIdx !== -1 ? softMatchIdx : 0;
+                }
               }
             }
           }
 
+          successCount++;
           return {
             exam_id: exam.id,
             question_text: questionText,
-            options: options,
+            options: options.slice(0, 4), // Ensure exactly 4 options
             correct_option: correctIdx,
             explanation: explanation
           };
@@ -141,14 +189,14 @@ const ManageQuestions = ({ exam, onBack }) => {
         if (questionsToInsert.length > 0) {
           const { error } = await supabase.from('questions').insert(questionsToInsert);
           if (error) throw error;
-          toast(`Successfully uploaded ${questionsToInsert.length} questions`, 'success');
+          toast(`Uploaded ${successCount} questions.${skipCount > 0 ? ` Skipped ${skipCount} invalid rows.` : ''}`, 'success');
           fetchQuestions();
         } else {
-          toast('No valid questions found in Excel file. Please check headers.', 'warning');
+          toast('No valid questions found. Check column headers.', 'warning');
         }
       } catch (err) {
         console.error('Excel parse error:', err);
-        toast('Error parsing Excel: ' + err.message, 'error');
+        toast('Error: ' + err.message, 'error');
       } finally {
         setIsUploading(false);
         e.target.value = ''; 

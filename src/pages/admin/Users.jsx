@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import supabase from '../../utils/supabase';
 import UserSubmissions from '../../components/admin/UserSubmissions';
-import { useConfirm } from '../../components/common/AlertProvider';
+import { useConfirm, useToast } from '../../components/common/AlertProvider';
 
 const Users = () => {
   const confirm = useConfirm();
+  const toast = useToast();
   const [users, setUsers] = useState([]);
   const [exams, setExams] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,18 +51,26 @@ const Users = () => {
 
   const handleDeleteUser = async (user) => {
     const isConfirmed = await confirm({
-      title: 'Delete Candidate',
-      message: `Are you sure you want to delete candidate "${user.full_name}"? This will archive their profile.`,
+      title: 'Permanently Delete Candidate',
+      message: `Are you sure you want to delete candidate "${user.full_name}"? This will permanently remove their profile, submissions, and login access.`,
       type: 'error',
-      confirmText: 'Delete'
+      confirmText: 'Delete Permanently'
     });
     if (!isConfirmed) return;
 
     try {
       setLoading(true);
-      await supabase.from('submissions').delete().eq('user_id', user.id);
-      await supabase.from('profiles').update({ role: 'archived' }).eq('id', user.id);
+      const { error } = await supabase.rpc('admin_delete_user', { target_user_id: user.id });
+      
+      if (error) {
+        console.error('Failed to delete user:', error);
+        throw new Error(error.message || "Failed to delete user account.");
+      }
+
       setUsers(users.filter(u => u.id !== user.id));
+      toast('User deleted successfully!', 'success');
+    } catch (err) {
+      toast('Error: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }

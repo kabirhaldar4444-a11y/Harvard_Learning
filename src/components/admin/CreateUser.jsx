@@ -23,12 +23,23 @@ const CreateUser = () => {
     e.preventDefault();
     setIsCreating(true);
     
+    // Trim values for consistency
+    const emailToCreate = candidateEmail.trim().toLowerCase();
+    const nameToCreate = candidateName.trim();
+    const passwordToCreate = candidatePassword.trim();
+
+    if (!emailToCreate || !nameToCreate || !passwordToCreate) {
+      toast('Please fill all required fields.', 'warning');
+      setIsCreating(false);
+      return;
+    }
+    
     try {
       // Create user using secure RPC to prevent admin session invalidation
       const { error: createError } = await supabase.rpc('admin_create_candidate', {
-        candidate_email: candidateEmail,
-        candidate_password: candidatePassword,
-        candidate_name: candidateName
+        candidate_email: emailToCreate,
+        candidate_password: passwordToCreate,
+        candidate_name: nameToCreate
       });
 
       if (createError) {
@@ -36,7 +47,7 @@ const CreateUser = () => {
         throw new Error(createError.message || "Failed to create user account.");
       }
 
-      toast('Candidate created successfully!', 'success');
+      toast('Candidate created and activated successfully! They can now log in.', 'success');
       setCandidateEmail('');
       setCandidatePassword('');
       setCandidateName('');
