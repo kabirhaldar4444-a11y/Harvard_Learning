@@ -171,15 +171,15 @@ function App() {
               <Profile profile={profile} />
             ) : <Navigate to="/login" />
           } />
-           <Route path="/admin" element={
+          <Route path="/admin" element={
             profile?.role === 'admin' ? (
-              <AdminDashboard exams={exams} addExam={addExam} deleteExam={deleteExam} onRefresh={fetchExams} />
+              <AdminDashboard user={user} profile={profile} exams={exams} addExam={addExam} deleteExam={deleteExam} onRefresh={fetchExams} />
             ) : <Navigate to="/login" />
           } />
 
           <Route path="/admin/users" element={
             profile?.role === 'admin' ? (
-              <Users />
+              <Users user={user} profile={profile} />
             ) : <Navigate to="/login" />
           } />
 

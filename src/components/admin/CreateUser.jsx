@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import supabase from '../../utils/supabase';
 import { useToast } from '../common/AlertProvider';
 
-const CreateUser = () => {
+const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
   const toast = useToast();
   const [candidateEmail, setCandidateEmail] = useState('');
   const [candidatePassword, setCandidatePassword] = useState('');
   const [candidateName, setCandidateName] = useState('');
+  const [role, setRole] = useState(initialRole);
   const [isCreating, setIsCreating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const isSuperAdmin = user?.email === 'info@elitetoolistic.com';
   
   const generatePassword = () => {
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -35,19 +38,33 @@ const CreateUser = () => {
     }
     
     try {
-      // Create user using secure RPC to prevent admin session invalidation
-      const { error: createError } = await supabase.rpc('admin_create_candidate', {
-        candidate_email: emailToCreate,
-        candidate_password: passwordToCreate,
-        candidate_name: nameToCreate
+      // Step 2: Intelligent Native Registration (No hacks)
+      const { createClient } = await import('@supabase/supabase-js');
+      
+      // Create a secondary client that DOES NOT save session data (Admin stays logged in)
+      const supabaseAdmin = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        { auth: { persistSession: false } }
+      );
+
+      const { data, error: createError } = await supabaseAdmin.auth.signUp({
+        email: emailToCreate,
+        password: passwordToCreate,
+        options: {
+          data: {
+            full_name: nameToCreate,
+            role: role
+          }
+        }
       });
 
       if (createError) {
-        console.error('Failed to create candidate:', createError);
+        console.error('Failed to register user:', createError);
         throw new Error(createError.message || "Failed to create user account.");
       }
 
-      toast('Candidate created and activated successfully! They can now log in.', 'success');
+      toast(`${role === 'admin' ? 'Administrative' : 'Candidate'} account created successfully!`, 'success');
       setCandidateEmail('');
       setCandidatePassword('');
       setCandidateName('');
@@ -67,12 +84,29 @@ const CreateUser = () => {
 
         <div className="mb-10 text-center relative z-10">
           <h2 className="text-3xl font-black tracking-tight mb-2 text-[color:var(--text-dark)]">
-            Create User Account
+            {role === 'admin' ? 'Create Staff Access' : 'Create User Account'}
           </h2>
-          <p className="text-[color:var(--text-light)] text-sm font-medium">Create a new candidate login account.</p>
+          <p className="text-[color:var(--text-light)] text-sm font-medium">
+            {role === 'admin' ? 'Register a new administrative staff member.' : 'Create a new candidate login account.'}
+          </p>
         </div>
         
         <form autoComplete="off" onSubmit={handleCreateCandidate} className="flex flex-col gap-6 relative z-10">
+          {/* Role Selection (Only for Super Admin) */}
+          {isSuperAdmin && !initialRole && (
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold uppercase tracking-widest ml-2 text-[color:var(--text-light)]">Account Role</label>
+              <select 
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="input-premium w-full py-4 appearance-none cursor-pointer"
+              >
+                <option value="candidate">Student/Candidate</option>
+                <option value="admin">Staff Administrator</option>
+              </select>
+            </div>
+          )}
+
           <div className="space-y-2">
             <label className="text-[10px] font-bold uppercase tracking-widest ml-2 text-[color:var(--text-light)]">Email Address</label>
             <div className="relative">
@@ -81,13 +115,13 @@ const CreateUser = () => {
               </div>
               <input 
                 type="email" 
-                placeholder="candidate@institution.edu" 
+                placeholder="user@elitetoolistic.com" 
                 value={candidateEmail}
                 autoComplete="off"
                 data-lpignore="true"
                 onChange={(e) => setCandidateEmail(e.target.value)}
                 required
-                className="input-premium w-full py-4"
+                className="input-premium w-full py-4 text-[color:var(--text-dark)]"
                 style={{ paddingLeft: '3rem' }}
               />
             </div>
@@ -107,7 +141,7 @@ const CreateUser = () => {
                 data-lpignore="true"
                 onChange={(e) => setCandidateName(e.target.value)}
                 required 
-                className="input-premium w-full py-4"
+                className="input-premium w-full py-4 text-[color:var(--text-dark)]"
                 style={{ paddingLeft: '3rem' }}
               />
             </div>
@@ -127,7 +161,7 @@ const CreateUser = () => {
                 data-lpignore="true"
                 onChange={(e) => setCandidatePassword(e.target.value)}
                 required
-                className="input-premium w-full py-4"
+                className="input-premium w-full py-4 text-[color:var(--text-dark)]"
                 style={{ paddingLeft: '3rem', paddingRight: '6rem' }}
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-1">
@@ -162,7 +196,7 @@ const CreateUser = () => {
               disabled={isCreating}
             >
               {isCreating && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}
-              {isCreating ? 'Creating Account...' : 'Create Candidate Account'}
+              {isCreating ? 'Creating...' : `Create ${role === 'admin' ? 'Staff' : 'Student'} Account`}
             </button>
           </div>
         </form>

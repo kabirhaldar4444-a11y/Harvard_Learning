@@ -21,92 +21,58 @@ const Login = ({ onLoginSuccess }) => {
     const passwordToAuth = password.trim();
 
     try {
-      // 1. Unified Logic: Match hardcoded admin credentials first
-      // Requirement: Admin: info@elitetoolistic.com / qwerty@123
-      if (emailToAuth === 'info@elitetoolistic.com' && passwordToAuth === 'qwerty@123') {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: 'info@elitetoolistic.com',
-          password: 'qwerty@123'
-        });
+      // 1. Unified Logic: Match credentials & Role Verification
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailToAuth,
+        password: passwordToAuth
+      });
 
-        if (error) throw error;
-        const user = data.user;
+      if (error) throw error;
+      const user = data.user;
 
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role, profile_completed, full_name')
-          .eq('id', user.id)
-          .single();
+      // 2. Fetch profile to determine role
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, profile_completed, full_name')
+        .eq('id', user.id)
+        .single();
 
-        if (profileError) {
-          console.error('Profile fetch error:', profileError);
-          await supabase.auth.signOut();
-          if (profileError.code === 'PGRST116') {
-            throw new Error('Your profile record is missing. Please contact the administrator to sync your account.');
-          }
-          throw new Error('Database access error. Your account initialization is incomplete.');
-        }
+      if (profileError) {
+        console.error('Profile fetch error:', profileError);
+        await supabase.auth.signOut();
+        throw new Error('Database access error. Your account initialization is incomplete.');
+      }
 
-        if (!profile) {
-          await supabase.auth.signOut();
-          throw new Error('Profile not found. Please contact support.');
-        }
+      // 3. Hierarchical Redirect Logic (Professional Secure)
+      // MASTER ADMIN CHECK (Hardcoded Email Safety)
+      if (user.email === 'info@elitetoolistic.com') {
+        await onLoginSuccess();
+        toast('Logged in as Master Administrator', 'success');
+        navigate('/admin');
+        return;
+      }
 
-        if (profile.role === 'admin' || user.email === 'info@elitetoolistic.com') {
-          await onLoginSuccess();
-          toast('Logged in as Administrator', 'success');
-          navigate('/admin');
+      // STAFF ADMIN CHECK
+      if (profile.role === 'admin') {
+        await onLoginSuccess();
+        toast('Logged in as Staff Administrator', 'success');
+        navigate('/admin');
+        return;
+      }
+
+      // CANDIDATE CHECK
+      if (profile.role === 'candidate') {
+        await onLoginSuccess();
+        toast(`Welcome back, ${profile.full_name || 'Candidate'}`, 'success');
+        if (profile.profile_completed) {
+          navigate('/');
         } else {
-          throw new Error('Unauthorized: Admin access only');
+          navigate('/complete-profile');
         }
       } else {
-        // 2. Candidate Login via Supabase Auth
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: emailToAuth,
-          password: passwordToAuth
-        });
-
-        if (error) throw error;
-        const user = data.user;
-
-        // NEW: Double-Check Profile Existence (Safety Block) with Diagnostics
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role, profile_completed, full_name')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          console.error('Profile fetch error:', profileError);
-          await supabase.auth.signOut();
-          if (profileError.code === 'PGRST116') {
-            throw new Error('Your profile record is missing. Please contact the administrator to sync your account.');
-          }
-          throw new Error('Database access error. Your account initialization is the problem.');
-        }
-
-        if (!profile) {
-          await supabase.auth.signOut();
-          throw new Error('Profile data missing. Contact admin.');
-        }
-
-        if (profile.role === 'candidate') {
-          await onLoginSuccess();
-          toast(`Welcome back, ${profile.full_name || 'Candidate'}`, 'success');
-          if (profile.profile_completed) {
-            navigate('/');
-          } else {
-            navigate('/complete-profile');
-          }
-        } else if (profile.role === 'admin') {
-          await onLoginSuccess();
-          toast('Administrator detected, redirecting to Admin Panel', 'success');
-          navigate('/admin');
-        } else {
-          // Block "archived" or null roles
-          await supabase.auth.signOut();
-          throw new Error('Invalid account role or access restricted. Contact admin.');
-        }
+        // Restricted access
+        await supabase.auth.signOut();
+        throw new Error('Access restricted. Please contact the administrator.');
       }
     } catch (err) {
       console.error('Full Login Error Details:', err);

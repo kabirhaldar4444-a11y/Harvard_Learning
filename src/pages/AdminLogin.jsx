@@ -54,11 +54,18 @@ const AdminLogin = ({ onLoginSuccess }) => {
         return;
       }
 
-      // STEP 6: Redirect
-      if (profile.role === 'admin' || user.email === 'info@elitetoolistic.com') {
+      // STEP 6: Hierarchical Redirect Logic
+      // MASTER ADMIN CHECK (Hardcoded Email Safety)
+      if (user.email === 'info@elitetoolistic.com') {
         await onLoginSuccess();
         navigate('/admin');
-      } else {
+      } 
+      // STAFF ADMIN CHECK
+      else if (profile.role === 'admin') {
+        await onLoginSuccess();
+        navigate('/admin');
+      } 
+      else {
         await supabase.auth.signOut();
         alert("Unauthorized: You do not have administrative privileges.");
       }

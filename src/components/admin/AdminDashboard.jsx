@@ -3,8 +3,9 @@ import supabase from '../../utils/supabase';
 import CreateUser from './CreateUser';
 import ManageQuestions from './ManageQuestions';
 
-const AdminDashboard = ({ exams, addExam, deleteExam, onRefresh }) => {
+const AdminDashboard = ({ user, profile, exams, addExam, deleteExam, onRefresh }) => {
   const [activeTab, setActiveTab] = useState('exams');
+  const isSuperAdmin = user?.email === 'info@elitetoolistic.com';
   const [newTitle, setNewTitle] = useState('');
   const [newDuration, setNewDuration] = useState('');
   const [selectedExam, setSelectedExam] = useState(null);
@@ -71,10 +72,27 @@ const AdminDashboard = ({ exams, addExam, deleteExam, onRefresh }) => {
               }}
             >
               <div className="flex items-center gap-2">
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                Candidate Portal Setup
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                Student Management
               </div>
             </button>
+
+            {isSuperAdmin && (
+              <button 
+                onClick={() => setActiveTab('staff')} 
+                className={`relative px-8 py-3 rounded-xl font-bold text-sm tracking-wide transition-all duration-500 overflow-hidden ${activeTab === 'staff' ? 'shadow-md scale-100' : 'hover:opacity-80 scale-95 opacity-70'}`}
+                style={{ 
+                  backgroundColor: activeTab === 'staff' ? 'var(--card-bg)' : 'transparent',
+                  color: activeTab === 'staff' ? 'var(--text-dark)' : 'var(--text-light)',
+                  border: activeTab === 'staff' ? '1px solid var(--glass-border)' : '1px solid transparent'
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                  Staff Access
+                </div>
+              </button>
+            )}
           </div>
         </div>
         
@@ -176,9 +194,23 @@ const AdminDashboard = ({ exams, addExam, deleteExam, onRefresh }) => {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'candidates' ? (
             <div className="candidates-tab animate-slide-up">
-              <CreateUser />
+              <CreateUser user={user} profile={profile} />
+            </div>
+          ) : (
+            <div className="staff-tab animate-slide-up">
+              {/* This tab only exists for Super Admin */}
+              <div className="glass-card-saas p-8 border-l-4 border-l-purple-500">
+                <h3 className="text-2xl font-black mb-6 flex items-center gap-3 tracking-tight text-[color:var(--text-dark)]">
+                  <span className="w-10 h-10 rounded-full flex items-center justify-center bg-purple-500/10 text-purple-500">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                  </span>
+                  Manage Staff Administrators
+                </h3>
+                <p className="text-[color:var(--text-light)] mb-8 font-medium">As the Master Admin, you can grant administrative access to other users. Search for a user in the Students tab and click "Promote to Admin" or create a new Admin account here.</p>
+                <CreateUser user={user} profile={profile} initialRole="admin" />
+              </div>
             </div>
           )}
         </div>
@@ -188,4 +220,3 @@ const AdminDashboard = ({ exams, addExam, deleteExam, onRefresh }) => {
 };
 
 export default AdminDashboard;
-
