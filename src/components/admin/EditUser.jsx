@@ -4,6 +4,37 @@ import supabase from '../../utils/supabase';
 import UserSubmissions from './UserSubmissions';
 import { useToast } from '../common/AlertProvider';
 
+const DocumentPreview = ({ title, url }) => {
+  return (
+    <div className="glass-card-saas p-4 flex flex-col gap-3 h-full">
+      <h4 className="text-sm font-bold tracking-widest uppercase text-[color:var(--text-light)]">{title}</h4>
+      {url ? (
+        url.match(/\.(jpeg|jpg|gif|png)$/i) || !url.includes('.pdf') ? (
+           <a href={url} target="_blank" rel="noopener noreferrer" className="block relative group overflow-hidden rounded-xl border border-[color:var(--glass-border)] aspect-video bg-black/10 flex items-center justify-center">
+             <img src={url} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                <span className="text-white font-bold text-sm bg-primary-500/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/20 shadow-lg flex items-center gap-2">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                  Inspect
+                </span>
+             </div>
+           </a>
+        ) : (
+           <a href={url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-2 aspect-video rounded-xl border border-[color:var(--glass-border)] hover:border-primary-500 hover:bg-primary-500/5 transition-all text-primary-500 group">
+             <svg className="group-hover:-translate-y-1 transition-transform" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+             <span className="text-sm font-bold">View PDF Document</span>
+           </a>
+        )
+      ) : (
+        <div className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-[color:var(--glass-border)] text-[color:var(--text-light)] bg-black/5 opacity-50">
+          <svg width="24" height="24" className="mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          <span className="text-xs font-bold uppercase tracking-wider">No document</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const EditUser = () => {
   const toast = useToast();
   const { id } = useParams();
@@ -14,7 +45,10 @@ const EditUser = () => {
     email: '',
     full_name: '',
     new_password: '',
-    allotted_exam_ids: []
+    allotted_exam_ids: [],
+    aadhaar_front_url: '',
+    aadhaar_back_url: '',
+    profile_photo_url: '',
   });
   
   const [exams, setExams] = useState([]);
@@ -42,7 +76,10 @@ const EditUser = () => {
         email: data.email || '',
         full_name: data.full_name || '',
         new_password: '',
-        allotted_exam_ids: data.allotted_exam_ids || []
+        allotted_exam_ids: data.allotted_exam_ids || [],
+        aadhaar_front_url: data.aadhaar_front_url || '',
+        aadhaar_back_url: data.aadhaar_back_url || '',
+        profile_photo_url: data.profile_photo_url || ''
       });
     } else if (error) {
       console.error('Error fetching user:', error);
@@ -183,6 +220,21 @@ const EditUser = () => {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Document Verification Section */}
+          <div className="animate-slide-up animation-delay-100">
+            <h2 className="text-2xl font-black mb-8 tracking-tight flex items-center gap-3 text-[color:var(--text-dark)]">
+              <span className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-400">
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z"/></svg>
+              </span>
+              Identity Verification
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <DocumentPreview title="Profile Photo" url={editUser.profile_photo_url} />
+               <DocumentPreview title="Aadhaar Front" url={editUser.aadhaar_front_url} />
+               <DocumentPreview title="Aadhaar Back" url={editUser.aadhaar_back_url} />
             </div>
           </div>
 
