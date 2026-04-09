@@ -97,29 +97,30 @@ const Login = ({ onLoginSuccess }) => {
       title="Examination Portal" 
       subtitle="Sign in to start your journey"
     >
-      <form onSubmit={handleLogin} className="flex flex-col gap-5">
+      <form onSubmit={handleLogin} className="flex flex-col gap-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-70" style={{ color: 'var(--text-dark)' }}>Email Address</label>
-          <input 
-            type="email" 
-            placeholder="example@elitetoolistic.com" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required 
-            autoComplete="off"
-            className="w-full rounded-2xl px-5 py-4 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
-            style={{ 
-              backgroundColor: 'var(--input-bg)',
-              borderColor: 'var(--input-border)',
-              color: 'var(--text-dark)',
-              borderWidth: '1px'
-            }}
-          />
+          <label className="text-[10px] font-extrabold uppercase tracking-[0.2em] ml-2 opacity-60" style={{ color: 'var(--text-dark)' }}>Email Address</label>
+          <div className="relative group">
+            <input 
+              type="email" 
+              placeholder="example@elitetoolistic.com" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+              autoComplete="off"
+              className="w-full rounded-2xl px-5 py-4 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/10 border-2"
+              style={{ 
+                backgroundColor: 'var(--input-bg)',
+                borderColor: 'var(--input-border)',
+                color: 'var(--text-dark)'
+              }}
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-70" style={{ color: 'var(--text-dark)' }}>Password</label>
-          <div className="relative flex items-center group">
+          <label className="text-[10px] font-extrabold uppercase tracking-[0.2em] ml-2 opacity-60" style={{ color: 'var(--text-dark)' }}>Password</label>
+          <div className="relative group flex items-center">
             <input 
               type={showPassword ? "text" : "password"} 
               placeholder="••••••••" 
@@ -127,12 +128,11 @@ const Login = ({ onLoginSuccess }) => {
               onChange={(e) => setPassword(e.target.value)}
               required 
               autoComplete="off"
-              className="w-full rounded-2xl px-5 py-4 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+              className="w-full rounded-2xl px-5 py-4 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/10 border-2"
               style={{ 
                 backgroundColor: 'var(--input-bg)',
                 borderColor: 'var(--input-border)',
-                color: 'var(--text-dark)',
-                borderWidth: '1px'
+                color: 'var(--text-dark)'
               }}
             />
             <button 
@@ -142,9 +142,9 @@ const Login = ({ onLoginSuccess }) => {
               title={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
               )}
             </button>
           </div>
@@ -153,7 +153,8 @@ const Login = ({ onLoginSuccess }) => {
         <button 
           type="submit" 
           disabled={loading}
-          className="mt-4 w-full bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-black py-4 rounded-2xl shadow-xl shadow-primary-600/20 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2"
+          className="mt-4 w-full bg-gradient-to-br from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-black py-4.5 rounded-2xl shadow-xl shadow-primary-600/20 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 group border-t border-white/20"
+          style={{ minHeight: '60px' }}
         >
           {loading ? (
             <>
@@ -161,12 +162,12 @@ const Login = ({ onLoginSuccess }) => {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              <span>Authenticating...</span>
+              <span className="tracking-wide">Verifying...</span>
             </>
           ) : (
             <>
-              <span>Enter Portal</span>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+              <span className="tracking-wide text-lg">Enter Portal</span>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="ml-1 transition-transform group-hover:translate-x-1">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                 <polyline points="10 17 15 12 10 7"></polyline>
                 <line x1="15" y1="12" x2="3" y2="12"></line>
