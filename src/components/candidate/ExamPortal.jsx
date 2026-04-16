@@ -14,6 +14,8 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [timeExpired, setTimeExpired] = useState(false);
+  const [hasAcceptedDeclaration, setHasAcceptedDeclaration] = useState(false);
+  const [acceptedCheckbox, setAcceptedCheckbox] = useState(false);
 
   const answersRef = React.useRef(answers);
   useEffect(() => {
@@ -107,13 +109,13 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
       }, 3000);
       return () => clearTimeout(autoSubmitTimer);
     }
-    if (isSubmitted) return;
+    if (isSubmitted || !hasAcceptedDeclaration) return;
 
     const timer = setInterval(() => {
       setTimeLeft(prev => prev - 1);
     }, 1000);
     return () => clearInterval(timer);
-  }, [timeLeft, isSubmitted]);
+  }, [timeLeft, isSubmitted, hasAcceptedDeclaration]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -177,7 +179,138 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
     return score;
   };
 
-  if (loading) return <div>Loading questions...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
+      <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+
+  if (!hasAcceptedDeclaration) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 md:p-12 animate-fade-in relative z-10 w-full overflow-y-auto font-sans">
+        {/* Ambient background decoration */}
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-primary-100/30 rounded-full blur-[128px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-indigo-100/30 rounded-full blur-[128px] pointer-events-none" />
+
+        <div className="relative w-full max-w-4xl bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] rounded-[2.5rem] border border-slate-200 z-10 p-8 md:p-12 animate-slide-up">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 border-b border-slate-100 pb-10">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 rounded-[1.5rem] bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 shadow-sm border border-primary-100">
+                <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.35 3.35a1 1 0 011.3 0l6.75 6.75a1 1 0 010 1.41l-6.75 6.75a1 1 0 01-1.3 0l-6.75-6.75a1 1 0 010-1.41l6.75-6.75z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-black tracking-tight text-slate-900 leading-none">{exam.title}</h1>
+                <p className="text-xs font-black text-primary-600 tracking-[0.2em] uppercase mt-2">Elite Assessment Entrance</p>
+              </div>
+            </div>
+            
+            <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100 shadow-inner">
+              <div className="px-5 py-2 text-center border-r border-slate-200">
+                <p className="text-[10px] font-black uppercase text-slate-400 mb-0.5">Duration</p>
+                <p className="text-sm font-black text-slate-900">120 Minutes</p>
+              </div>
+              <div className="px-5 py-2 text-center">
+                <p className="text-[10px] font-black uppercase text-slate-400 mb-0.5">Total Load</p>
+                <p className="text-sm font-black text-slate-900">40 Questions</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Instructions Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+            <section className="space-y-6">
+              <div className="flex items-center gap-3">
+                <span className="w-1.5 h-6 bg-primary-600 rounded-full"></span>
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">General Instructions</h3>
+              </div>
+              <div className="space-y-4 text-slate-600 font-medium">
+                {[
+                  "Ensure a stable internet connection for the entire duration.",
+                  "System will automatically submit if the 2-hour timer runs out.",
+                  "Unauthorized tab switching or browser minimized is strictly logged.",
+                  "Do not refresh the page once the exam has started."
+                ].map((text, i) => (
+                  <div key={i} className="flex gap-3">
+                    <span className="text-primary-500 font-black">•</span>
+                    <p className="text-[15px] leading-relaxed italic">{text}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="space-y-6">
+              <div className="flex items-center gap-3">
+                <span className="w-1.5 h-6 bg-indigo-600 rounded-full"></span>
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Marking Scheme</h3>
+              </div>
+              <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100 space-y-4">
+                <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                  <span className="text-xs font-black uppercase text-slate-500">Correct Attempt</span>
+                  <span className="text-sm font-black text-emerald-600">+2 Marks</span>
+                </div>
+                <div className="flex justify-between items-center bg-emerald-50 p-4 rounded-2xl border border-emerald-100/50 shadow-sm group">
+                  <span className="text-xs font-black uppercase text-emerald-800">Negative Marking</span>
+                  <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-black tracking-widest uppercase">No Penalty</span>
+                </div>
+              </div>
+              <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3 italic">
+                <span className="text-amber-500">⚠️</span>
+                <p className="text-[13px] font-bold text-amber-700 leading-tight">Proctoring is active. Any suspicious activity will lead to immediate disqualification.</p>
+              </div>
+            </section>
+          </div>
+
+          {/* Candidate Oath & Acceptance */}
+          <div className="bg-slate-50 rounded-[2.5rem] p-8 md:p-10 border border-slate-200 shadow-inner">
+            <div className="max-w-2xl mx-auto space-y-8">
+              <div className="text-center space-y-4">
+                <h4 className="text-xs font-black uppercase tracking-[0.25em] text-indigo-600">Integrity Declaration</h4>
+                <p className="text-[15px] font-bold text-slate-600 leading-relaxed italic">
+                  "I solemnly declare that I have read and understood all instructions. I will complete this assessment independently and follow the highest standards of academic integrity during the session."
+                </p>
+              </div>
+
+              <div className="h-px bg-slate-200" />
+
+              <div className="flex flex-col items-center gap-8">
+                <label className="flex items-center gap-4 cursor-pointer group">
+                  <div className="relative">
+                    <input 
+                      type="checkbox" 
+                      checked={acceptedCheckbox}
+                      onChange={(e) => setAcceptedCheckbox(e.target.checked)}
+                      className="peer sr-only"
+                    />
+                    <div className="w-7 h-7 rounded-xl border-2 border-slate-300 bg-white transition-all peer-checked:bg-primary-600 peer-checked:border-primary-600 group-hover:border-primary-400 flex items-center justify-center">
+                      <svg className={`w-4 h-4 text-white transition-transform duration-300 ${acceptedCheckbox ? 'scale-100' : 'scale-0'}`} fill="none" stroke="currentColor" strokeWidth="4" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                  </div>
+                  <span className="text-sm font-black text-slate-700 tracking-tight group-hover:text-primary-600 transition-colors">
+                    I acknowledge and agree to the instructions above
+                  </span>
+                </label>
+
+                {/* Conditional Start Button with smooth entrance */}
+                <div className={`w-full transition-all duration-700 transform ${acceptedCheckbox ? 'opacity-100 translate-y-0 scale-100 h-auto visible' : 'opacity-0 translate-y-8 scale-95 h-0 overflow-hidden invisible'}`}>
+                  <button
+                    onClick={() => setHasAcceptedDeclaration(true)}
+                    className="w-full py-6 rounded-[2rem] font-black tracking-[0.25em] flex items-center justify-center gap-4 transition-all duration-500 shadow-2xl bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-primary-500/30 hover:shadow-primary-600/50 hover:scale-[1.01] active:scale-95 uppercase text-sm"
+                  >
+                    Start Examination Now
+                    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                  </button>
+                  <p className="text-[10px] text-center text-slate-400 font-black uppercase tracking-[0.2em] mt-4 ml-1">The timer will initiate immediately</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   /* ── Confirm Submit Modal ── */
   const ConfirmModal = () => (

@@ -138,6 +138,56 @@ select {
 .animation-delay-2000 { animation-delay: 2s; }
 .animation-delay-4000 { animation-delay: 4s; }
 
+@keyframes bubble-drift-right {
+  0% { transform: translateX(-10vw) translateY(0) scale(1); opacity: 0; }
+  10% { opacity: 0.7; }
+  50% { transform: translateX(45vw) translateY(-80px) scale(1.4); opacity: 1; }
+  90% { opacity: 0.7; }
+  100% { transform: translateX(110vw) translateY(0) scale(1); opacity: 0; }
+}
+
+@keyframes bubble-drift-left {
+  0% { transform: translateX(110vw) translateY(0) scale(1); opacity: 0; }
+  10% { opacity: 0.7; }
+  50% { transform: translateX(45vw) translateY(60px) scale(1.3); opacity: 1; }
+  90% { opacity: 0.7; }
+  100% { transform: translateX(-10vw) translateY(0) scale(1); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-drift-right {
+  animation: bubble-drift-right 60s linear infinite;
+}
+
+.animate-drift-left {
+  animation: bubble-drift-left 60s linear infinite;
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2.5s infinite;
+}
+
 /* Premium Button Utility */
 .btn-premium {
   @apply rounded-full px-8 py-4 font-black tracking-wide flex items-center justify-center gap-2 transition-all duration-300 shadow-lg active:scale-95;

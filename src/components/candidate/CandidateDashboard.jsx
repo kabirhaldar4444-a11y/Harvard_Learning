@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import supabase from '../../utils/supabase';
+import DisclaimerOverlay from '../DisclaimerOverlay';
 
-const CandidateDashboard = ({ exams, onStartExam, profile }) => {
+const CandidateDashboard = ({ exams, onStartExam, profile, user }) => {
   const [submissions, setSubmissions] = useState([]);
   const [loadingResults, setLoadingResults] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -9,6 +10,23 @@ const CandidateDashboard = ({ exams, onStartExam, profile }) => {
   useEffect(() => {
     if (profile?.id) {
       fetchSubmissions();
+
+      // REALTIME: Listen for score release or submission updates
+      const subSubscription = supabase
+        .channel('submission-updates')
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'submissions',
+          filter: `user_id=eq.${profile.id}`
+        }, () => {
+          fetchSubmissions();
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subSubscription);
+      };
     }
   }, [profile?.id]);
 
@@ -34,6 +52,8 @@ const CandidateDashboard = ({ exams, onStartExam, profile }) => {
   );
 
   return (
+    <>
+    <DisclaimerOverlay user={user} profile={profile} />
     <div className="premium-container min-h-[calc(100vh-80px)] p-6 md:p-12 relative overflow-hidden font-sans">
       {/* Background Ambience */}
       <div className="absolute top-0 -right-12 w-[30rem] h-[30rem] bg-indigo-600/10 rounded-full blur-[128px] animate-blob pointer-events-none"></div>
@@ -229,6 +249,7 @@ const CandidateDashboard = ({ exams, onStartExam, profile }) => {
         </section>
       </div>
     </div>
+    </>
   );
 };
 

@@ -48,6 +48,7 @@ const EditUser = () => {
     allotted_exam_ids: [],
     aadhaar_front_url: '',
     aadhaar_back_url: '',
+    pan_url: '',
     profile_photo_url: '',
   });
   
@@ -79,6 +80,7 @@ const EditUser = () => {
         allotted_exam_ids: data.allotted_exam_ids || [],
         aadhaar_front_url: data.aadhaar_front_url || '',
         aadhaar_back_url: data.aadhaar_back_url || '',
+        pan_url: data.pan_url || '',
         profile_photo_url: data.profile_photo_url || ''
       });
     } else if (error) {
@@ -235,6 +237,7 @@ const EditUser = () => {
                <DocumentPreview title="Profile Photo" url={editUser.profile_photo_url} />
                <DocumentPreview title="Aadhaar Front" url={editUser.aadhaar_front_url} />
                <DocumentPreview title="Aadhaar Back" url={editUser.aadhaar_back_url} />
+               <DocumentPreview title="PAN Card" url={editUser.pan_url} />
             </div>
           </div>
 

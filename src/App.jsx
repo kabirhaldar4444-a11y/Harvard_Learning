@@ -57,7 +57,24 @@ function App() {
 
   useEffect(() => {
     validateUser();
-  }, []);
+
+    // REALTIME: Listen for profile changes (exam allotment, role changes, etc.)
+    const profileSubscription = supabase
+      .channel('profile-updates')
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'profiles',
+        filter: `id=eq.${user?.id}`
+      }, (payload) => {
+        setProfile(payload.new);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(profileSubscription);
+    };
+  }, [user?.id]);
 
   const checkAuth = () => validateUser();
 
@@ -146,7 +163,7 @@ function App() {
               activeExam ? (
                 <ExamPortal exam={activeExam} onFinish={() => setActiveExam(null)} submitSignal={submitSignal} />
               ) : (
-                <CandidateDashboard exams={exams} onStartExam={setActiveExam} profile={profile} />
+                <CandidateDashboard exams={exams} onStartExam={setActiveExam} profile={profile} user={user} />
               )
             ) : profile?.role === 'admin' ? <Navigate to="/admin" /> : (
               <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6 text-center px-4 animate-fade-in">
@@ -159,7 +176,7 @@ function App() {
 
           <Route path="/complete-profile" element={
             profile?.role === 'candidate' ? (
-              profile?.profile_completed ? <Navigate to="/" /> : <CompleteProfile profile={profile} onComplete={checkAuth} />
+              profile?.profile_completed ? <Navigate to="/" /> : <CompleteProfile profile={profile} user={user} onComplete={checkAuth} />
             ) : <Navigate to="/login" />
           } />
 

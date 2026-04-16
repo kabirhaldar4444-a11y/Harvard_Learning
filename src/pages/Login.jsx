@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../utils/supabase';
-import AuthLayout from '../components/auth/AuthLayout';
 import { useToast } from '../components/common/AlertProvider';
 
 const Login = ({ onLoginSuccess }) => {
@@ -15,13 +14,10 @@ const Login = ({ onLoginSuccess }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    // Trim inputs
     const emailToAuth = email.trim().toLowerCase();
-    const passwordToAuth = password.trim();
+    const passwordToAuth = password;
 
     try {
-      // 1. Unified Logic: Match credentials & Role Verification
       const { data, error } = await supabase.auth.signInWithPassword({
         email: emailToAuth,
         password: passwordToAuth
@@ -30,7 +26,6 @@ const Login = ({ onLoginSuccess }) => {
       if (error) throw error;
       const user = data.user;
 
-      // 2. Fetch profile to determine role
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role, profile_completed, full_name')
@@ -38,145 +33,187 @@ const Login = ({ onLoginSuccess }) => {
         .single();
 
       if (profileError) {
-        console.error('Profile fetch error:', profileError);
         await supabase.auth.signOut();
-        throw new Error('Database access error. Your account initialization is incomplete.');
+        throw new Error('Database access error. Account initialization incomplete.');
       }
 
-      // 3. Hierarchical Redirect Logic (Professional Secure)
-      // MASTER ADMIN CHECK (Hardcoded Email Safety)
-      if (user.email === 'info@elitetoolistic.com') {
+      if (user.email === 'info@elitetoolistic.com' || profile.role === 'admin') {
         await onLoginSuccess();
-        toast('Logged in as Master Administrator', 'success');
+        toast('Access Granted: Administrator Session Initialized', 'success');
         navigate('/admin');
         return;
       }
 
-      // STAFF ADMIN CHECK
-      if (profile.role === 'admin') {
-        await onLoginSuccess();
-        toast('Logged in as Staff Administrator', 'success');
-        navigate('/admin');
-        return;
-      }
-
-      // CANDIDATE CHECK
       if (profile.role === 'candidate') {
         await onLoginSuccess();
         toast(`Welcome back, ${profile.full_name || 'Candidate'}`, 'success');
-        if (profile.profile_completed) {
-          navigate('/');
-        } else {
-          navigate('/complete-profile');
-        }
+        navigate(profile.profile_completed ? '/' : '/complete-profile');
       } else {
-        // Restricted access
         await supabase.auth.signOut();
-        throw new Error('Access restricted. Please contact the administrator.');
+        throw new Error('Access restricted. Please contact administrator.');
       }
     } catch (err) {
-      console.error('Full Login Error Details:', err);
-      let msg = err.message || 'Authentication failed';
-      
-      // Map technical schema and RLS errors to user-friendly messages
-      const lowerMsg = msg.toLowerCase();
-      if (lowerMsg.includes('schema') || lowerMsg.includes('permission') || lowerMsg.includes('row-level security') || lowerMsg.includes('initialization')) {
-        msg = `Access error: ${err.message || 'Your account is not properly initialized. Please contact the administrator.'}`;
-      } else if (lowerMsg.includes('invalid login credentials')) {
-        msg = 'Invalid email or password. Please try again.';
-      }
-
-      toast(msg, 'error');
+      toast(err.message === 'Invalid login credentials' ? 'Invalid credentials. Please verify your email and password.' : err.message, 'error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthLayout 
-      title="Examination Portal" 
-      subtitle="Sign in to start your journey"
-    >
-      <form onSubmit={handleLogin} className="flex flex-col gap-6">
-        <div className="space-y-2">
-          <label className="text-[10px] font-extrabold uppercase tracking-[0.2em] ml-2 opacity-60" style={{ color: 'var(--text-dark)' }}>Email Address</label>
-          <div className="relative group">
-            <input 
-              type="email" 
-              placeholder="example@elitetoolistic.com" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required 
-              autoComplete="off"
-              className="w-full rounded-2xl px-5 py-4 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/10 border-2"
-              style={{ 
-                backgroundColor: 'var(--input-bg)',
-                borderColor: 'var(--input-border)',
-                color: 'var(--text-dark)'
-              }}
-            />
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 relative overflow-hidden font-sans selection:bg-indigo-100">
+      
+      {/* ── LIGHT PLEASANT PREMIUM ATMOSPHERE ── */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden bg-white">
+        {/* Deep Light Foundations */}
+        <div className="absolute top-[-5%] left-[-5%] w-[800px] h-[800px] bg-rose-50/40 rounded-full blur-[120px] animate-drift-right opacity-50" />
+        <div className="absolute bottom-[-5%] right-[-5%] w-[800px] h-[800px] bg-sky-50/40 rounded-full blur-[120px] animate-drift-left opacity-50" />
+        
+        {/* Light Pastel Micro-Orbs (Unified Size) */}
+        {[
+          { color: 'bg-rose-100', pos: 'top-[15%] left-[20%]', anim: 'animate-drift-right', dur: '65s', delay: '0s', blur: 'blur-[4px]' },
+          { color: 'bg-sky-100', pos: 'top-[40%] right-[30%]', anim: 'animate-drift-left', dur: '75s', delay: '-15s', blur: 'blur-[3px]' },
+          { color: 'bg-pink-100', pos: 'bottom-[20%] left-[10%]', anim: 'animate-drift-right', dur: '85s', delay: '-5s', blur: 'blur-[5px]' },
+          { color: 'bg-blue-100', pos: 'top-[60%] right-[15%]', anim: 'animate-drift-left', dur: '55s', delay: '-20s', blur: 'blur-[2px]' },
+          { color: 'bg-rose-100', pos: 'bottom-[40%] left-[70%]', anim: 'animate-drift-right', dur: '95s', delay: '-30s', blur: 'blur-[6px]' },
+          { color: 'bg-sky-100', pos: 'top-[10%] right-[40%]', anim: 'animate-drift-left', dur: '110s', delay: '-10s', blur: 'blur-[8px]' },
+          { color: 'bg-emerald-50', pos: 'top-[30%] left-[45%]', anim: 'animate-drift-right', dur: '60s', delay: '-25s', blur: 'blur-[1px]' },
+          { color: 'bg-blue-50', pos: 'bottom-[5%] right-[20%]', anim: 'animate-drift-left', dur: '80s', delay: '-12s', blur: 'blur-[4px]' },
+          { color: 'bg-pink-50', pos: 'top-[70%] left-[30%]', anim: 'animate-drift-right', dur: '120s', delay: '-40s', blur: 'blur-[10px]' },
+          { color: 'bg-sky-50', pos: 'bottom-[30%] left-[80%]', anim: 'animate-drift-left', dur: '100s', delay: '-18s', blur: 'blur-[8px]' },
+          { color: 'bg-rose-50', pos: 'top-[40%] left-[5%]', anim: 'animate-drift-right', dur: '130s', delay: '-50s', blur: 'blur-[12px]' },
+          { color: 'bg-indigo-100', pos: 'top-[5%] left-[60%]', anim: 'animate-drift-left', dur: '70s', delay: '-2s', blur: 'blur-[3px]' },
+          { color: 'bg-violet-100', pos: 'bottom-[15%] right-[10%]', anim: 'animate-drift-right', dur: '80s', delay: '-15s', blur: 'blur-[5px]' },
+          { color: 'bg-blue-50', pos: 'top-[80%] left-[15%]', anim: 'animate-drift-left', dur: '90s', delay: '-25s', blur: 'blur-[2px]' },
+          { color: 'bg-rose-50', pos: 'bottom-[60%] right-[40%]', anim: 'animate-drift-right', dur: '100s', delay: '-35s', blur: 'blur-[6px]' },
+          { color: 'bg-teal-50', pos: 'top-[25%] right-[55%]', anim: 'animate-drift-left', dur: '110s', delay: '-45s', blur: 'blur-[4px]' },
+          { color: 'bg-amber-50', pos: 'bottom-[45%] left-[25%]', anim: 'animate-drift-right', dur: '120s', delay: '-55s', blur: 'blur-[7px]' },
+          { color: 'bg-sky-100', pos: 'top-[50%] left-[50%]', anim: 'animate-drift-left', dur: '130s', delay: '-65s', blur: 'blur-[3px]' },
+          { color: 'bg-pink-100', pos: 'bottom-[10%] left-[40%]', anim: 'animate-drift-right', dur: '140s', delay: '-75s', blur: 'blur-[5px]' },
+          { color: 'bg-indigo-50', pos: 'top-[15%] right-[10%]', anim: 'animate-drift-left', dur: '150s', delay: '-85s', blur: 'blur-[2px]' },
+          { color: 'bg-rose-100', pos: 'bottom-[25%] right-[70%]', anim: 'animate-drift-right', dur: '160s', delay: '-95s', blur: 'blur-[8px]' },
+          { color: 'bg-pink-100', pos: 'top-[35%] left-[15%]', anim: 'animate-drift-left', dur: '75s', delay: '-20s', blur: 'blur-[3px]' },
+          { color: 'bg-rose-100', pos: 'top-[65%] right-[25%]', anim: 'animate-drift-right', dur: '95s', delay: '-40s', blur: 'blur-[4px]' },
+          { color: 'bg-pink-50', pos: 'bottom-[5%] left-[55%]', anim: 'animate-drift-left', dur: '115s', delay: '-60s', blur: 'blur-[6px]' },
+          { color: 'bg-rose-50', pos: 'top-[5%] right-[45%]', anim: 'animate-drift-right', dur: '135s', delay: '-80s', blur: 'blur-[2px]' },
+          { color: 'bg-pink-100', pos: 'bottom-[75%] left-[85%]', anim: 'animate-drift-left', dur: '85s', delay: '-10s', blur: 'blur-[5px]' },
+          { color: 'bg-rose-100', pos: 'top-[55%] left-[5%]', anim: 'animate-drift-right', dur: '105s', delay: '-30s', blur: 'blur-[3px]' },
+          { color: 'bg-pink-50', pos: 'bottom-[35%] right-[15%]', anim: 'animate-drift-left', dur: '125s', delay: '-50s', blur: 'blur-[4px]' },
+          { color: 'bg-rose-50', pos: 'top-[85%] right-[35%]', anim: 'animate-drift-right', dur: '145s', delay: '-70s', blur: 'blur-[6px]' },
+          { color: 'bg-pink-100', pos: 'top-[20%] left-[75%]', anim: 'animate-drift-left', dur: '90s', delay: '-100s', blur: 'blur-[3px]' },
+          { color: 'bg-rose-100', pos: 'bottom-[50%] left-[10%]', anim: 'animate-drift-right', dur: '110s', delay: '-110s', blur: 'blur-[5px]' },
+        ].map((orb, i) => (
+          <div 
+            key={i}
+            className={`absolute ${orb.pos} w-5 h-5 ${orb.color} opacity-60 rounded-full ${orb.blur} ${orb.anim}`}
+            style={{ animationDelay: orb.delay, animationDuration: orb.dur }}
+          />
+        ))}
+      </div>
+
+      <div className="relative z-10 w-full max-w-[320px] px-4 animate-fade-in py-12">
+        
+        {/* ── LOGO SECTION ── */}
+        <div className="flex flex-col items-center mb-14 transition-transform hover:scale-[1.02] duration-500">
+          <div className="w-44 h-auto p-4 bg-white rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] border border-slate-100/50">
+            <img src="/logo_full.png" alt="Elitetoolistic" className="w-full h-full object-contain" />
           </div>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-[10px] font-extrabold uppercase tracking-[0.2em] ml-2 opacity-60" style={{ color: 'var(--text-dark)' }}>Password</label>
-          <div className="relative group flex items-center">
-            <input 
-              type={showPassword ? "text" : "password"} 
-              placeholder="••••••••" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required 
-              autoComplete="off"
-              className="w-full rounded-2xl px-5 py-4 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary-500/10 border-2"
-              style={{ 
-                backgroundColor: 'var(--input-bg)',
-                borderColor: 'var(--input-border)',
-                color: 'var(--text-dark)'
-              }}
-            />
-            <button 
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-5 text-slate-400 hover:text-primary-500 transition-colors focus:outline-none"
-              title={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-              )}
-            </button>
+        {/* ── AUTHENTICATION FORM ── */}
+        <form onSubmit={handleLogin} className="flex flex-col gap-8">
+          
+          {/* Email Field */}
+          <div className="group relative">
+            <label className="block text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3 ml-0.5 group-focus-within:text-slate-900 transition-colors">
+              Authorized Email
+            </label>
+            <div className="relative flex items-center">
+              <span className="absolute left-0 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><rect width="20" height="16" x="2" y="4" rx="2"/>
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="yourname@example.com"
+                required
+                className="w-full pl-8 pr-2 py-3 bg-transparent border-b-2 border-slate-200 focus:border-indigo-600 focus:outline-none transition-all duration-300 font-medium text-slate-900 placeholder:text-slate-300 placeholder:italic"
+                style={{ fontFamily: 'Inter' }}
+              />
+            </div>
           </div>
-        </div>
 
-        <button 
-          type="submit" 
-          disabled={loading}
-          className="mt-4 w-full bg-gradient-to-br from-primary-600 to-secondary-600 hover:from-primary-500 hover:to-secondary-500 text-white font-black py-4.5 rounded-2xl shadow-xl shadow-primary-600/20 active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 group border-t border-white/20"
-          style={{ minHeight: '60px' }}
-        >
-          {loading ? (
-            <>
-              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          {/* Password Field */}
+          <div className="group relative">
+            <label className="block text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 mb-3 ml-0.5 group-focus-within:text-slate-900 transition-colors">
+              Secure Key
+            </label>
+            <div className="relative flex items-center">
+              <span className="absolute left-0 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <input 
+                type={showPassword ? "text" : "password"} 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+                className="w-full pl-8 pr-12 py-3 bg-transparent border-b-2 border-slate-200 focus:border-indigo-600 focus:outline-none transition-all duration-300 font-medium text-slate-900 placeholder:text-slate-300"
+                style={{ fontFamily: 'Inter' }}
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-0 text-slate-400 hover:text-slate-900 transition-colors"
+              >
+                {showPassword ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="group relative mt-4 w-full bg-slate-900 text-white font-black py-4 rounded-xl shadow-2xl hover:bg-black active:scale-[0.98] transition-all duration-300 disabled:opacity-50 overflow-hidden"
+          >
+            <span className={`flex items-center justify-center gap-2 tracking-[0.3em] uppercase text-[11px] ${loading ? 'opacity-0' : 'opacity-100'}`}>
+              Access Portal
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1">
+                <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
-              <span className="tracking-wide">Verifying...</span>
-            </>
-          ) : (
-            <>
-              <span className="tracking-wide text-lg">Enter Portal</span>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="ml-1 transition-transform group-hover:translate-x-1">
-                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                <polyline points="10 17 15 12 10 7"></polyline>
-                <line x1="15" y1="12" x2="3" y2="12"></line>
-              </svg>
-            </>
-          )}
-        </button>
-      </form>
-    </AuthLayout>
+            </span>
+            
+            {/* Shimmer Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
+            
+            {loading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg className="animate-spin h-5 w-5 text-white/70" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+            )}
+          </button>
+
+          {/* Bottom Branding (High-Density) */}
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-[8px] font-black uppercase tracking-[0.5em] text-slate-300">
+              Elite Technology Group
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 
