@@ -133,7 +133,7 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
     // calculate score uses answers state, we need local calculation
     let score = 0;
     questions.forEach((q, idx) => {
-      if (currentAnswers[idx] === q.correct_option) score++;
+      if (currentAnswers[idx] === q.correct_option) score += 5;
     });
 
     const { data } = await supabase.auth.getUser();
@@ -173,7 +173,7 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
     let score = 0;
     questions.forEach((q, index) => {
       if (answers[index] === q.correct_option) {
-        score++;
+        score += 5;
       }
     });
     return score;
@@ -249,7 +249,7 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
               <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100 space-y-4">
                 <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
                   <span className="text-xs font-black uppercase text-slate-500">Correct Attempt</span>
-                  <span className="text-sm font-black text-emerald-600">+2 Marks</span>
+                  <span className="text-sm font-black text-emerald-600">+5 Marks</span>
                 </div>
                 <div className="flex justify-between items-center bg-emerald-50 p-4 rounded-2xl border border-emerald-100/50 shadow-sm group">
                   <span className="text-xs font-black uppercase text-emerald-800">Negative Marking</span>

@@ -3,7 +3,7 @@ import supabase from '../../utils/supabase';
 import { useToast } from '../common/AlertProvider';
 
 const SubmissionCard = ({ sub, viewDetails, handleToggleRelease, fetchSubmissions, toast }) => {
-  const maxScore = sub.total_questions;
+  const maxScore = sub.total_questions * 5;
   const currentSavedScore = sub.admin_score_override ?? sub.score;
   
   // Single source of truth for the local UI
@@ -295,7 +295,7 @@ const UserSubmissions = ({ userId }) => {
             <div className="p-6 border-b flex justify-between items-center bg-[color:var(--card-bg)]" style={{ borderColor: 'var(--glass-border)' }}>
               <div>
                 <h3 className="text-xl font-black text-[color:var(--text-dark)]">{selectedSubmission.exams?.title} - Analysis</h3>
-                <p className="text-sm text-[color:var(--text-light)]">Candidate Score: {selectedSubmission.score} / {selectedSubmission.total_questions}</p>
+                <p className="text-sm text-[color:var(--text-light)]">Candidate Score: {selectedSubmission.score} / {selectedSubmission.total_questions * 5}</p>
               </div>
               <button onClick={() => setSelectedSubmission(null)} className="p-2 hover:bg-black/10 rounded-full transition-colors">
                 <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>

@@ -236,7 +236,7 @@ const CandidateDashboard = ({ exams, onStartExam, profile, user }) => {
                           <p className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--text-light)] mb-1">Final Score</p>
                           <p className="text-3xl font-black tracking-tight text-primary-500">
                             {sub.admin_score_override !== null ? sub.admin_score_override : sub.score}
-                            <span className="text-sm font-bold text-slate-400 ml-1">/{sub.total_questions}</span>
+                            <span className="text-sm font-bold text-slate-400 ml-1">/{sub.total_questions * 5}</span>
                           </p>
                         </div>
                       )}
