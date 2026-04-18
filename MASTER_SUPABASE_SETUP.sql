@@ -1,5 +1,5 @@
 -- ============================================================
--- MASTER SUPABASE SETUP SCRIPT (ELITETOOLISTIC EXAM PORTAL)
+-- MASTER SUPABASE SETUP SCRIPT (HARVARD LEARNING EXAM PORTAL)
 -- ============================================================
 -- Run this in your Supabase SQL Editor to fix ALL issues:
 -- 1. Admin/Candidate Login
@@ -146,7 +146,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- 5. REPAIR ADMIN USER (if exists)
 DO $$
 DECLARE
-  target_email text := 'info@elitetoolistic.com';
+  target_email text := 'info@harvardlearning.com';
   user_id uuid;
 BEGIN
   SELECT id INTO user_id FROM auth.users WHERE email = target_email;

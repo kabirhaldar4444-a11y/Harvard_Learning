@@ -23,7 +23,7 @@ async function listAdmins() {
   });
   
   // Also check for the master hardcoded email which might not be in the results if role isn't 'admin' there
-  console.log('- Master Admin: info@elitetoolistic.com');
+  console.log('- Master Admin: info@harvardlearning.com');
 }
 
 listAdmins();

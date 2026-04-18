@@ -1,5 +1,5 @@
 {
-  "name": "elitetoolisticapp",
+  "name": "harvard-learning-app",
   "rewrites": [
     {
       "source": "/(.*)",

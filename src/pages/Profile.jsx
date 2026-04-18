@@ -40,7 +40,7 @@ const Profile = ({ profile }) => {
           </div>
 
           <div className="mt-12 pt-8 border-t w-full" style={{ borderColor: 'var(--glass-border)' }}>
-            <p className="text-sm italic" style={{ color: 'var(--text-light)' }}>Account secured by Elitetoolistic Infrastructure</p>
+            <p className="text-sm italic" style={{ color: 'var(--text-light)' }}>Account secured by Harvard Learning Infrastructure</p>
           </div>
         </div>
       </div>

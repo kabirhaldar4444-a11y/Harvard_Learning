@@ -1,11 +1,11 @@
 -- ==========================================
 -- SCRIPT TO REPAIR / UPDATE ADMIN ROLE
 -- ==========================================
--- Use this if 'info@elitetoolistic.com' already exists but cannot login as admin.
+-- Use this if 'info@harvardlearning.com' already exists but cannot login as admin.
 
 DO $$
 DECLARE
-  target_email text := 'info@elitetoolistic.com';
+  target_email text := 'info@harvardlearning.com';
   user_id uuid;
 BEGIN
   -- 1. Get the existing user's ID

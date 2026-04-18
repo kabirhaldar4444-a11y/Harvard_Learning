@@ -80,16 +80,15 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
       if (data && data.length > 0) {
         setQuestions(data);
       } else {
-        // Fallback for empty exams
-        setQuestions([{ 
-          id: 'mock-1', 
-          question_text: "What is 2+2?", 
-          options: ["3", "4", "5", "6"], 
-          correct_option: 1 
-        }]);
+        // No questions found in database
+        setQuestions([]);
+        if (error) {
+          toast('Database access error: ' + error.message, 'error');
+        }
       }
     } catch (err) {
       console.error('Error in ExamPortal init:', err);
+      toast('Failed to load examination questions.', 'error');
     } finally {
       setLoading(false);
     }
@@ -375,6 +374,24 @@ const ExamPortal = ({ exam, onFinish, submitSignal }) => {
             Return to Dashboard
             <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] py-12 px-6 animate-fade-in relative z-10 w-full">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-[128px] pointer-events-none"></div>
+        <div className="glass-card-saas p-10 md:p-14 text-center max-w-xl w-full relative z-10 animate-slide-up border-t-4 border-t-amber-500">
+          <div className="w-20 h-20 mx-auto bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mb-8">
+            <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <h2 className="text-3xl font-black mb-4" style={{ color: 'var(--text-dark)' }}>No Questions Available</h2>
+          <p className="mb-8" style={{ color: 'var(--text-light)' }}>
+            This exam has been scheduled but no questions have been added yet. Please contact the administrator.
+          </p>
+          <button onClick={onFinish} className="btn-premium w-full py-4">Return to Dashboard</button>
         </div>
       </div>
     );

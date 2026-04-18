@@ -11,7 +11,7 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const isSuperAdmin = user?.email === 'info@elitetoolistic.com';
+  const isSuperAdmin = user?.email === 'info@harvardlearning.com';
   
   const generatePassword = () => {
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -115,7 +115,7 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
               </div>
               <input 
                 type="email" 
-                placeholder="user@elitetoolistic.com" 
+                placeholder="user@harvardlearning.com" 
                 value={candidateEmail}
                 autoComplete="off"
                 data-lpignore="true"

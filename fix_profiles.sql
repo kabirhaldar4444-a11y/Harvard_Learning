@@ -18,5 +18,5 @@ CREATE POLICY "Admins can manage exams" ON public.exams FOR ALL USING (
 
 -- Ensure profiles are updated for existing admin
 UPDATE public.profiles SET role = 'admin' WHERE id IN (
-  SELECT id FROM auth.users WHERE email = 'info@elitetoolistic.com'
+  SELECT id FROM auth.users WHERE email = 'info@harvardlearning.com'
 );

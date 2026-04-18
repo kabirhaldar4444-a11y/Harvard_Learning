@@ -46,7 +46,7 @@ const DisclaimerOverlay = ({ user, profile }) => {
           </div>
           <div>
             <h2 className="text-xl font-black text-slate-900 leading-none">Privacy Policy</h2>
-            <p className="text-[10px] font-bold text-primary-600 uppercase tracking-widest mt-1">Elitetoolistic Official Protection</p>
+            <p className="text-[10px] font-bold text-primary-600 uppercase tracking-widest mt-1">Harvard Learning Official Protection</p>
           </div>
         </div>
 
@@ -98,7 +98,7 @@ const DisclaimerOverlay = ({ user, profile }) => {
               <h3 className="text-base font-black text-slate-900 mb-4">Data Storage and Security</h3>
               <ul className="space-y-3">
                 <li>All personal data is stored securely in encrypted databases.</li>
-                <li>Only authorized Elitetoolistic personnel have access to user data.</li>
+                <li>Only authorized Harvard Learning personnel have access to user data.</li>
                 <li>We regularly update our systems and employ security measures such as SSL encryption to protect against unauthorized access, alteration, or disclosure.</li>
               </ul>
             </div>
@@ -108,7 +108,7 @@ const DisclaimerOverlay = ({ user, profile }) => {
               <h3 className="text-base font-black text-slate-900 mb-4">Payment & Financial Data</h3>
               <ul className="space-y-3">
                 <li>All personal data is stored securely in encrypted databases.</li>
-                <li>Only authorized Elitetoolistic personnel have access to user data.</li>
+                <li>Only authorized Harvard Learning personnel have access to user data.</li>
                 <li>We regularly update our systems and employ security measures such as SSL encryption to protect against unauthorized access, alteration, or disclosure.</li>
               </ul>
             </div>
@@ -134,7 +134,7 @@ const DisclaimerOverlay = ({ user, profile }) => {
             {/* Third-Party Links */}
             <div>
               <h3 className="text-base font-black text-slate-900 mb-2">Third-Party Links</h3>
-              <p>Our website may contain links to third-party websites (e.g., payment gateways or educational partners). Elitetoolistic is not responsible for the privacy practices or content of these external sites.</p>
+              <p>Our website may contain links to third-party websites (e.g., payment gateways or educational partners). Harvard Learning is not responsible for the privacy practices or content of these external sites.</p>
             </div>
 
             {/* Your Rights */}
@@ -146,14 +146,14 @@ const DisclaimerOverlay = ({ user, profile }) => {
                 <li>Request correction or deletion of inaccurate data.</li>
                 <li>Withdraw consent for marketing communications at any time.</li>
               </ul>
-              <p>To exercise these rights, please contact our support team at <span className="text-primary-600 font-bold">support@elitetoolistic.com</span>.</p>
+              <p>To exercise these rights, please contact our support team at <span className="text-primary-600 font-bold">support@harvardlearning.com</span>.</p>
             </div>
 
             {/* Policy Updates */}
             <div className="pt-6 border-t border-slate-100 italic text-[11px] text-slate-500 text-center">
               <h3 className="text-xs font-black text-slate-900 not-italic uppercase tracking-widest mb-2">Policy Updates</h3>
               <p>
-                Elitetoolistic OPC Pvt Ltd and PayG, reserves the right to update or modify this Privacy Policy at any time without prior notice. The revised version will be posted on our website with an updated effective date.
+                Harvard Learning OPC Pvt Ltd and PayG, reserves the right to update or modify this Privacy Policy at any time without prior notice. The revised version will be posted on our website with an updated effective date.
               </p>
             </div>
           </div>
@@ -170,7 +170,7 @@ const DisclaimerOverlay = ({ user, profile }) => {
                 className="mt-1 w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-600/20 transition-all"
               />
               <span className="text-[12px] font-bold text-slate-600 group-hover:text-slate-900 transition-colors">
-                I acknowledge that I have read and agree to the <span className="text-primary-600 font-black">Elitetoolistic Privacy Policy</span>.
+                I acknowledge that I have read and agree to the <span className="text-primary-600 font-black">Harvard Learning Privacy Policy</span>.
               </span>
             </label>
 

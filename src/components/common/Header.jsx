@@ -20,7 +20,7 @@ const Header = ({ isAdmin, isCandidate, onLogout, isExamActive, onSubmitExam }) 
           {/* Left Section: Logo */}
           <div className="flex-1 flex justify-start">
             <Link to="/" className="flex items-center bg-white/95 rounded-xl px-4 py-1.5 shadow-md hover:scale-[1.03] transition-all duration-300">
-              <img src="/logo_full.png" alt="Elitetoolistic" className="h-7 object-contain" />
+              <img src="/logo_full.png" alt="Harvard Learning" className="h-7 object-contain" />
             </Link>
           </div>
 

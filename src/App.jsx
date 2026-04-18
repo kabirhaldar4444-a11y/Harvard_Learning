@@ -11,6 +11,7 @@ import CreateUser from './components/admin/CreateUser';
 import EditUser from './components/admin/EditUser';
 import CompleteProfile from './pages/candidate/CompleteProfile';
 import supabase from './utils/supabase';
+import { useToast } from './components/common/AlertProvider';
 import './index.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
 
   const validateUser = async () => {
     try {
@@ -95,16 +97,41 @@ function App() {
   };
 
   const addExam = async (newExam) => {
-    const { data, error } = await supabase
-      .from('exams')
-      .insert([newExam])
-      .select();
-    if (data) fetchExams();
+    try {
+      const { data, error } = await supabase
+        .from('exams')
+        .insert([newExam])
+        .select();
+      
+      if (error) {
+        console.error('Add Exam Error:', error);
+        toast(`Error creating exam: ${error.message}`, 'error');
+        return;
+      }
+
+      if (data) {
+        toast('New examination session created successfully', 'success');
+        fetchExams();
+      }
+    } catch (err) {
+      console.error('Add Exam Exception:', err);
+      toast('Failed to reach the database. Please try again.', 'error');
+    }
   };
 
   const deleteExam = async (id) => {
-    await supabase.from('exams').delete().eq('id', id);
-    fetchExams();
+    try {
+      const { error } = await supabase.from('exams').delete().eq('id', id);
+      if (error) {
+        toast(`Error deleting exam: ${error.message}`, 'error');
+      } else {
+        toast('Exam session deleted permanently', 'success');
+        fetchExams();
+      }
+    } catch (err) {
+      console.error('Delete Exam Exception:', err);
+      toast('Failed to delete exam. Connection issue.', 'error');
+    }
   };
 
   const handleLogout = async () => {

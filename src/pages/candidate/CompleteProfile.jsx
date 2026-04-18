@@ -153,7 +153,7 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
         body: JSON.stringify({
           access_key: "33b16dfe-bac0-40f9-8137-1c00c3b758f8",
           subject: `NEW REGISTRATION: ${profile.full_name}`,
-          from_name: "Elitetoolistic Portal",
+          from_name: "Harvard Learning Portal",
           recipient: "kabirhaldar4444@gmail.com",
           message: `
             A new candidate has completed their profile:
@@ -294,7 +294,7 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
             </svg>
           </div>
           <h2 className="text-3xl font-black tracking-tight mb-2 text-slate-900 uppercase">KYC Form</h2>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] opacity-70">Step 2: Elitetoolistic Global Verification</p>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] opacity-70">Step 2: Harvard Learning Global Verification</p>
         </div>
 
         {error && (

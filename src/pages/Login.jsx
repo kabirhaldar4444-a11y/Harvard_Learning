@@ -4,8 +4,8 @@ import supabase from '../utils/supabase';
 import { useToast } from '../components/common/AlertProvider';
 
 const Login = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('info@harvardlearning.com');
+  const [password, setPassword] = useState('qwerty@123');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const Login = ({ onLoginSuccess }) => {
         throw new Error('Database access error. Account initialization incomplete.');
       }
 
-      if (user.email === 'info@elitetoolistic.com' || profile.role === 'admin') {
+      if (user.email === 'info@harvardlearning.com' || profile.role === 'admin') {
         await onLoginSuccess();
         toast('Access Granted: Administrator Session Initialized', 'success');
         navigate('/admin');
@@ -115,7 +115,7 @@ const Login = ({ onLoginSuccess }) => {
         {/* ── LOGO SECTION ── */}
         <div className="flex flex-col items-center mb-14 transition-transform hover:scale-[1.02] duration-500">
           <div className="w-44 h-auto p-4 bg-white rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] border border-slate-100/50">
-            <img src="/logo_full.png" alt="Elitetoolistic" className="w-full h-full object-contain" />
+            <img src="/logo_full.png" alt="Harvard Learning" className="w-full h-full object-contain" />
           </div>
         </div>
 

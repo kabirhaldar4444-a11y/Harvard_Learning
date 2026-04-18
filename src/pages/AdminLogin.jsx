@@ -4,7 +4,7 @@ import supabase from '../utils/supabase';
 import AuthLayout from '../components/auth/AuthLayout';
 
 const AdminLogin = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState('info@elitetoolistic.com');
+  const [email, setEmail] = useState('info@harvardlearning.com');
   const [password, setPassword] = useState('qwerty@123');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,7 +56,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
 
       // STEP 6: Hierarchical Redirect Logic
       // MASTER ADMIN CHECK (Hardcoded Email Safety)
-      if (user.email === 'info@elitetoolistic.com') {
+      if (user.email === 'info@harvardlearning.com') {
         await onLoginSuccess();
         navigate('/admin');
       } 
@@ -87,7 +87,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
           <label className="text-xs font-bold uppercase tracking-widest ml-1 transition-colors duration-300" style={{ color: 'var(--text-light)' }}>Admin Email</label>
           <input 
             type="email" 
-            placeholder="admin@elitetoolistic.com" 
+            placeholder="admin@harvardlearning.com" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required 
