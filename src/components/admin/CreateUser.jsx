@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import supabase from '../../utils/supabase';
 import { useToast } from '../common/AlertProvider';
 
@@ -39,7 +40,6 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
     
     try {
       // Step 2: Intelligent Native Registration (No hacks)
-      const { createClient } = await import('@supabase/supabase-js');
       
       // Create a secondary client that DOES NOT save session data (Admin stays logged in)
       const supabaseAdmin = createClient(
