@@ -43,8 +43,8 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
       
       // Create a secondary client that DOES NOT save session data (Admin stays logged in)
       const supabaseAdmin = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co',
+        import.meta.env.VITE_SUPABASE_ANON_KEY || 'PLACEHOLDER_KEY',
         { auth: { persistSession: false } }
       );
 
