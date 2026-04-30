@@ -10,6 +10,7 @@ import Users from './pages/admin/Users';
 import CreateUser from './components/admin/CreateUser';
 import EditUser from './components/admin/EditUser';
 import CompleteProfile from './pages/candidate/CompleteProfile';
+import TermsAndConditions from './pages/TermsAndConditions';
 import supabase from './utils/supabase';
 import { useToast } from './components/common/AlertProvider';
 import './index.css';
@@ -235,6 +236,8 @@ function App() {
               <EditUser />
             ) : <Navigate to="/login" />
           } />
+          
+          <Route path="/terms" element={<TermsAndConditions />} />
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

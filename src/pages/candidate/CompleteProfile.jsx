@@ -5,42 +5,42 @@ import DisclaimerOverlay from '../../components/DisclaimerOverlay';
 import SignaturePad from '../../components/common/SignaturePad';
 
 const INDIA_STATES_CITIES = {
-  "Andhra Pradesh": ["Visakhapatnam","Vijayawada","Guntur","Nellore","Kurnool","Rajahmundry","Tirupati","Kakinada","Kadapa","Anantapur"],
-  "Arunachal Pradesh": ["Itanagar","Naharlagun","Pasighat","Tawang","Ziro","Bomdila","Roing","Tezu","Aalo","Khonsa"],
-  "Assam": ["Guwahati","Silchar","Dibrugarh","Jorhat","Nagaon","Tinsukia","Tezpur","Bongaigaon","Dhubri","Diphu"],
-  "Bihar": ["Patna","Gaya","Bhagalpur","Muzaffarpur","Darbhanga","Arrah","Begusarai","Chhapra","Katihar","Munger"],
-  "Chhattisgarh": ["Raipur","Bhilai","Bilaspur","Korba","Durg","Rajnandgaon","Jagdalpur","Ambikapur","Raigarh","Chirmiri"],
-  "Goa": ["Panaji","Margao","Vasco da Gama","Mapusa","Ponda","Bicholim","Curchorem","Sanquelim","Canacona","Pernem"],
-  "Gujarat": ["Ahmedabad","Surat","Vadodara","Rajkot","Bhavnagar","Jamnagar","Junagadh","Gandhinagar","Anand","Morbi"],
-  "Haryana": ["Faridabad","Gurugram","Panipat","Ambala","Yamunanagar","Rohtak","Hisar","Karnal","Sonipat","Panchkula"],
-  "Himachal Pradesh": ["Shimla","Mandi","Solan","Dharamsala","Kullu","Hamirpur","Chamba","Una","Bilaspur","Nahan"],
-  "Jharkhand": ["Ranchi","Jamshedpur","Dhanbad","Bokaro","Deoghar","Hazaribagh","Giridih","Ramgarh","Phusro","Medininagar"],
-  "Karnataka": ["Bengaluru","Mysuru","Hubballi","Mangaluru","Belagavi","Davanagere","Ballari","Vijayapura","Shivamogga","Tumakuru"],
-  "Kerala": ["Thiruvananthapuram","Kochi","Kozhikode","Thrissur","Kollam","Palakkad","Alappuzha","Malappuram","Kottayam","Kannur"],
-  "Madhya Pradesh": ["Indore","Bhopal","Jabalpur","Gwalior","Ujjain","Sagar","Ratlam","Satna","Dewas","Murwara"],
-  "Maharashtra": ["Mumbai","Pune","Nagpur","Thane","Nashik","Aurangabad","Solapur","Amravati","Navi Mumbai","Kolhapur"],
-  "Manipur": ["Imphal","Thoubal","Bishnupur","Churachandpur","Ukhrul","Senapati","Chandel","Tamenglong","Jiribam","Moreh"],
-  "Meghalaya": ["Shillong","Tura","Jowai","Nongpoh","Baghmara","Williamnagar","Resubelpara","Nongstoin","Mairang","Khliehriat"],
-  "Mizoram": ["Aizawl","Lunglei","Saiha","Champhai","Kolasib","Serchhip","Lawngtlai","Mamit","Hnahthial","Khawzach"],
-  "Nagaland": ["Kohima","Dimapur","Mokokchung","Tuensang","Wokha","Zunieboto","Mon","Phek","Longleng","Kiphire"],
-  "Odisha": ["Bhubaneswar","Cuttack","Rourkela","Brahmapur","Sambalpur","Puri","Balasore","Bhadrak","Baripada","Jharsuguda"],
-  "Punjab": ["Ludhiana","Amritsar","Jalandhar","Patiala","Bathinda","Mohali","Pathankot","Hoshiarpur","Batala","Moga"],
-  "Rajasthan": ["Jaipur","Jodhpur","Kota","Bikaner","Ajmer","Udaipur","Bhilwara","Alwar","Bharatpur","Sikar"],
-  "Sikkim": ["Gangtok","Namchi","Mangan","Gyalshing","Rangpo","Jorethang","Nayabazar","Singtam","Ravangla","Yuksom"],
-  "Tamil Nadu": ["Chennai","Coimbatore","Madurai","Tiruchirappalli","Salem","Tirunelveli","Vellore","Erode","Thoothukudi","Dindigul"],
-  "Telangana": ["Hyderabad","Warangal","Nizamabad","Karimnagar","Khammam","Mahbubnagar","Nalgonda","Adilabad","Suryapet","Miryalaguda"],
-  "Tripura": ["Agartala","Udaipur","Dharmanagar","Kailasahar","Belonia","Khowai","Ambassa","Sonamura","Sabroom","Teliamura"],
-  "Uttar Pradesh": ["Lucknow","Kanpur","Agra","Varanasi","Meerut","Allahabad","Ghaziabad","Bareilly","Aligarh","Moradabad"],
-  "Uttarakhand": ["Dehradun","Haridwar","Roorkee","Haldwani","Rudrapur","Kashipur","Rishikesh","Kotdwar","Ramnagar","Mussoorie"],
-  "West Bengal": ["Kolkata","Howrah","Durgapur","Asansol","Siliguri","Bardhaman","Malda","Baharampur","Habra","Kharagpur"],
-  "Andaman and Nicobar Islands": ["Port Blair","Car Nicobar","Little Andaman","Diglipur","Rangat","Mayabunder","Ferrargunj","Prothrapur","Nancowrie","Campbell Bay"],
+  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati", "Kakinada", "Kadapa", "Anantapur"],
+  "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tawang", "Ziro", "Bomdila", "Roing", "Tezu", "Aalo", "Khonsa"],
+  "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon", "Dhubri", "Diphu"],
+  "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Darbhanga", "Arrah", "Begusarai", "Chhapra", "Katihar", "Munger"],
+  "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Durg", "Rajnandgaon", "Jagdalpur", "Ambikapur", "Raigarh", "Chirmiri"],
+  "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda", "Bicholim", "Curchorem", "Sanquelim", "Canacona", "Pernem"],
+  "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Junagadh", "Gandhinagar", "Anand", "Morbi"],
+  "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Yamunanagar", "Rohtak", "Hisar", "Karnal", "Sonipat", "Panchkula"],
+  "Himachal Pradesh": ["Shimla", "Mandi", "Solan", "Dharamsala", "Kullu", "Hamirpur", "Chamba", "Una", "Bilaspur", "Nahan"],
+  "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Hazaribagh", "Giridih", "Ramgarh", "Phusro", "Medininagar"],
+  "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi", "Davanagere", "Ballari", "Vijayapura", "Shivamogga", "Tumakuru"],
+  "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam", "Palakkad", "Alappuzha", "Malappuram", "Kottayam", "Kannur"],
+  "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Ujjain", "Sagar", "Ratlam", "Satna", "Dewas", "Murwara"],
+  "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad", "Solapur", "Amravati", "Navi Mumbai", "Kolhapur"],
+  "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Ukhrul", "Senapati", "Chandel", "Tamenglong", "Jiribam", "Moreh"],
+  "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh", "Baghmara", "Williamnagar", "Resubelpara", "Nongstoin", "Mairang", "Khliehriat"],
+  "Mizoram": ["Aizawl", "Lunglei", "Saiha", "Champhai", "Kolasib", "Serchhip", "Lawngtlai", "Mamit", "Hnahthial", "Khawzach"],
+  "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Tuensang", "Wokha", "Zunieboto", "Mon", "Phek", "Longleng", "Kiphire"],
+  "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Brahmapur", "Sambalpur", "Puri", "Balasore", "Bhadrak", "Baripada", "Jharsuguda"],
+  "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Mohali", "Pathankot", "Hoshiarpur", "Batala", "Moga"],
+  "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer", "Udaipur", "Bhilwara", "Alwar", "Bharatpur", "Sikar"],
+  "Sikkim": ["Gangtok", "Namchi", "Mangan", "Gyalshing", "Rangpo", "Jorethang", "Nayabazar", "Singtam", "Ravangla", "Yuksom"],
+  "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli", "Vellore", "Erode", "Thoothukudi", "Dindigul"],
+  "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam", "Mahbubnagar", "Nalgonda", "Adilabad", "Suryapet", "Miryalaguda"],
+  "Tripura": ["Agartala", "Udaipur", "Dharmanagar", "Kailasahar", "Belonia", "Khowai", "Ambassa", "Sonamura", "Sabroom", "Teliamura"],
+  "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Meerut", "Allahabad", "Ghaziabad", "Bareilly", "Aligarh", "Moradabad"],
+  "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur", "Kashipur", "Rishikesh", "Kotdwar", "Ramnagar", "Mussoorie"],
+  "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri", "Bardhaman", "Malda", "Baharampur", "Habra", "Kharagpur"],
+  "Andaman and Nicobar Islands": ["Port Blair", "Car Nicobar", "Little Andaman", "Diglipur", "Rangat", "Mayabunder", "Ferrargunj", "Prothrapur", "Nancowrie", "Campbell Bay"],
   "Chandigarh": ["Chandigarh"],
-  "Dadra and Nagar Haveli and Daman and Diu": ["Daman","Diu","Silvassa"],
-  "Delhi": ["New Delhi","Central Delhi","East Delhi","North Delhi","North East Delhi","North West Delhi","Shahdara","South Delhi","South East Delhi","South West Delhi","West Delhi"],
-  "Jammu and Kashmir": ["Srinagar","Jammu","Anantnag","Baramulla","Sopore","Kathua","Udhampur","Poonch","Leh","Kargil"],
-  "Ladakh": ["Leh","Kargil"],
-  "Lakshadweep": ["Kavaratti","Agatti","Amini","Andrott","Kadmat"],
-  "Puducherry": ["Puducherry","Karaikal","Mahe","Yanam"]
+  "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
+  "Delhi": ["New Delhi", "Central Delhi", "East Delhi", "North Delhi", "North East Delhi", "North West Delhi", "Shahdara", "South Delhi", "South East Delhi", "South West Delhi", "West Delhi"],
+  "Jammu and Kashmir": ["Srinagar", "Jammu", "Anantnag", "Baramulla", "Sopore", "Kathua", "Udhampur", "Poonch", "Leh", "Kargil"],
+  "Ladakh": ["Leh", "Kargil"],
+  "Lakshadweep": ["Kavaratti", "Agatti", "Amini", "Andrott", "Kadmat"],
+  "Puducherry": ["Puducherry", "Karaikal", "Mahe", "Yanam"]
 };
 
 const STATES = Object.keys(INDIA_STATES_CITIES).sort();
@@ -143,52 +143,92 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
     return publicUrl;
   };
 
+  const getIPAddress = async () => {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json');
+      const data = await res.json();
+      return data.ip;
+    } catch (e) {
+      return 'Unknown';
+    }
+  };
+
+  const getGeoLocation = () => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve('Not Supported');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          resolve(`LAT: ${pos.coords.latitude}, LNG: ${pos.coords.longitude}`);
+        },
+        () => {
+          resolve('Permission Denied');
+        },
+        { timeout: 10000 }
+      );
+    });
+  };
+
   const sendEmailNotification = async (candidateData) => {
     try {
-      // Using Web3Forms for a zero-backend, zero-database change notification
-      // You can get a free access key at https://web3forms.com/
       await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          access_key: "33b16dfe-bac0-40f9-8137-1c00c3b758f8",
-          subject: `NEW REGISTRATION: ${profile.full_name}`,
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+          subject: `KYC COMPLETED: ${profile.full_name}`,
           from_name: "Harvard Learning Portal",
-          recipient: "kabirhaldar4444@gmail.com",
+          to_email: "Support@harvardlearning.in",
           message: `
-            A new candidate has completed their profile:
-            - Name: ${profile?.full_name || 'New Candidate'}
-            - Email: ${emailValue || user?.email || 'N/A'}
-            - Phone: ${candidateData.phone}
-            - Location: ${candidateData.location}
+            CANDIDATE KYC DETAILS:
+            -----------------------------------
+            - Name: ${profile?.full_name || 'N/A'}
+            - Email: ${candidateData.email || 'N/A'}
+            - Phone: ${candidateData.phone || 'N/A'}
+            - Address: ${candidateData.address || 'N/A'}
+            - State: ${selectedState || 'N/A'}
+            - City: ${selectedCity || 'N/A'}
             
-            UPLOADED DOCUMENTS:
+            SECURITY & LOCATION:
+            -----------------------------------
+            - IP Address: ${candidateData.ipAddress || 'N/A'}
+            - Live Location: ${candidateData.liveLocation || 'N/A'}
+            
+            LEGAL ACKNOWLEDGEMENT:
+            -----------------------------------
+            - Terms & Conditions: ACCEPTED
+            - Academic Integrity: AGREED
+            - Digital Signature: Verified
+            
+            UPLOADED DOCUMENTS (SUPABASE LINKS):
+            -----------------------------------
             - Profile Photo: ${candidateData.photoUrl}
             - Aadhaar (Front): ${candidateData.frontUrl}
             - Aadhaar (Back): ${candidateData.backUrl}
             - PAN Card: ${candidateData.panUrl}
             - Signature: ${candidateData.signUrl}
             
-            Documents are also mirrored in the Admin Dashboard.
+            System Log: KYC Process completed on ${new Date().toLocaleString()}
           `
         })
       });
     } catch (err) {
       console.error('Email Notification Error:', err);
-      // We don't throw here to avoid blocking the user flow if the email fails
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    
+
     if (!profilePhoto) return setError('Please click your photo to continue.');
     if (!signatureBlob) return setError('Please provide your digital signature.');
     if (!panCard) return setError('Please upload your PAN card.');
     if (!emailValue) return setError('Please provide a valid email address.');
     if (!acceptedTerms) return setError('Please accept the legal terms to continue.');
-    
+
     const digits = phone.replace(/\D/g, '');
     if (!digits.startsWith('91') || digits.length !== 12) return setError('Please enter a valid 10-digit Indian mobile number.');
     if (!selectedState) return setError('Please select your state.');
@@ -196,7 +236,7 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
 
     setUploading(true);
     setUploadStatus('Optimizing legal documents...');
-    
+
     try {
       // 1. Parallel Compression
       const [compPhoto, compFront, compBack, compPan] = await Promise.all([
@@ -217,6 +257,16 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
         handleFileUpload(signatureBlob, 'signature')
       ]);
 
+      setUploadStatus('Verifying session security...');
+      const [ipAddress, liveLocation] = await Promise.all([
+        getIPAddress(),
+        getGeoLocation()
+      ]);
+
+      if (liveLocation === 'Permission Denied' || liveLocation === 'Not Supported') {
+        throw new Error('Location access is mandatory for security verification. Please enable location permissions in your browser and try again.');
+      }
+
       setUploadStatus('Initializing your dashboard...');
 
       const fullAddress = `${address ? address + ', ' : ''}${selectedCity}, ${selectedState}`;
@@ -229,11 +279,13 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
         pan_url: panUrl,
         signature_url: signUrl,
         profile_photo_url: photoUrl,
+        ip_address: ipAddress,
+        live_location: liveLocation,
         profile_completed: true
       }).eq('id', profile.id);
 
       if (error) throw error;
-      
+
       // Send background notification with document links
       await sendEmailNotification({
         phone,
@@ -243,7 +295,10 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
         frontUrl,
         backUrl,
         panUrl,
-        signUrl
+        signUrl,
+        address: fullAddress,
+        ipAddress,
+        liveLocation
       });
 
       if (onComplete) await onComplete();
@@ -256,292 +311,397 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
     }
   };
 
-  const inputStyle = { 
-    padding: '16px 20px', 
-    borderRadius: '16px', 
-    border: '1px solid #e2e8f0', 
-    backgroundColor: '#ffffff', 
-    color: '#0f172a', 
-    width: '100%', 
-    fontSize: '14px', 
+  const inputStyle = {
+    padding: '16px 20px',
+    borderRadius: '16px',
+    border: '1px solid #e2e8f0',
+    backgroundColor: '#ffffff',
+    color: '#0f172a',
+    width: '100%',
+    fontSize: '14px',
     outline: 'none',
     transition: 'all 0.3s ease'
   };
 
-  const selectStyle = { 
-    ...inputStyle, 
-    cursor: 'pointer', 
-    appearance: 'none', 
-    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, 
-    backgroundRepeat: 'no-repeat', 
-    backgroundPosition: 'right 20px center', 
-    backgroundSize: '16px', 
-    paddingRight: '48px' 
+  const selectStyle = {
+    ...inputStyle,
+    cursor: 'pointer',
+    appearance: 'none',
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 20px center',
+    backgroundSize: '16px',
+    paddingRight: '48px'
   };
 
   return (
     <>
-    <DisclaimerOverlay user={user} profile={profile} />
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-primary-100/50 rounded-full blur-[128px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-indigo-100/50 rounded-full blur-[128px] pointer-events-none" />
+      <DisclaimerOverlay user={user} profile={profile} />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden font-sans">
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-primary-100/50 rounded-full blur-[128px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-indigo-100/50 rounded-full blur-[128px] pointer-events-none" />
 
-      <div className="relative w-full max-w-3xl bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] rounded-[2.5rem] border border-slate-200 z-10 p-8 md:p-12 animate-slide-up my-12">
-        <div className="text-center mb-12">
-          <div className="w-20 h-20 rounded-[2rem] bg-slate-50 border border-slate-100 text-primary-600 flex items-center justify-center mx-auto mb-6 shadow-sm">
-            <svg width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
-          <h2 className="text-3xl font-black tracking-tight mb-2 text-slate-900 uppercase">KYC Form</h2>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] opacity-70">Step 2: Harvard Learning Global Verification</p>
-        </div>
-
-        {error && (
-          <div className="mb-8 p-5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 text-xs font-black text-center uppercase tracking-wide">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-12">
-          <div className="space-y-8">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary-600 flex items-center gap-3">
-              <span className="w-1.5 h-5 bg-primary-600 rounded-full"></span>
-              Personal Credentials
-            </h4>
-            
-            <div className="flex flex-col items-center gap-6 p-8 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 group transition-all hover:border-primary-300">
-              <div className="text-center">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Livestream Verification</p>
-                <p className="text-xs font-bold text-slate-600">Take a high-quality profile photo *</p>
-              </div>
-
-              {!showCamera && !profilePhoto && (
-                <button type="button" onClick={startCamera} className="w-32 h-32 rounded-full flex flex-col items-center justify-center cursor-pointer transition-all border-4 border-white bg-white shadow-xl hover:scale-105 gap-2 group-hover:shadow-primary-500/10">
-                  <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
-                  </div>
-                  <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest">Open Lens</span>
-                </button>
-              )}
-
-              {showCamera && (
-                <div className="relative w-full max-w-sm">
-                  <video ref={videoRef} autoPlay playsInline className="w-full rounded-2xl border-4 border-white shadow-2xl bg-black" />
-                  <button type="button" onClick={capturePhoto} className="absolute bottom-4 left-1/2 -translate-x-1/2 py-3 px-8 rounded-full font-black text-xs bg-slate-900 text-white shadow-2xl hover:bg-slate-800 transition-all uppercase tracking-widest">Capture Now</button>
-                </div>
-              )}
-
-              {profilePhoto && !showCamera && (
-                <div className="relative">
-                  <img src={URL.createObjectURL(profilePhoto)} alt="Candidate" className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-2xl" />
-                  <button type="button" onClick={startCamera} className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-xs hover:rotate-180 transition-all duration-500 shadow-xl">🔄</button>
-                </div>
-              )}
-              <canvas ref={canvasRef} style={{ display: 'none' }} />
+        <div className="relative w-full max-w-3xl bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] rounded-[2.5rem] border border-slate-200 z-10 p-8 md:p-12 animate-slide-up my-12">
+          <div className="text-center mb-12">
+            <div className="w-20 h-20 rounded-[2rem] bg-slate-50 border border-slate-100 text-primary-600 flex items-center justify-center mx-auto mb-6 shadow-sm">
+              <svg width="36" height="36" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </div>
+            <h2 className="text-3xl font-black tracking-tight mb-2 text-slate-900 uppercase">KYC Form</h2>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] opacity-70">Step 2: Harvard Learning Global Verification</p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">Account Email *</label>
-                <input
-                  type="email"
-                  placeholder="name@example.com"
-                  value={emailValue}
-                  onChange={e => setEmailValue(e.target.value)}
-                  style={inputStyle}
-                  required
-                />
+          {error && (
+            <div className="mb-8 p-5 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 text-xs font-black text-center uppercase tracking-wide">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-12">
+            <div className="space-y-8">
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary-600 flex items-center gap-3">
+                <span className="w-1.5 h-5 bg-primary-600 rounded-full"></span>
+                Personal Credentials
+              </h4>
+
+              <div className="flex flex-col items-center gap-6 p-8 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 group transition-all hover:border-primary-300">
+                <div className="text-center">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Livestream Verification</p>
+                  <p className="text-xs font-bold text-slate-600">Take a high-quality profile photo *</p>
+                </div>
+
+                {!showCamera && !profilePhoto && (
+                  <button type="button" onClick={startCamera} className="w-32 h-32 rounded-full flex flex-col items-center justify-center cursor-pointer transition-all border-4 border-white bg-white shadow-xl hover:scale-105 gap-2 group-hover:shadow-primary-500/10">
+                    <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center">
+                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><circle cx="12" cy="13" r="3" /></svg>
+                    </div>
+                    <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest">Open Lens</span>
+                  </button>
+                )}
+
+                {showCamera && (
+                  <div className="relative w-full max-w-sm">
+                    <video ref={videoRef} autoPlay playsInline className="w-full rounded-2xl border-4 border-white shadow-2xl bg-black" />
+                    <button type="button" onClick={capturePhoto} className="absolute bottom-4 left-1/2 -translate-x-1/2 py-3 px-8 rounded-full font-black text-xs bg-slate-900 text-white shadow-2xl hover:bg-slate-800 transition-all uppercase tracking-widest">Capture Now</button>
+                  </div>
+                )}
+
+                {profilePhoto && !showCamera && (
+                  <div className="relative">
+                    <img src={URL.createObjectURL(profilePhoto)} alt="Candidate" className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-2xl" />
+                    <button type="button" onClick={startCamera} className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-xs hover:rotate-180 transition-all duration-500 shadow-xl">🔄</button>
+                  </div>
+                )}
+                <canvas ref={canvasRef} style={{ display: 'none' }} />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">Phone Number *</label>
-                <div className="flex gap-3">
-                  <div className="flex items-center px-5 rounded-2xl border border-slate-200 font-black text-xs bg-slate-50 text-slate-500">+91</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">Account Email *</label>
                   <input
-                    type="tel"
-                    placeholder="10-digit number"
-                    value={phone.replace(/^\+91\s?/, '')}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
-                      setPhone('+91 ' + raw);
-                      setPhoneError(raw.length === 10 ? '' : (raw.length > 0 ? 'Invalid length' : ''));
-                    }}
+                    type="email"
+                    placeholder="name@example.com"
+                    value={emailValue}
+                    onChange={e => setEmailValue(e.target.value)}
                     style={inputStyle}
                     required
                   />
                 </div>
-                {phoneError && <p className="text-[10px] text-rose-500 font-black uppercase ml-1">{phoneError}</p>}
+
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">Phone Number *</label>
+                  <div className="flex gap-3">
+                    <div className="flex items-center px-5 rounded-2xl border border-slate-200 font-black text-xs bg-slate-50 text-slate-500">+91</div>
+                    <input
+                      type="tel"
+                      placeholder="10-digit number"
+                      value={phone.replace(/^\+91\s?/, '')}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        setPhone('+91 ' + raw);
+                        setPhoneError(raw.length === 10 ? '' : (raw.length > 0 ? 'Invalid length' : ''));
+                      }}
+                      style={inputStyle}
+                      required
+                    />
+                  </div>
+                  {phoneError && <p className="text-[10px] text-rose-500 font-black uppercase ml-1">{phoneError}</p>}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">State / UT *</label>
+                  <select value={selectedState} onChange={handleStateChange} style={selectStyle} required>
+                    <option value="">Select State</option>
+                    {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">City / District *</label>
+                  <select value={selectedCity} onChange={e => setSelectedCity(e.target.value)} style={selectStyle} required disabled={!selectedState}>
+                    <option value="">{selectedState ? 'Choose City' : 'Pending State Selection...'}</option>
+                    {availableCities.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">Residential Address</label>
+                  <input
+                    type="text"
+                    placeholder="Street, Locality, House No."
+                    value={address}
+                    onChange={e => setAddress(e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="h-px bg-slate-100" />
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">State / UT *</label>
-                <select value={selectedState} onChange={handleStateChange} style={selectStyle} required>
-                  <option value="">Select State</option>
-                  {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+            <div className="space-y-8">
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600 flex items-center gap-3">
+                <span className="w-1.5 h-5 bg-indigo-600 rounded-full"></span>
+                Verification Documents
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {[
+                  { label: 'Aadhaar Front *', state: aadhaarFront, setter: setAadhaarFront },
+                  { label: 'Aadhaar Back *', state: aadhaarBack, setter: setAadhaarBack },
+                  { label: 'PAN Card *', state: panCard, setter: setPanCard }
+                ].map(({ label, state, setter }) => (
+                  <div key={label} className="space-y-3">
+                    <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest ml-1">{label}</label>
+                    <div className="relative h-32 group">
+                      <input type="file" accept="image/*" onChange={e => setter(e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" />
+                      <div className={`h-full rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all px-4 text-center ${state ? 'border-primary-500 bg-primary-50/10 text-primary-600' : 'border-slate-200 bg-white hover:border-slate-300 text-slate-400'}`}>
+                        {state ? (
+                          <>
+                            <div className="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center mb-2 shadow-lg shadow-primary-500/20">
+                              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                            </div>
+                            <span className="text-[10px] font-black truncate w-full uppercase tracking-widest">{state.name}</span>
+                          </>
+                        ) : (
+                          <>
+                            <div className="w-8 h-8 rounded-xl bg-slate-50 text-slate-300 flex items-center justify-center mb-2 group-hover:text-slate-400 transition-colors">
+                              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-widest">Upload File</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">City / District *</label>
-                <select value={selectedCity} onChange={e => setSelectedCity(e.target.value)} style={selectStyle} required disabled={!selectedState}>
-                  <option value="">{selectedState ? 'Choose City' : 'Pending State Selection...'}</option>
-                  {availableCities.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">Residential Address</label>
-                <input
-                  type="text"
-                  placeholder="Street, Locality, House No."
-                  value={address}
-                  onChange={e => setAddress(e.target.value)}
-                  style={inputStyle}
-                />
+
+            <div className="h-px bg-slate-100" />
+
+            <div className="space-y-8">
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-600 flex items-center gap-3">
+                <span className="w-1.5 h-5 bg-emerald-600 rounded-full"></span>
+                Identity Attestation
+              </h4>
+
+              <div className="bg-white p-1 rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
+                <SignaturePad onSave={(blob) => setSignatureBlob(blob)} onClear={() => setSignatureBlob(null)} />
               </div>
             </div>
-          </div>
 
-          <div className="h-px bg-slate-100" />
+            <div className="h-px bg-slate-100" />
 
-          <div className="space-y-8">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600 flex items-center gap-3">
-              <span className="w-1.5 h-5 bg-indigo-600 rounded-full"></span>
-              Verification Documents
-            </h4>
+            {/* Legal Terms Section */}
+            <div className="space-y-8">
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-amber-600 flex items-center gap-3">
+                <span className="w-1.5 h-5 bg-amber-600 rounded-full"></span>
+                Legal Acknowledgement
+              </h4>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {[
-                { label: 'Aadhaar Front *', state: aadhaarFront, setter: setAadhaarFront },
-                { label: 'Aadhaar Back *', state: aadhaarBack, setter: setAadhaarBack },
-                { label: 'PAN Card *', state: panCard, setter: setPanCard }
-              ].map(({ label, state, setter }) => (
-                <div key={label} className="space-y-3">
-                  <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest ml-1">{label}</label>
-                  <div className="relative h-32 group">
-                    <input type="file" accept="image/*" onChange={e => setter(e.target.files[0])} className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" />
-                    <div className={`h-full rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all px-4 text-center ${state ? 'border-primary-500 bg-primary-50/10 text-primary-600' : 'border-slate-200 bg-white hover:border-slate-300 text-slate-400'}`}>
-                      {state ? (
-                        <>
-                          <div className="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center mb-2 shadow-lg shadow-primary-500/20">
-                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                          </div>
-                          <span className="text-[10px] font-black truncate w-full uppercase tracking-widest">{state.name}</span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-8 h-8 rounded-xl bg-slate-50 text-slate-300 flex items-center justify-center mb-2 group-hover:text-slate-400 transition-colors">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                          </div>
-                          <span className="text-[10px] font-black uppercase tracking-widest">Upload File</span>
-                        </>
-                      )}
+              <div className="relative w-full flex flex-col max-h-[80vh] bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200">
+                <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white/90 backdrop-blur-md">
+                  <div className="flex items-center gap-6">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xl shadow-slate-200">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.744c0 5.552 3.84 10.29 9 11.623 5.16-1.333 9-6.07 9-11.623 0-1.314-.254-2.57-.716-3.714A11.959 11.959 0 0112 2.714z"></path></svg>
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-black text-slate-900 tracking-tight leading-none mb-1 uppercase">Terms & Conditions</h2>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Please read carefully</p>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="h-px bg-slate-100" />
+                <div className="px-8 py-10 overflow-y-auto flex-1 custom-scrollbar selection:bg-slate-100 bg-white">
+                  <div className="space-y-16">
+                    <section className="space-y-8">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-black text-[10px]">01</div>
+                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Service Delivery</h3>
+                      </div>
+                      <div className="relative pl-10 space-y-12 border-l border-slate-100">
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Enrollment Process</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Customers visit the Harvard Learning website and fill out the Enrollment Form. After form submission, Our team connects with the customer. A detailed email is shared explaining the complete process flow and fee structure. Payments may also be accepted directly through an authorized professional expert trainer account, where applicable.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Process Explanation & Confirmation</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">During the call, the team explains the course structure, learning journey, and assessment-to-certification flow. The customer then confirms their participation in the program.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Fee Payment</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Upon successful completion of the fee payment, a GST-compliant invoice is issued within 6 hours. Pre-examination study materials are shared with the learner within 24 hours.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Pre-Exam</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">A Pre-Exam is conducted within 24–48 hours of fee payment. This exam assesses the customer’s initial understanding of the selected domain. Before the exam, the Guidance Team connects to explain the exam process.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Pre-Exam Result & Pre-Board Professional Certificate</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Results are shared within 24–48 hours via email. A Pre-Board Professional Certificate is issued with “Under Training” mentioned.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Reward Eligibility</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Customers scoring above 80% become eligible for a gift. One gift can be selected from four available options, which will be delivered accordingly.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Self-Paced Training</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Access to recorded video lectures is shared within 15 days on payment. Training duration is 90–120 days.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Final Exam</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">A Final Exam is conducted between 90-120 days.</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Final Certificate</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Upon successful completion of all requirements, the Final Certificate is issued. The certificate will clearly state the status as “Certified.”</p>
+                        </div>
+                        <div className="relative group">
+                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
+                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Continuous Support</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Throughout the entire journey, the Harvard Learning team remains in contact for guidance and support.</p>
+                        </div>
+                      </div>
+                    </section>
 
-          <div className="space-y-8">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-600 flex items-center gap-3">
-              <span className="w-1.5 h-5 bg-emerald-600 rounded-full"></span>
-              Identity Attestation
-            </h4>
-            
-            <div className="bg-white p-1 rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm">
-              <SignaturePad onSave={(blob) => setSignatureBlob(blob)} onClear={() => setSignatureBlob(null)} />
-            </div>
-          </div>
+                    <section className="space-y-8">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-black text-[10px]">02</div>
+                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Terms & Conditions</h3>
+                      </div>
+                      <div className="space-y-12 pl-4 border-l border-slate-100">
+                        <div className="space-y-6">
+                          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Course Duration and Delivery</h4>
+                          <div className="space-y-4 text-[13px] text-slate-500 font-medium leading-relaxed">
+                            <p>The complete course will be delivered within 90 to 120 days from the date of enrollment.</p>
+                            <p>After enrollment, learners will receive an Invoice, Study Materials and video lectures within 10 working days of making the payment.</p>
+                            <p>A Pre-Board Exam will be scheduled 24 to 48 hours after payment, accessible via the official Harvard Learning exam portal. An Initial PC Softcopy (indicating “Under Training” and course details), will be provided after going through the pre-board exam within 48 to 72 hours.</p>
+                            <p>The final online exam must be attended between 90 to 120 days after enrollment.</p>
+                            <p>Upon successful exam completion, the Final PC Softcopy will be emailed to the candidate, indicating “Successfully Certified”.</p>
+                          </div>
+                        </div>
+                        <div className="space-y-6">
+                          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Training Format</h4>
+                          <ul className="space-y-3 text-[13px] text-slate-500 font-medium leading-relaxed">
+                            <li className="flex gap-3"><span className="text-slate-900">•</span> No live training sessions will be provided.</li>
+                            <li className="flex gap-3"><span className="text-slate-900">•</span> Study material and training videos will be shared once only via email after the enrollment.</li>
+                            <li className="flex gap-3"><span className="text-slate-900">•</span> Training videos and study materials are non-transferable and intended solely for enrolled candidates.</li>
+                            <li className="flex gap-3"><span className="text-slate-900">•</span> Upon successful completion of the program, the certificate will be released with an abbreviation format.</li>
+                          </ul>
+                        </div>
+                        <div className="space-y-6">
+                          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Refund Policy (Summary)</h4>
+                          <ul className="space-y-3 text-[13px] text-slate-500 font-medium leading-relaxed">
+                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> No refund will be applicable after attempting any exam (Pre-Board or Final).</li>
+                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> A 90% refund is applicable before attempting any exam.</li>
+                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> There is no 100% refund policy.</li>
+                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> A 10% deduction will apply to all refunds.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </section>
 
-          <div className="h-px bg-slate-100" />
-
-          {/* Legal Terms Section */}
-          <div className="space-y-8">
-            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-amber-600 flex items-center gap-3">
-              <span className="w-1.5 h-5 bg-amber-600 rounded-full"></span>
-              Legal Acknowledgement
-            </h4>
-
-            <div className="bg-slate-50/80 rounded-[2rem] border border-slate-200 p-8 space-y-6">
-              <div className="space-y-4 max-h-80 overflow-y-auto pr-4 custom-scrollbar">
-                <div className="space-y-2">
-                  <h5 className="text-[11px] font-black uppercase text-slate-900 tracking-wider">1. Identity Verification and Authentication</h5>
-                  <p className="text-[13px] text-slate-600 leading-relaxed font-medium">To ensure the integrity of the examination process and to prevent proxy attendance, the Candidate hereby authorizes the Portal to capture a live photograph (selfie) at the commencement of and/or during the examination. This image will be used solely to authenticate the Candidate’s identity against registered records. Failure to provide a clear image or any attempt to bypass this authentication may result in immediate disqualification.</p>
+                    <section className="space-y-8 pb-10">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-black text-[10px]">03</div>
+                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Privacy & Identity</h3>
+                      </div>
+                      <div className="space-y-12 pl-4 border-l border-slate-100">
+                        <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+                          <h5 className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Data Storage and Security</h5>
+                          <p className="text-xs text-slate-500 font-medium leading-relaxed">All personal data is stored securely in encrypted databases. Only authorized Harvard Learning personnel have access to user data. We regularly update our systems and employ security measures such as SSL encryption to protect against unauthorized access.</p>
+                        </div>
+                        <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 space-y-4">
+                          <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em]">Your Rights</h4>
+                          <p className="text-[13px] text-slate-500 font-medium leading-relaxed">You have the right to access the information we hold about you. To exercise these rights, please contact our support team at support@harvardlearning.in.</p>
+                        </div>
+                      </div>
+                    </section>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <h5 className="text-[11px] font-black uppercase text-slate-900 tracking-wider">2. Purpose of Certification and Employment Disclaimer</h5>
-                  <p className="text-[13px] text-slate-600 leading-relaxed font-medium">The Candidate acknowledges and agrees that this certification is intended solely for personal and professional growth.</p>
-                  <ul className="list-disc ml-4 space-y-1 text-[13px] text-slate-600 font-medium">
-                    <li><span className="font-bold text-slate-800">No Guarantee of Employment:</span> Successful completion of the exam and issuance of a certificate does not guarantee a job offer, placement, or any form of employment.</li>
-                    <li><span className="font-bold text-slate-800">No Guarantee of Financial Increase:</span> This certification does not entitle the Candidate to a salary hike, promotion, or bonus from any current or future employer.</li>
-                  </ul>
-                  <p className="text-[13px] text-slate-600 leading-relaxed font-medium">The Portal and its affiliates are not liable for any career expectations not met following the attainment of this certification.</p>
-                </div>
-
-                <div className="space-y-2">
-                  <h5 className="text-[11px] font-black uppercase text-slate-900 tracking-wider">3. Academic Integrity</h5>
-                  <p className="text-[13px] text-slate-600 leading-relaxed font-medium">The Candidate agrees to complete the examination independently without the use of unauthorized materials, AI tools, or external assistance. Any detected malpractice will lead to the permanent banning of the Candidate’s profile and the nullification of any previous results.</p>
-                </div>
-
-                <div className="space-y-2">
-                  <h5 className="text-[11px] font-black uppercase text-slate-900 tracking-wider">4. Limitation of Liability</h5>
-                  <p className="text-[13px] text-slate-600 leading-relaxed font-medium">The Portal shall not be held responsible for technical failures on the Candidate’s end, including but not limited to internet connectivity issues, hardware malfunctions, or power outages during the examination session.</p>
+                <div className="px-8 py-8 border-t border-slate-50 bg-white/90 backdrop-blur-md shrink-0 sticky bottom-0 z-20">
+                  <div className="flex flex-col gap-6">
+                    <label className="flex items-start gap-4 cursor-pointer group">
+                      <div className="relative flex items-center mt-1">
+                        <input
+                          className="w-5 h-5 rounded-lg border-2 border-slate-200 checked:bg-slate-900 checked:border-slate-900 transition-all cursor-pointer appearance-none shadow-sm"
+                          type="checkbox"
+                          checked={acceptedTerms}
+                          onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        />
+                        <svg className={`absolute left-1 top-1 w-3 h-3 text-white pointer-events-none transition-transform duration-300 ${acceptedTerms ? 'scale-100' : 'scale-0'}`} fill="none" stroke="currentColor" strokeWidth="4" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 group-hover:text-slate-900 transition-colors leading-relaxed uppercase tracking-tight">I have read and unequivocally agree to the <span className="text-slate-900 underline underline-offset-4 decoration-2">Harvard Learning TERMS & CONDITIONS</span> and all associated identity protocols.</span>
+                    </label>
+                  </div>
                 </div>
               </div>
-
-              <label className="flex items-start gap-4 p-5 rounded-2xl bg-white border border-slate-200 cursor-pointer group transition-all hover:border-primary-400">
-                <div className="relative flex items-center h-5">
-                  <input
-                    type="checkbox"
-                    checked={acceptedTerms}
-                    onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500 transition-all cursor-pointer"
-                  />
-                </div>
-                <span className="text-xs font-bold text-slate-700 leading-tight group-hover:text-primary-700 transition-colors">
-                  I have read, understood, and agree to follow all the legal terms and academic integrity policies mentioned above.
-                </span>
-              </label>
             </div>
-          </div>
 
-          <div className={acceptedTerms ? 'block animate-fade-in' : 'hidden'}>
-            <button
-              type="submit"
-              className="w-full py-6 rounded-3xl font-black tracking-[0.25em] flex flex-col items-center justify-center gap-1 mt-8 transition-all duration-500 shadow-2xl bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-[1.01] active:scale-95 disabled:opacity-50 uppercase text-sm"
-              disabled={uploading}
-            >
-              {uploading ? (
-                <>
-                  <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                    <span className="text-sm font-black">Processing Security...</span>
-                  </div>
-                  {uploadStatus && <span className="text-[10px] font-bold opacity-80 tracking-widest animate-pulse">{uploadStatus}</span>}
-                </>
-              ) : (
-                <>
-                <div className="flex items-center gap-4">
-                  Submit KYC & Complete Profile
-                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </div>
-                </>
-              )}
-            </button>
-          </div>
-        </form>
+            <div className={acceptedTerms ? 'block animate-fade-in' : 'hidden'}>
+              <button
+                type="submit"
+                className="w-full py-6 rounded-3xl font-black tracking-[0.25em] flex flex-col items-center justify-center gap-1 mt-8 transition-all duration-500 shadow-2xl bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-[1.01] active:scale-95 disabled:opacity-50 uppercase text-sm"
+                disabled={uploading}
+              >
+                {uploading ? (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm font-black">Processing Security...</span>
+                    </div>
+                    {uploadStatus && <span className="text-[10px] font-bold opacity-80 tracking-widest animate-pulse">{uploadStatus}</span>}
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-4">
+                      Submit KYC & Complete Profile
+                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </div>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
     </>
   );
 };

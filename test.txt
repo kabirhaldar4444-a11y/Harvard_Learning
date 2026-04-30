@@ -1,1 +1,6 @@
 test
+[EMAIL_ADDRESS: Support@harvardlearning.in]          
+[password: Support@1234]
+
+use Web3form for send the all kyc details to this email with all user data
+ including profile pic and  pan card and adhar and sign and all the documents image
