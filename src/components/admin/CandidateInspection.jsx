@@ -1,4 +1,5 @@
 import React from 'react';
+import UserSubmissions from './UserSubmissions';
 
 const CandidateInspection = ({ candidate, onClose, exams = [], onToggleExam, isSuperAdmin }) => {
   if (!candidate) return null;
@@ -102,10 +103,11 @@ const CandidateInspection = ({ candidate, onClose, exams = [], onToggleExam, isS
                 <h3 className="text-lg font-black text-slate-900">Identity Artifacts</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                  { label: 'Aadhar Card (Front)', url: candidate.aadhaar_front_url },
-                  { label: 'Aadhar Card (Back)', url: candidate.aadhaar_back_url }
+                  { label: 'Aadhar Front', url: candidate.aadhaar_front_url },
+                  { label: 'Aadhar Back', url: candidate.aadhaar_back_url },
+                  { label: 'PAN Card', url: candidate.pan_url }
                 ].map((doc, idx) => (
                   <div key={idx} className="bg-slate-50/50 rounded-[2rem] border border-slate-100 p-8 space-y-6">
                     <div className="flex items-center justify-between">
@@ -118,17 +120,34 @@ const CandidateInspection = ({ candidate, onClose, exams = [], onToggleExam, isS
                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Verified Artifact</p>
                         </div>
                       </div>
-                      <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20 animate-pulse"></div>
+                      <div className={`w-2 h-2 rounded-full ${doc.url ? 'bg-emerald-500 shadow-emerald-500/20' : 'bg-slate-300 shadow-slate-300/20'} shadow-lg animate-pulse`}></div>
                     </div>
 
-                    <div className="aspect-video bg-white rounded-2xl border border-slate-100 flex flex-col items-center justify-center gap-4 relative overflow-hidden group">
-                      <div className="absolute inset-0 bg-slate-900/5 backdrop-blur-[2px] z-10"></div>
-                      <div className="relative z-20 flex flex-col items-center gap-3">
-                        <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-amber-500 shadow-xl border border-amber-100">
-                          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                    <div className="aspect-video bg-white rounded-2xl border border-slate-100 flex flex-col items-center justify-center relative overflow-hidden group">
+                      {!isSuperAdmin ? (
+                        <div className="flex flex-col items-center gap-3">
+                          <div className="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 shadow-inner border border-slate-100">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                          </div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Masked for Security</p>
                         </div>
-                        <p className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em]">Security Lockdown</p>
-                      </div>
+                      ) : doc.url ? (
+                        doc.url.toLowerCase().includes('.pdf') ? (
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 text-indigo-500 hover:text-indigo-600 transition-colors">
+                            <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span className="text-[10px] font-bold uppercase tracking-widest">View PDF</span>
+                          </a>
+                        ) : (
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer" className="w-full h-full">
+                            <img src={doc.url} alt={doc.label} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                          </a>
+                        )
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 text-slate-300">
+                          <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Not Uploaded</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -169,16 +188,16 @@ const CandidateInspection = ({ candidate, onClose, exams = [], onToggleExam, isS
               </div>
             </section>
 
-            {/* Analytical Metrics Section */}
+            {/* Performance & Exam Data Section */}
             <section className="space-y-6 pb-10">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-900">
                   <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/></svg>
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Analytical Metrics</h3>
+                <h3 className="text-lg font-black text-slate-900">Performance & Exam Records</h3>
               </div>
-              <div className="p-10 rounded-[2rem] bg-slate-50 border border-slate-100 flex flex-col items-center justify-center gap-4">
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Computing Analytics...</p>
+              <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100">
+                 <UserSubmissions userId={candidate.id} />
               </div>
             </section>
 

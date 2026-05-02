@@ -4,11 +4,16 @@ import supabase from '../../utils/supabase';
 import UserSubmissions from './UserSubmissions';
 import { useToast } from '../common/AlertProvider';
 
-const DocumentPreview = ({ title, url }) => {
+const DocumentPreview = ({ title, url, isSuperAdmin }) => {
   return (
     <div className="glass-card-saas p-4 flex flex-col gap-3 h-full">
       <h4 className="text-sm font-bold tracking-widest uppercase text-[color:var(--text-light)]">{title}</h4>
-      {url ? (
+      {!isSuperAdmin ? (
+        <div className="flex flex-col items-center justify-center aspect-video rounded-xl border border-[color:var(--glass-border)] text-[color:var(--text-light)] bg-black/5">
+          <svg width="24" height="24" className="mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+          <span className="text-xs font-bold uppercase tracking-wider">Masked for Security</span>
+        </div>
+      ) : url ? (
         url.match(/\.(jpeg|jpg|gif|png)$/i) || !url.includes('.pdf') ? (
            <a href={url} target="_blank" rel="noopener noreferrer" className="block relative group overflow-hidden rounded-xl border border-[color:var(--glass-border)] aspect-video bg-black/10 flex items-center justify-center">
              <img src={url} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
@@ -35,10 +40,11 @@ const DocumentPreview = ({ title, url }) => {
   );
 };
 
-const EditUser = () => {
+const EditUser = ({ user, profile }) => {
   const toast = useToast();
   const { id } = useParams();
   const navigate = useNavigate();
+  const isSuperAdmin = user?.email === 'info@harvardlearning.com';
   
   const [editUser, setEditUser] = useState({
     id: '',
@@ -50,6 +56,8 @@ const EditUser = () => {
     aadhaar_back_url: '',
     pan_url: '',
     profile_photo_url: '',
+    phone: '',
+    address: '',
   });
   
   const [exams, setExams] = useState([]);
@@ -81,7 +89,9 @@ const EditUser = () => {
         aadhaar_front_url: data.aadhaar_front_url || '',
         aadhaar_back_url: data.aadhaar_back_url || '',
         pan_url: data.pan_url || '',
-        profile_photo_url: data.profile_photo_url || ''
+        profile_photo_url: data.profile_photo_url || '',
+        phone: data.phone || '',
+        address: data.address || ''
       });
     } else if (error) {
       console.error('Error fetching user:', error);
@@ -196,6 +206,30 @@ const EditUser = () => {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest ml-1 text-[color:var(--text-light)]">Contact Phone</label>
+                <input 
+                  type="text" 
+                  value={isSuperAdmin ? (editUser.phone || '') : '+91 XXXXXXXX'}
+                  readOnly={!isSuperAdmin}
+                  className={`w-full border rounded-2xl px-5 py-4 focus:outline-none transition-all font-medium ${!isSuperAdmin ? 'opacity-60 cursor-not-allowed italic' : 'focus:ring-2 focus:ring-primary-500/50'}`}
+                  style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--input-border)', color: 'var(--text-dark)' }}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest ml-1 text-[color:var(--text-light)]">Residential Address</label>
+                <input 
+                  type="text" 
+                  value={isSuperAdmin ? (editUser.address || '') : 'Masked for Security'}
+                  readOnly={!isSuperAdmin}
+                  className={`w-full border rounded-2xl px-5 py-4 focus:outline-none transition-all font-medium ${!isSuperAdmin ? 'opacity-60 cursor-not-allowed italic' : 'focus:ring-2 focus:ring-primary-500/50'}`}
+                  style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--input-border)', color: 'var(--text-dark)' }}
+                />
+              </div>
+            </div>
+
             <div className="relative space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest ml-1 text-[color:var(--text-light)]">
                 New Password <span className="text-[10px] font-normal lowercase opacity-60">(leave blank to keep current)</span>
@@ -234,10 +268,10 @@ const EditUser = () => {
               Identity Verification
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <DocumentPreview title="Profile Photo" url={editUser.profile_photo_url} />
-               <DocumentPreview title="Aadhaar Front" url={editUser.aadhaar_front_url} />
-               <DocumentPreview title="Aadhaar Back" url={editUser.aadhaar_back_url} />
-               <DocumentPreview title="PAN Card" url={editUser.pan_url} />
+               <DocumentPreview title="Profile Photo" url={editUser.profile_photo_url} isSuperAdmin={true} />
+               <DocumentPreview title="Aadhaar Front" url={editUser.aadhaar_front_url} isSuperAdmin={isSuperAdmin} />
+               <DocumentPreview title="Aadhaar Back" url={editUser.aadhaar_back_url} isSuperAdmin={isSuperAdmin} />
+               <DocumentPreview title="PAN Card" url={editUser.pan_url} isSuperAdmin={isSuperAdmin} />
             </div>
           </div>
 
