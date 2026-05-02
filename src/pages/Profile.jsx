@@ -12,8 +12,12 @@ const Profile = ({ profile }) => {
           {/* Avatar Section */}
           <div className="relative mb-10 group">
             <div className="absolute -inset-4 bg-gradient-to-tr from-[#A51C30] to-[#C49619] rounded-[2.5rem] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
-            <div className="relative w-40 h-40 rounded-[2.5rem] border-4 border-white flex items-center justify-center text-6xl font-black shadow-2xl bg-slate-900 text-white font-serif transform group-hover:rotate-3 transition-transform duration-500">
-              {profile?.full_name?.charAt(0) || 'S'}
+            <div className="relative w-40 h-40 rounded-[2.5rem] border-4 border-white flex items-center justify-center text-6xl font-black shadow-2xl bg-slate-900 text-white font-serif transform group-hover:rotate-3 transition-transform duration-500 overflow-hidden">
+              {profile?.profile_photo_url ? (
+                <img src={profile.profile_photo_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                profile?.full_name?.charAt(0) || 'S'
+              )}
             </div>
             <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-[#C49619] rounded-2xl border-4 border-white flex items-center justify-center shadow-lg">
                <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
