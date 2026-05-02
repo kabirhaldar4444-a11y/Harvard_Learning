@@ -115,7 +115,7 @@ const Login = ({ onLoginSuccess }) => {
         {/* ── LOGO SECTION ── */}
         <div className="flex flex-col items-center mb-14 transition-transform hover:scale-[1.02] duration-500">
           <div className="w-44 h-auto p-4 bg-white rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] border border-slate-100/50">
-            <img src="/logo_full.png" alt="Harvard Learning" className="w-full h-full object-contain" />
+            <img src="/Elitetoolistic.png" alt="Harvard Learning" className="w-full h-full object-contain" />
           </div>
         </div>
 

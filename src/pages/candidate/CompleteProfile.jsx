@@ -4,7 +4,7 @@ import supabase from '../../utils/supabase';
 import DisclaimerOverlay from '../../components/DisclaimerOverlay';
 import SignaturePad from '../../components/common/SignaturePad';
 
-const INDIA_STATES_CITIES = {
+let INDIA_STATES_CITIES = {
   "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati", "Kakinada", "Kadapa", "Anantapur"],
   "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tawang", "Ziro", "Bomdila", "Roing", "Tezu", "Aalo", "Khonsa"],
   "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia", "Tezpur", "Bongaigaon", "Dhubri", "Diphu"],
@@ -51,7 +51,11 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
   const [emailValue, setEmailValue] = useState(profile?.email || '');
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [pincode, setPincode] = useState('');
   const [address, setAddress] = useState('');
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
+  const [detectedLocationText, setDetectedLocationText] = useState('');
+  const [ipAddress, setIpAddress] = useState('');
   const [aadhaarFront, setAadhaarFront] = useState(null);
   const [aadhaarBack, setAadhaarBack] = useState(null);
   const [panCard, setPanCard] = useState(null);
@@ -144,12 +148,104 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
   };
 
   const getIPAddress = async () => {
+    const services = [
+      'https://api4.ipify.org?format=json', // Forces IPv4
+      'https://ipapi.co/json/',
+      'https://ipv4.icanhazip.com' // Plain text fallback
+    ];
+
+    for (const service of services) {
+      try {
+        const res = await fetch(service, { timeout: 5000 });
+        if (service.includes('icanhazip')) {
+          const ip = await res.text();
+          if (ip && ip.trim()) return ip.trim();
+        } else {
+          const data = await res.json();
+          const ip = data.ip || data.query || data.address;
+          if (ip && ip !== 'Unknown' && !ip.includes(':')) return ip; // Ensure no IPv6 (colons)
+        }
+      } catch (e) {
+        console.warn(`IP service ${service} failed:`, e.message);
+        continue;
+      }
+    }
+    return '0.0.0.0';
+  };
+
+  const fetchLocationByPincode = async (pin) => {
+    if (pin.length !== 6) return;
     try {
-      const res = await fetch('https://api.ipify.org?format=json');
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
       const data = await res.json();
-      return data.ip;
-    } catch (e) {
-      return 'Unknown';
+      if (data[0].Status === 'Success') {
+        const postOffice = data[0].PostOffice[0];
+        const state = postOffice.State;
+        const city = postOffice.District;
+
+        setSelectedState(state);
+        // Add city to list if not present (optional, but good for UX)
+        if (INDIA_STATES_CITIES[state] && !INDIA_STATES_CITIES[state].includes(city)) {
+          INDIA_STATES_CITIES[state].push(city);
+        }
+        setSelectedCity(city);
+      }
+    } catch (err) {
+      console.error('Pincode fetch error:', err);
+    }
+  };
+
+  const handleDetectLocation = async () => {
+    setIsDetectingLocation(true);
+    setError('');
+    
+    // Fetch IP in background (compulsory but transparent)
+    getIPAddress().then(ip => setIpAddress(ip));
+
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { 
+          enableHighAccuracy: true,
+          timeout: 10000 
+        });
+      });
+
+      const { latitude, longitude } = pos.coords;
+      
+      // Use Nominatim (OpenStreetMap) which is often more accurate for Indian Pincodes
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
+      const data = await res.json();
+      const addr = data.address || {};
+
+      const state = addr.state || addr.region || '';
+      const city = addr.city || addr.town || addr.village || addr.district || addr.county || '';
+      const postCode = addr.postcode || '';
+
+      if (state) setSelectedState(state);
+      if (city) setSelectedCity(city);
+      if (postCode) {
+        // Clean postcode (sometimes contains ranges or text)
+        const cleanPin = postCode.replace(/\D/g, '').slice(0, 6);
+        if (cleanPin.length === 6) {
+          setPincode(cleanPin);
+          // Optional: Verify/Sync with postal API
+          fetchLocationByPincode(cleanPin);
+        }
+      }
+
+      const locationParts = [city, state, postCode].filter(Boolean);
+      setDetectedLocationText(locationParts.join(', '));
+      
+      if (!postCode) {
+        console.warn('Pincode not found in geocoding response');
+        // If pincode is still missing, we could try a fallback API or just let the user enter it
+      }
+
+    } catch (err) {
+      setError('Location verification failed. Please ensure location services are enabled and try again.');
+      console.error('Security Verification Error:', err);
+    } finally {
+      setIsDetectingLocation(false);
     }
   };
 
@@ -258,20 +354,26 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
       ]);
 
       setUploadStatus('Verifying session security...');
-      const [ipAddress, liveLocation] = await Promise.all([
-        getIPAddress(),
+      let finalIP = ipAddress;
+      if (!finalIP) {
+        finalIP = await getIPAddress();
+      }
+
+      setUploadStatus('Initializing your dashboard...');
+      const [liveLocation] = await Promise.all([
         getGeoLocation()
       ]);
 
       if (liveLocation === 'Permission Denied' || liveLocation === 'Not Supported') {
-        throw new Error('Location access is mandatory for security verification. Please enable location permissions in your browser and try again.');
+        throw new Error('Location verification is required for global identity protocol. Please enable location access in your browser settings and refresh.');
       }
 
       setUploadStatus('Initializing your dashboard...');
 
-      const fullAddress = `${address ? address + ', ' : ''}${selectedCity}, ${selectedState}`;
+      const fullAddress = `${address ? address + ', ' : ''}${selectedCity}, ${selectedState} - ${pincode}`;
 
       const { error } = await supabase.from('profiles').update({
+        email: emailValue,
         phone,
         address: fullAddress,
         aadhaar_front_url: frontUrl,
@@ -279,9 +381,9 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
         pan_url: panUrl,
         signature_url: signUrl,
         profile_photo_url: photoUrl,
-        ip_address: ipAddress,
-        live_location: liveLocation,
-        profile_completed: true
+        ip_address: finalIP,
+        profile_completed: true,
+        disclaimer_accepted: true
       }).eq('id', profile.id);
 
       if (error) throw error;
@@ -297,8 +399,7 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
         panUrl,
         signUrl,
         address: fullAddress,
-        ipAddress,
-        liveLocation
+        ipAddress: finalIP
       });
 
       if (onComplete) await onComplete();
@@ -360,10 +461,48 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
 
           <form onSubmit={handleSubmit} className="space-y-12">
             <div className="space-y-8">
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary-600 flex items-center gap-3">
-                <span className="w-1.5 h-5 bg-primary-600 rounded-full"></span>
-                Personal Credentials
-              </h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-primary-600 flex items-center gap-3">
+                  <span className="w-1.5 h-5 bg-primary-600 rounded-full"></span>
+                  Personal Credentials
+                </h4>
+                <button
+                  type="button"
+                  onClick={handleDetectLocation}
+                  disabled={isDetectingLocation}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-all disabled:opacity-50"
+                >
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  </svg>
+                  {isDetectingLocation ? 'Detecting...' : 'Detect Location'}
+                </button>
+              </div>
+
+              {detectedLocationText && (
+                <div className="flex items-center gap-4 p-4 bg-emerald-50/50 border border-emerald-100 rounded-2xl animate-fade-in mx-1">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest leading-none mb-1.5">Location Automatically Detected</p>
+                    <p className="text-sm font-black text-slate-900 tracking-tight">{detectedLocationText}</p>
+                  </div>
+                  <button 
+                    type="button" 
+                    onClick={() => setDetectedLocationText('')}
+                    className="ml-auto w-8 h-8 flex items-center justify-center rounded-lg hover:bg-emerald-100 text-emerald-400 hover:text-emerald-600 transition-all"
+                  >
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              )}
 
               <div className="flex flex-col items-center gap-6 p-8 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 group transition-all hover:border-primary-300">
                 <div className="text-center">
@@ -431,23 +570,20 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">State / UT *</label>
-                  <select value={selectedState} onChange={handleStateChange} style={selectStyle} required>
-                    <option value="">Select State</option>
-                    {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">City / District *</label>
-                  <select value={selectedCity} onChange={e => setSelectedCity(e.target.value)} style={selectStyle} required disabled={!selectedState}>
-                    <option value="">{selectedState ? 'Choose City' : 'Pending State Selection...'}</option>
-                    {availableCities.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">Pin Code *</label>
+                  <input
+                    type="text"
+                    placeholder="6-digit pincode"
+                    value={pincode}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+                      setPincode(val);
+                      if (val.length === 6) fetchLocationByPincode(val);
+                    }}
+                    style={inputStyle}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -459,6 +595,27 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
                     onChange={e => setAddress(e.target.value)}
                     style={inputStyle}
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">State / UT *</label>
+                  <select value={selectedState} onChange={handleStateChange} style={selectStyle} required>
+                    <option value="">Select State</option>
+                    {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-800 uppercase tracking-widest ml-1">City / District *</label>
+                  <select value={selectedCity} onChange={e => setSelectedCity(e.target.value)} style={selectStyle} required disabled={!selectedState}>
+                    <option value="">{selectedState ? 'Choose City' : 'Pending State Selection...'}</option>
+                    {availableCities.map(c => <option key={c} value={c}>{c}</option>)}
+                    {selectedCity && !availableCities.includes(selectedCity) && (
+                      <option value={selectedCity}>{selectedCity}</option>
+                    )}
+                  </select>
                 </div>
               </div>
             </div>
@@ -527,130 +684,81 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
               </h4>
 
               <div className="relative w-full flex flex-col max-h-[80vh] bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200">
-                <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white/90 backdrop-blur-md">
-                  <div className="flex items-center gap-6">
-                    <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xl shadow-slate-200">
-                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.744c0 5.552 3.84 10.29 9 11.623 5.16-1.333 9-6.07 9-11.623 0-1.314-.254-2.57-.716-3.714A11.959 11.959 0 0112 2.714z"></path></svg>
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-black text-slate-900 tracking-tight leading-none mb-1 uppercase">Terms & Conditions</h2>
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Please read carefully</p>
-                    </div>
-                  </div>
-                </div>
+
 
                 <div className="px-8 py-10 overflow-y-auto flex-1 custom-scrollbar selection:bg-slate-100 bg-white">
-                  <div className="space-y-16">
-                    <section className="space-y-8">
+                  <div className="space-y-12">
+                    {/* 01 Identity Verification */}
+                    <section className="space-y-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-black text-[10px]">01</div>
-                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Service Delivery</h3>
+                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px]">01</div>
+                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Identity Verification and Authentication</h3>
                       </div>
-                      <div className="relative pl-10 space-y-12 border-l border-slate-100">
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Enrollment Process</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Customers visit the Harvard Learning website and fill out the Enrollment Form. After form submission, Our team connects with the customer. A detailed email is shared explaining the complete process flow and fee structure. Payments may also be accepted directly through an authorized professional expert trainer account, where applicable.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Process Explanation & Confirmation</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">During the call, the team explains the course structure, learning journey, and assessment-to-certification flow. The customer then confirms their participation in the program.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Fee Payment</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Upon successful completion of the fee payment, a GST-compliant invoice is issued within 6 hours. Pre-examination study materials are shared with the learner within 24 hours.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Pre-Exam</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">A Pre-Exam is conducted within 24–48 hours of fee payment. This exam assesses the customer’s initial understanding of the selected domain. Before the exam, the Guidance Team connects to explain the exam process.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Pre-Exam Result & Pre-Board Professional Certificate</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Results are shared within 24–48 hours via email. A Pre-Board Professional Certificate is issued with “Under Training” mentioned.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Reward Eligibility</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Customers scoring above 80% become eligible for a gift. One gift can be selected from four available options, which will be delivered accordingly.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Self-Paced Training</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Access to recorded video lectures is shared within 15 days on payment. Training duration is 90–120 days.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Final Exam</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">A Final Exam is conducted between 90-120 days.</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Final Certificate</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Upon successful completion of all requirements, the Final Certificate is issued. The certificate will clearly state the status as “Certified.”</p>
-                        </div>
-                        <div className="relative group">
-                          <div className="absolute -left-[45px] top-1.5 w-3.5 h-3.5 rounded-full bg-white border-[3px] border-slate-900 shadow-lg ring-4 ring-white"></div>
-                          <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-2.5">Continuous Support</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">Throughout the entire journey, the Harvard Learning team remains in contact for guidance and support.</p>
-                        </div>
+                      <div className="pl-4 border-l border-slate-100">
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          To ensure the integrity of the examination process and to prevent proxy attendance, the Candidate hereby authorizes the Portal to capture a live photograph (selfie) at the commencement of and/or during the examination. This image will be used solely to authenticate the Candidate’s identity against registered records. Failure to provide a clear image or any attempt to bypass this authentication may result in immediate disqualification.
+                        </p>
                       </div>
                     </section>
 
-                    <section className="space-y-8">
+                    {/* 02 Purpose & Disclaimer */}
+                    <section className="space-y-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-black text-[10px]">02</div>
-                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Terms & Conditions</h3>
+                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px]">02</div>
+                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Purpose of Certification and Employment Disclaimer</h3>
                       </div>
-                      <div className="space-y-12 pl-4 border-l border-slate-100">
-                        <div className="space-y-6">
-                          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Course Duration and Delivery</h4>
-                          <div className="space-y-4 text-[13px] text-slate-500 font-medium leading-relaxed">
-                            <p>The complete course will be delivered within 90 to 120 days from the date of enrollment.</p>
-                            <p>After enrollment, learners will receive an Invoice, Study Materials and video lectures within 10 working days of making the payment.</p>
-                            <p>A Pre-Board Exam will be scheduled 24 to 48 hours after payment, accessible via the official Harvard Learning exam portal. An Initial PC Softcopy (indicating “Under Training” and course details), will be provided after going through the pre-board exam within 48 to 72 hours.</p>
-                            <p>The final online exam must be attended between 90 to 120 days after enrollment.</p>
-                            <p>Upon successful exam completion, the Final PC Softcopy will be emailed to the candidate, indicating “Successfully Certified”.</p>
+                      <div className="pl-4 border-l border-slate-100 space-y-6">
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          The Candidate acknowledges and agrees that this certification is intended solely for personal and professional growth.
+                        </p>
+                        
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex gap-4 items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-1.5 shrink-0"></div>
+                            <div className="space-y-1">
+                              <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">No Guarantee of Employment</p>
+                              <p className="text-slate-500 text-xs font-medium leading-relaxed">Successful completion of the exam and issuance of a certificate does not guarantee a job offer, placement, or any form of employment.</p>
+                            </div>
+                          </div>
+                          
+                          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex gap-4 items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-1.5 shrink-0"></div>
+                            <div className="space-y-1">
+                              <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">No Guarantee of Financial Increase</p>
+                              <p className="text-slate-500 text-xs font-medium leading-relaxed">This certification does not entitle the Candidate to a salary hike, promotion, or bonus from any current or future employer.</p>
+                            </div>
                           </div>
                         </div>
-                        <div className="space-y-6">
-                          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Training Format</h4>
-                          <ul className="space-y-3 text-[13px] text-slate-500 font-medium leading-relaxed">
-                            <li className="flex gap-3"><span className="text-slate-900">•</span> No live training sessions will be provided.</li>
-                            <li className="flex gap-3"><span className="text-slate-900">•</span> Study material and training videos will be shared once only via email after the enrollment.</li>
-                            <li className="flex gap-3"><span className="text-slate-900">•</span> Training videos and study materials are non-transferable and intended solely for enrolled candidates.</li>
-                            <li className="flex gap-3"><span className="text-slate-900">•</span> Upon successful completion of the program, the certificate will be released with an abbreviation format.</li>
-                          </ul>
-                        </div>
-                        <div className="space-y-6">
-                          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Refund Policy (Summary)</h4>
-                          <ul className="space-y-3 text-[13px] text-slate-500 font-medium leading-relaxed">
-                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> No refund will be applicable after attempting any exam (Pre-Board or Final).</li>
-                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> A 90% refund is applicable before attempting any exam.</li>
-                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> There is no 100% refund policy.</li>
-                            <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> A 10% deduction will apply to all refunds.</li>
-                          </ul>
-                        </div>
+
+                        <p className="text-xs text-slate-400 font-medium italic">
+                          The Portal and its affiliates are not liable for any career expectations not met following the attainment of this certification.
+                        </p>
                       </div>
                     </section>
 
-                    <section className="space-y-8 pb-10">
+                    {/* 03 Academic Integrity */}
+                    <section className="space-y-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 font-black text-[10px]">03</div>
-                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Privacy & Identity</h3>
+                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px]">03</div>
+                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Academic Integrity</h3>
                       </div>
-                      <div className="space-y-12 pl-4 border-l border-slate-100">
-                        <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
-                          <h5 className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Data Storage and Security</h5>
-                          <p className="text-xs text-slate-500 font-medium leading-relaxed">All personal data is stored securely in encrypted databases. Only authorized Harvard Learning personnel have access to user data. We regularly update our systems and employ security measures such as SSL encryption to protect against unauthorized access.</p>
-                        </div>
-                        <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 space-y-4">
-                          <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em]">Your Rights</h4>
-                          <p className="text-[13px] text-slate-500 font-medium leading-relaxed">You have the right to access the information we hold about you. To exercise these rights, please contact our support team at support@harvardlearning.in.</p>
-                        </div>
+                      <div className="pl-4 border-l border-slate-100">
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          The Candidate agrees to complete the examination independently without the use of unauthorized materials, AI tools, or external assistance. Any detected malpractice will lead to the permanent banning of the Candidate’s profile and the nullification of any previous results.
+                        </p>
+                      </div>
+                    </section>
+
+                    {/* 04 Limitation of Liability */}
+                    <section className="space-y-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px]">04</div>
+                        <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Limitation of Liability</h3>
+                      </div>
+                      <div className="pl-4 border-l border-slate-100 pb-6">
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                          The Portal shall not be held responsible for technical failures on the Candidate’s end, including but not limited to internet connectivity issues, hardware malfunctions, or power outages during the examination session.
+                        </p>
                       </div>
                     </section>
                   </div>
@@ -661,7 +769,7 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
                     <label className="flex items-start gap-4 cursor-pointer group">
                       <div className="relative flex items-center mt-1">
                         <input
-                          className="w-5 h-5 rounded-lg border-2 border-slate-200 checked:bg-slate-900 checked:border-slate-900 transition-all cursor-pointer appearance-none shadow-sm"
+                          className="w-5 h-5 rounded-lg border-[3px] border-slate-900 checked:bg-slate-900 checked:border-slate-900 transition-all cursor-pointer appearance-none shadow-sm"
                           type="checkbox"
                           checked={acceptedTerms}
                           onChange={(e) => setAcceptedTerms(e.target.checked)}

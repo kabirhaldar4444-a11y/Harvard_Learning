@@ -45,8 +45,8 @@ const DisclaimerOverlay = ({ user, profile }) => {
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-black text-slate-900 leading-none uppercase">Legal Documents</h2>
-            <p className="text-[10px] font-bold text-primary-600 uppercase tracking-widest mt-1">Harvard Learning Information Center</p>
+            <h2 className="text-xl font-black text-slate-900 leading-none uppercase">Harvard Learning Terms & Conditions</h2>
+            <p className="text-[10px] font-bold text-primary-600 uppercase tracking-widest mt-1">Please read carefully</p>
           </div>
         </div>
 
@@ -139,7 +139,7 @@ const DisclaimerOverlay = ({ user, profile }) => {
                   </ul>
                 </div>
                 <div className="space-y-6">
-                  <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Refund Policy (Summary)</h4>
+                  <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Refund Policy</h4>
                   <ul className="space-y-3 text-[13px] text-slate-500 font-medium leading-relaxed">
                     <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> No refund will be applicable after attempting any exam (Pre-Board or Final).</li>
                     <li className="flex gap-3"><span className="text-slate-900 font-black">•</span> A 90% refund is applicable before attempting any exam.</li>
@@ -150,15 +150,15 @@ const DisclaimerOverlay = ({ user, profile }) => {
                 <div className="space-y-6">
                   <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em]">Pre-Examination Reward Policy</h4>
                   <div className="p-8 bg-slate-900 rounded-[2rem] shadow-2xl space-y-6">
-                    <p className="text-[13px] font-bold text-white tracking-tight leading-relaxed pr-32">Candidates who secure 80% or above in the designated pre-examination will be eligible to receive a complimentary gift worth upto 50k-100k.</p>
+                    <p className="text-[13px] font-bold text-white tracking-tight leading-relaxed">Candidates who secure 80% or above in the designated pre-examination will be eligible to receive a complimentary gift.</p>
                     <ul className="text-[11px] text-slate-400 space-y-3 font-medium leading-relaxed">
-                      <li>• Eligible candidates will be provided with 5+ options for gift items. Final selection subject to availability and company discretion.</li>
-                      <li>• By qualifying, candidates consent to the use and display of their photograph on the company’s official website and promotional platforms.</li>
-                      <li>• Gift items dispatched within 45 to 60 days from the date of result declaration.</li>
-                      <li>• All gifts accompanied by the manufacturer’s warranty, where applicable.</li>
-                      <li>• Courier tracking details shared via registered email once dispatched.</li>
-                      <li>• Delivery verification (OTP) required by the courier partner will be shared with the recipient.</li>
-                      <li>• The company reserves the right to modify, substitute, or discontinue the reward offer at any time without prior notice.</li>
+                      <li>• Eligible candidates will be provided with 5+ options for gift items worth upto 50k-100k. The final gift selection will be subject to availability and company discretion.</li>
+                      <li>• By qualifying for the reward, candidates consent to the use and display of their photograph on the company’s official website and promotional platforms.</li>
+                      <li>• Gift items will be dispatched within 45 to 60 days from the date of result declaration.</li>
+                      <li>• All gifts will be accompanied by the manufacturer’s warranty, where applicable.</li>
+                      <li>• Courier tracking details will be shared via registered email once the item has been dispatched.</li>
+                      <li>• For delivery verification, a one-time password (OTP) required by the courier partner will be shared with the recipient by the company.</li>
+                      <li>• The company reserves the right to modify, substitute, or discontinue the reward offer at any time without prior notice, in accordance with applicable laws and operational requirements.</li>
                     </ul>
                   </div>
                 </div>
@@ -173,11 +173,87 @@ const DisclaimerOverlay = ({ user, profile }) => {
               </div>
             </section>
 
-            {/* 03 Refund Policy */}
+            {/* 03 Privacy Policy */}
             <section className="space-y-8">
               <div className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px]">03</div>
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Refund Policy</h3>
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Privacy Policy</h3>
+              </div>
+              <div className="pl-4 space-y-10 border-l border-slate-100">
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Information We Collect</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">We collect the following types of information to ensure smooth operation of our services:</p>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-1">Personal Information:</p>
+                      <p className="text-xs text-slate-500 font-medium">Your name, email address, contact number, and country of residence collected during registration or inquiries.</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-1">Payment Information:</p>
+                      <p className="text-xs text-slate-500 font-medium">Transaction details (amount, date, and payment method). We do not store complete payment card or crypto wallet details.</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-1">Course and Usage Data:</p>
+                      <p className="text-xs text-slate-500 font-medium">Information about the courses you enroll in, your progress, assessments, and interactions with our online learning platform.</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black text-slate-900 uppercase tracking-widest mb-1">Technical Information:</p>
+                      <p className="text-xs text-slate-500 font-medium">Device type, IP address, browser version, and cookies to improve website performance and user experience.</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">How We Use Your Information</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">We use your information to:</p>
+                  <ul className="space-y-2 text-xs text-slate-500 font-medium list-disc pl-5">
+                    <li>Process your course enrollment and payments.</li>
+                    <li>Provide access to study materials, exams, and course completion certificates.</li>
+                    <li>Communicate important updates, reminders, and support-related information.</li>
+                    <li>Improve course quality, website functionality, and user experience.</li>
+                    <li>Maintain compliance with our internal policies and applicable laws.</li>
+                  </ul>
+                  <p className="text-xs text-slate-900 font-bold mt-2">We do not sell, trade, or rent your personal information to any third party.</p>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Data Storage and Security</h4>
+                  <ul className="space-y-2 text-xs text-slate-500 font-medium list-disc pl-5">
+                    <li>All personal data is stored securely in encrypted databases.</li>
+                    <li>Only authorized Harvard Learning personnel have access to user data.</li>
+                    <li>We regularly update our systems and employ security measures such as SSL encryption to protect against unauthorized access, alteration, or disclosure.</li>
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Payment & Financial Data</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">All personal data is stored securely in encrypted databases. Only authorized Harvard Learning personnel have access to user data. We regularly update our systems and employ security measures such as SSL encryption to protect against unauthorized access, alteration, or disclosure.</p>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Use of Cookies</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">Our website uses cookies to enhance your browsing experience, save login preferences, and analyze site traffic. You can choose to disable cookies from your browser settings; however, some website features may not function properly as a result.</p>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Data Retention</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">We retain your personal information for as long as necessary to fulfill course delivery and legal obligations. Once no longer needed, your data will be securely deleted or anonymized.</p>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Third-Party Links</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">Our website may contain links to third-party websites (e.g., payment gateways or educational partners). Harvard Learning is not responsible for the privacy practices or content of these external sites.</p>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Your Rights</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">You have the right to access the information we hold about you, request correction or deletion of inaccurate data, and withdraw consent for marketing communications at any time. To exercise these rights, please contact our support team at support@harvardlearning.in.</p>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-widest">Policy Updates</h4>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">Harvard Learning reserves the right to update or modify this Privacy Policy at any time without prior notice. The revised version will be posted on our website with an updated effective date.</p>
+                </div>
+              </div>
+            </section>
+
+            {/* 04 Refund Policy Detailed */}
+            <section className="space-y-8">
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-[10px]">04</div>
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.25em]">Detailed Refund Policy</h3>
               </div>
               <div className="space-y-10 pl-4 border-l border-slate-100">
                 <div className="space-y-3">
@@ -249,9 +325,22 @@ const DisclaimerOverlay = ({ user, profile }) => {
                     <p>Candidates are responsible for reviewing these policies prior to enrollment, as continued use of the course materials implies acceptance of all terms.</p>
                   </div>
                 </div>
-                <div className="space-y-2 pt-4">
-                  <h5 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em]">Independent Organization</h5>
-                  <p className="text-[11px] text-slate-500 leading-relaxed font-medium">Harvard Learning is an independent training and service provider.</p>
+                <div className="space-y-6 pt-4">
+                  <h5 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em]">Important Notices</h5>
+                  <div className="space-y-4">
+                    <div>
+                      <h6 className="text-[10px] font-black text-slate-900 uppercase mb-1">Independent Organization</h6>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-medium">Harvard Learning is an independent training and service provider. We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with any other institute, organization, or governing body. All rights related to our services, content, and training materials are solely reserved by Harvard Learning.</p>
+                    </div>
+                    <div>
+                      <h6 className="text-[10px] font-black text-slate-900 uppercase mb-1">No Guarantee of Employment or Monetary Benefit</h6>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-medium">Our programs are designed for skill development and professional enhancement only. We do not guarantee any monetary benefit, job placement, promotion, or financial gain as a result of completing our training or certification programs.</p>
+                    </div>
+                    <div>
+                      <h6 className="text-[10px] font-black text-slate-900 uppercase mb-1">Third-Party Recommendations</h6>
+                      <p className="text-[11px] text-slate-500 leading-relaxed font-medium">Harvard Learning shall not be held responsible for any financial, personal, or professional loss incurred by customers who enroll in our services based on third-party recommendations, promotions, or representations. Any such engagement is strictly at the discretion and responsibility of the individual.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>

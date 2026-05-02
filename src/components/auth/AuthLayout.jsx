@@ -28,7 +28,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
               {/* Premium Logo 'Island' - Expertly Proportioned */}
               <div className="absolute -inset-2 bg-gradient-to-r from-primary-500/40 to-secondary-500/40 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
               <div className="relative w-40 h-auto bg-white rounded-[1.5rem] p-4 shadow-2xl transition-all duration-500 hover:scale-[1.05] hover:-translate-y-1">
-                <img src="/logo_full.png" alt="Logo" className="w-full h-full object-contain" />
+                <img src="/Elitetoolistic.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
             </div>
 
