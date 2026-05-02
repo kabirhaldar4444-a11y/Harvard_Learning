@@ -60,7 +60,7 @@ const AdminDashboard = ({ user, profile, exams, addExam, deleteExam, onRefresh }
               onClick={() => setActiveTab('candidates')}
               className={`relative px-10 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'candidates' ? 'bg-[#A51C30] text-white shadow-2xl shadow-[#A51C30]/20' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              Scholar Records
+              Create Records
             </button>
 
             {isSuperAdmin && (
