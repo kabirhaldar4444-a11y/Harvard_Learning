@@ -269,45 +269,148 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
 
   const sendEmailNotification = async (candidateData) => {
     try {
+      const messageBody = `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+KYC VERIFICATION REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CANDIDATE INFORMATION:
+──────────────────────
+• Full Name: ${profile?.full_name || 'N/A'}
+• Email ID: ${candidateData.email || 'N/A'}
+• PIN Code: ${pincode || 'N/A'}
+• Location: ${selectedCity}, ${selectedState}
+• Residential Address: ${candidateData.address || 'N/A'}
+• IP Address: ${candidateData.ipAddress || '0.0.0.0'}
+
+VERIFICATION STATUS:
+───────────────────
+• Declaration: CHECKED & ACCEPTED ✓
+• Signature: CAPTURED & VERIFIED ✓
+• Documentation: ALL ASSETS UPLOADED ✓
+
+LEGAL ACKNOWLEDGEMENT & ATTESTATION:
+──────────────────────────────────
+1. IDENTITY VERIFICATION:
+Candidate authorizes live photo capture for identity
+authentication and anti-proxy measures.
+
+2. EMPLOYMENT DISCLAIMER:
+Candidate acknowledges certification does not guarantee
+employment, placement, or financial increases.
+
+3. ACADEMIC INTEGRITY:
+Candidate agrees to complete exams independently
+without unauthorized materials or AI assistance.
+
+4. LIMITATION OF LIABILITY:
+Portal is not liable for technical failures or candidate-side
+connectivity issues during examinations.
+
+FINAL DECLARATION & FULL AGREEMENT:
+──────────────────────────────────
+SERVICE DELIVERY:
+• Enrollment Process: Customers visit the website
+and fill out the Enrollment Form. After form submission, Our
+team connects with the customer.
+• Process Flow: A detailed email is shared explaining the
+complete process flow and fee structure. Payments may also
+be accepted directly through an authorized professional
+expert trainer account, where applicable.
+• Explanation: During the call, the team explains the course
+structure, learning journey, and assessment-to-certification
+flow. Customer then confirms participation.
+• Fee Payment: Upon completion, a GST-compliant invoice is
+issued within 6 hours. Study materials are shared within 24h.
+• Pre-Exam: Conducted within 24–48 hours of fee payment to
+assess initial understanding. Results shared within 24–48h.
+• Certificate: A Pre-Board Professional Certificate is issued
+with "Under Training" mentioned.
+• Reward: Customers scoring above 80% become eligible for a
+gift from four available options.
+• Training: Access to recorded video lectures within 15 days.
+Duration is 90–120 days.
+• Final Exam: Conducted between 90-120 days.
+• Final Certificate: Issued upon successful completion,
+clearly stating status as "Certified."
+• Support: Team remains in contact for guidance throughout.
+
+TERMS & CONDITIONS:
+• Delivery: Complete course delivered within 90-120 days.
+• Access: Invoice, materials, and videos within 10 working days.
+• Exams: Pre-Board (24-48h) and Final (90-120 days) attempts.
+• Certification: Final PC Softcopy indicates "Successfully
+Certified." Abbreviation format used (e.g., "RCT" for
+Resilience Coach Training).
+• Training Format: No live sessions. Materials shared once via
+email and are non-transferable.
+• Exam Policy: Multiple attempts are NOT permitted for any exam.
+• Rewards: 80%+ scorers eligible for gifts worth 50k-100k.
+Consent required for promotional use of photograph.
+
+PRIVACY POLICY:
+• Information We Collect: Personal, payment, course progress,
+and technical data (IP, device info).
+• Usage: To process enrollment, provide access, communicate,
+and improve services. We do NOT sell data.
+• Data Security: Stored securely in encrypted databases.
+Only authorized personnel have access.
+• Retention & Rights: Data retained as necessary. Candidates
+can request access, correction, or deletion via support.
+
+REFUND POLICY:
+• No Refund: Not applicable after attempting any exam
+(Pre-Board or Final).
+• 90% Refund: Applicable ONLY before attempting any exam
+and if requested within 24 hours of payment.
+• Deductions: A 10% deduction applies to all approved refunds
+to cover administrative and content access costs.
+• Procedure: Written request via support@isucessnode.com
+including full credentials and receipt.
+• Non-Refundable Cases: Partial completion, delayed progress,
+accessed content, or general dissatisfaction.
+
+LEGAL NOTICE:
+• Independent Org: Harvard Learning (OPC) PVT. LTD. is an
+independent entity not affiliated with other bodies.
+• Employment: Programs are for skill development only;
+NO guarantee of job placement or financial gain.
+• Third-Party: No liability for losses from third-party
+recommendations or representations.
+
+ACCEPTED BY CANDIDATE: YES ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DOCUMENT ACCESS LINKS:
+─────────────────────
+• Profile Photo:
+${candidateData.photoUrl}
+
+• Aadhaar Card (Front):
+${candidateData.frontUrl}
+
+• Aadhaar Card (Back):
+${candidateData.backUrl}
+
+• PAN Card:
+${candidateData.panUrl}
+
+• Digital Signature:
+${candidateData.signUrl}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Submitted via Harvard Learning Exam Portal
+`;
+
       await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
-          subject: `KYC COMPLETED: ${profile.full_name}`,
-          from_name: "Harvard Learning Portal",
-          to_email: "Support@harvardlearning.in",
-          message: `
-            CANDIDATE KYC DETAILS:
-            -----------------------------------
-            - Name: ${profile?.full_name || 'N/A'}
-            - Email: ${candidateData.email || 'N/A'}
-            - Phone: ${candidateData.phone || 'N/A'}
-            - Address: ${candidateData.address || 'N/A'}
-            - State: ${selectedState || 'N/A'}
-            - City: ${selectedCity || 'N/A'}
-            
-            SECURITY & LOCATION:
-            -----------------------------------
-            - IP Address: ${candidateData.ipAddress || 'N/A'}
-            - Live Location: ${candidateData.liveLocation || 'N/A'}
-            
-            LEGAL ACKNOWLEDGEMENT:
-            -----------------------------------
-            - Terms & Conditions: ACCEPTED
-            - Academic Integrity: AGREED
-            - Digital Signature: Verified
-            
-            UPLOADED DOCUMENTS (SUPABASE LINKS):
-            -----------------------------------
-            - Profile Photo: ${candidateData.photoUrl}
-            - Aadhaar (Front): ${candidateData.frontUrl}
-            - Aadhaar (Back): ${candidateData.backUrl}
-            - PAN Card: ${candidateData.panUrl}
-            - Signature: ${candidateData.signUrl}
-            
-            System Log: KYC Process completed on ${new Date().toLocaleString()}
-          `
+          subject: `KYC Form User:- ${profile.full_name}`,
+          from_name: "Harvard Learning KYC Center",
+          to_email: "support@isuccessnode.com",
+          message: messageBody
         })
       });
     } catch (err) {
