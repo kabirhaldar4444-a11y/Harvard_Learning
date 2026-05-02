@@ -269,7 +269,15 @@ const CompleteProfile = ({ profile, user, onComplete }) => {
 
   const sendEmailNotification = async (candidateData) => {
     try {
-      const messageBody = `
+      await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+          subject: `KYC FROM User:- ${profile.full_name}`,
+          from_name: "HarvardLearning Exam Portal",
+          to_email: "support@harvardlearning.com",
+          message: `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 KYC VERIFICATION REPORT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -278,9 +286,10 @@ CANDIDATE INFORMATION:
 ──────────────────────
 • Full Name: ${profile?.full_name || 'N/A'}
 • Email ID: ${candidateData.email || 'N/A'}
+
 • PIN Code: ${pincode || 'N/A'}
-• Location: ${selectedCity}, ${selectedState}
-• Residential Address: ${candidateData.address || 'N/A'}
+• Location: ${selectedCity || 'N/A'}, ${selectedState || 'N/A'}
+• Residential Address: ${address || 'N/A'}
 • IP Address: ${candidateData.ipAddress || '0.0.0.0'}
 
 VERIFICATION STATUS:
@@ -291,27 +300,25 @@ VERIFICATION STATUS:
 
 LEGAL ACKNOWLEDGEMENT & ATTESTATION:
 ──────────────────────────────────
-1. IDENTITY VERIFICATION:
+
+IDENTITY VERIFICATION:
 Candidate authorizes live photo capture for identity
 authentication and anti-proxy measures.
-
-2. EMPLOYMENT DISCLAIMER:
+EMPLOYMENT DISCLAIMER:
 Candidate acknowledges certification does not guarantee
 employment, placement, or financial increases.
-
-3. ACADEMIC INTEGRITY:
+ACADEMIC INTEGRITY:
 Candidate agrees to complete exams independently
 without unauthorized materials or AI assistance.
-
-4. LIMITATION OF LIABILITY:
+LIMITATION OF LIABILITY:
 Portal is not liable for technical failures or candidate-side
 connectivity issues during examinations.
 
 FINAL DECLARATION & FULL AGREEMENT:
 ──────────────────────────────────
 SERVICE DELIVERY:
-• Enrollment Process: Customers visit the website
-and fill out the Enrollment Form. After form submission, Our
+• Enrollment Process: Customers visit the HarvardLearning website
+and fill out the Enrollment Form. After form submission, our
 team connects with the customer.
 • Process Flow: A detailed email is shared explaining the
 complete process flow and fee structure. Payments may also
@@ -330,22 +337,22 @@ with "Under Training" mentioned.
 gift from four available options.
 • Training: Access to recorded video lectures within 15 days.
 Duration is 90–120 days.
-• Final Exam: Conducted between 90-120 days.
+• Final Exam: Conducted between 90–120 days.
 • Final Certificate: Issued upon successful completion,
 clearly stating status as "Certified."
 • Support: Team remains in contact for guidance throughout.
 
 TERMS & CONDITIONS:
-• Delivery: Complete course delivered within 90-120 days.
+• Delivery: Complete course delivered within 90–120 days.
 • Access: Invoice, materials, and videos within 10 working days.
-• Exams: Pre-Board (24-48h) and Final (90-120 days) attempts.
+• Exams: Pre-Board (24–48h) and Final (90–120 days) attempts.
 • Certification: Final PC Softcopy indicates "Successfully
 Certified." Abbreviation format used (e.g., "RCT" for
 Resilience Coach Training).
 • Training Format: No live sessions. Materials shared once via
 email and are non-transferable.
 • Exam Policy: Multiple attempts are NOT permitted for any exam.
-• Rewards: 80%+ scorers eligible for gifts worth 50k-100k.
+• Rewards: 80%+ scorers eligible for gifts worth 50k–100k.
 Consent required for promotional use of photograph.
 
 PRIVACY POLICY:
@@ -365,13 +372,13 @@ REFUND POLICY:
 and if requested within 24 hours of payment.
 • Deductions: A 10% deduction applies to all approved refunds
 to cover administrative and content access costs.
-• Procedure: Written request via support@isucessnode.com
+• Procedure: Written request via support@harvardlearning.com
 including full credentials and receipt.
 • Non-Refundable Cases: Partial completion, delayed progress,
 accessed content, or general dissatisfaction.
 
 LEGAL NOTICE:
-• Independent Org: Harvard Learning (OPC) PVT. LTD. is an
+• Independent Org: HARVARDLEARNING (OPC) PVT. LTD. is an
 independent entity not affiliated with other bodies.
 • Employment: Programs are for skill development only;
 NO guarantee of job placement or financial gain.
@@ -399,18 +406,8 @@ ${candidateData.panUrl}
 ${candidateData.signUrl}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Submitted via Harvard Learning Exam Portal
-`;
-
-      await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
-          subject: `KYC Form User:- ${profile.full_name}`,
-          from_name: "Harvard Learning KYC Center",
-          to_email: "support@isuccessnode.com",
-          message: messageBody
+Submitted via HarvardLearning Exam Portal 
+`
         })
       });
     } catch (err) {
