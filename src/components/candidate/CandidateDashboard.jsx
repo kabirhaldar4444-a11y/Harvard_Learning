@@ -54,84 +54,80 @@ const CandidateDashboard = ({ exams, onStartExam, profile, user }) => {
   return (
     <>
     <DisclaimerOverlay user={user} profile={profile} />
-    <div className="premium-container min-h-[calc(100vh-80px)] p-6 md:p-12 relative overflow-hidden font-sans">
-      {/* Background Ambience */}
-      <div className="absolute top-0 -right-12 w-[30rem] h-[30rem] bg-indigo-600/10 rounded-full blur-[128px] animate-blob pointer-events-none"></div>
-      <div className="absolute bottom-0 -left-12 w-[30rem] h-[30rem] bg-primary-600/10 rounded-full blur-[128px] animate-blob animation-delay-4000 pointer-events-none"></div>
+    <div className="premium-container min-h-[calc(100vh-80px)] p-6 md:p-12 relative overflow-hidden font-sans selection:bg-[#A51C30]/10">
+      {/* Background Ambience - Harvard Crimson & Gold */}
+      <div className="absolute top-0 -right-12 w-[40rem] h-[40rem] bg-[#A51C30]/5 rounded-full blur-[160px] animate-blob pointer-events-none"></div>
+      <div className="absolute bottom-0 -left-12 w-[40rem] h-[40rem] bg-[#C49619]/5 rounded-full blur-[160px] animate-blob animation-delay-4000 pointer-events-none"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto animate-fade-in">
         {/* Dashboard Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b pb-8" style={{ borderColor: 'var(--glass-border)' }}>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 border-b border-slate-200 pb-12">
           <div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight bg-clip-text text-transparent mb-2" style={{ backgroundImage: 'linear-gradient(to right, var(--text-dark), var(--text-light))' }}>
-              My Assessments
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-[#1e293b] mb-4 font-serif">
+              Scholar Dashboard
             </h1>
-            <p className="text-lg font-medium text-[color:var(--text-light)]">
-              Welcome back, <span className="font-bold text-primary-500">{profile?.full_name || 'Candidate'}</span>
+            <p className="text-[#A51C30] font-black text-xs uppercase tracking-[0.4em] mb-2">Academic Excellence Command</p>
+            <p className="text-lg font-medium text-slate-500">
+              Welcome, <span className="text-[#1e293b] font-serif font-black">{profile?.full_name || 'Scholar'}</span>
             </p>
           </div>
-          <div className="glass-effect px-6 py-3 rounded-full flex items-center gap-3 border shadow-sm" style={{ backgroundColor: 'var(--input-bg)' }}>
-            <span className="text-[10px] font-black uppercase tracking-widest text-[color:var(--text-light)]">Status</span>
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-              </span>
-              <span className="text-emerald-500 font-bold text-sm">Verified Profile</span>
+          <div className="bg-white px-8 py-5 rounded-[2rem] border border-slate-100 shadow-xl flex items-center gap-5">
+            <div className="flex flex-col items-end">
+               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Institutional Status</span>
+               <span className="text-[#22c55e] font-black text-sm uppercase tracking-widest">Verified Collegiate</span>
+            </div>
+            <div className="relative flex h-4 w-4">
+               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-20"></span>
+               <span className="relative inline-flex rounded-full h-4 w-4 bg-[#22c55e] border-2 border-white shadow-sm"></span>
             </div>
           </div>
         </div>
 
         {/* Available Exams Section */}
-        <section className="mb-16">
-          <h2 className="text-2xl font-black tracking-tight text-[color:var(--text-dark)] mb-6 flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl bg-primary-500/10 text-primary-500 flex items-center justify-center">
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-            </span>
-            Available Exams
-            {searchQuery && (
-              <span className="ml-2 px-3 py-1 text-xs font-black rounded-full bg-primary-500/10 text-primary-500">
-                {filteredExams.length} result{filteredExams.length !== 1 ? 's' : ''}
+        <section className="mb-20">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-6 border-b border-slate-100">
+            <h2 className="text-3xl font-black tracking-tight text-[#1e293b] font-serif flex items-center gap-4">
+              Curriculum Evaluations
+              {searchQuery && (
+                <span className="text-[10px] font-black bg-[#A51C30]/5 text-[#A51C30] px-4 py-2 rounded-full border border-[#A51C30]/10 uppercase tracking-widest">
+                  {filteredExams.length} Identified
+                </span>
+              )}
+            </h2>
+            
+            {/* Search Bar */}
+            <div className="relative group w-full md:w-96">
+              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#A51C30] transition-colors">
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               </span>
-            )}
-          </h2>
-
-          {/* Search Bar */}
-          <div className="relative mb-8">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[color:var(--text-light)]">
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input
+                type="text"
+                placeholder="Locate evaluations..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="input-premium !rounded-full !pl-16 w-full !bg-white shadow-sm"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Search exams by name..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-12 py-4 rounded-2xl font-medium text-sm transition-all duration-300 outline-none focus:ring-2 focus:ring-primary-500/40"
-              style={{ backgroundColor: 'var(--input-bg)', border: '1px solid var(--glass-border)', color: 'var(--text-dark)' }}
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute inset-y-0 right-4 flex items-center text-[color:var(--text-light)] hover:text-[color:var(--text-dark)] transition-colors"
-              >
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            )}
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredExams.length === 0 ? (
-              <div className="col-span-full py-16 flex flex-col items-center justify-center border-2 border-dashed rounded-3xl" style={{ borderColor: 'var(--glass-border)' }}>
+              <div className="col-span-full py-24 flex flex-col items-center justify-center bg-white rounded-[3.5rem] border-2 border-dashed border-slate-100 shadow-sm">
                 {searchQuery ? (
                   <>
-                    <svg className="text-slate-400 mb-4 opacity-50" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    <p className="text-[color:var(--text-light)] font-bold text-lg">No exams match "{searchQuery}"</p>
-                    <button onClick={() => setSearchQuery('')} className="mt-4 px-6 py-2 rounded-full text-sm font-bold bg-primary-500/10 text-primary-500 hover:bg-primary-500/20 transition-all">Clear Search</button>
+                    <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 mb-6">
+                       <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </div>
+                    <p className="text-slate-400 font-serif text-xl">No identifiers found for "{searchQuery}"</p>
+                    <button onClick={() => setSearchQuery('')} className="mt-6 text-[10px] font-black uppercase tracking-[0.3em] text-[#A51C30] hover:opacity-70 transition-all border-b border-[#A51C30]">Clear Parameters</button>
                   </>
                 ) : (
                   <>
-                    <svg className="text-slate-400 mb-4 opacity-50" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    <p className="text-[color:var(--text-light)] font-bold text-lg">No pending exams assigned to you.</p>
-                    <p className="text-[color:var(--text-light)] opacity-70 mt-1">Check back later or contact your instructor.</p>
+                    <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 mb-6">
+                       <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>
+                    </div>
+                    <p className="text-slate-400 font-serif text-xl">The curriculum is currently empty.</p>
+                    <p className="text-slate-300 font-black text-[9px] uppercase tracking-[0.4em] mt-3">Await faculty assignment for upcoming evaluations.</p>
                   </>
                 )}
               </div>
@@ -139,41 +135,32 @@ const CandidateDashboard = ({ exams, onStartExam, profile, user }) => {
               filteredExams.map((exam, i) => (
                 <div 
                   key={exam.id} 
-                  className={`glass-card-saas p-8 flex flex-col h-full transition-all duration-500 group animate-slide-up ${profile?.is_exam_locked ? 'opacity-75 saturate-50' : 'hover:-translate-y-2 hover:shadow-2xl shadow-xl'}`}
+                  className={`group relative bg-white p-10 rounded-[3rem] shadow-xl border border-slate-50 hover:border-[#A51C30]/20 hover:shadow-2xl transition-all duration-700 h-full flex flex-col overflow-hidden animate-slide-up`}
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
-                  <div className="flex-1">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center text-white mb-6 shadow-lg shadow-primary-500/30 group-hover:scale-110 transition-transform">
-                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                  {/* Decorative Background Icon */}
+                  <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none">
+                     <svg width="120" height="120" fill="#A51C30" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+                  </div>
+
+                  <div className="flex-1 relative z-10">
+                    <div className="w-16 h-16 rounded-[1.5rem] bg-[#A51C30] flex items-center justify-center text-white mb-8 shadow-2xl shadow-[#A51C30]/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                      <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" /></svg>
                     </div>
-                    <h3 className="text-2xl font-black text-[color:var(--text-dark)] leading-tight mb-4">{exam.title}</h3>
+                    <h3 className="text-2xl font-black text-[#1e293b] font-serif leading-tight mb-6 group-hover:text-[#A51C30] transition-colors">{exam.title}</h3>
                     
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl mb-8 border" style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--input-border)' }}>
-                      <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">⏱</span>
-                      <span className="font-bold text-[color:var(--text-light)]">{exam.duration} Minutes Duration</span>
+                    <div className="flex items-center gap-3 px-5 py-3 rounded-2xl mb-10 bg-slate-50 border border-slate-100">
+                      <svg width="16" height="16" fill="none" stroke="#A51C30" strokeWidth="3" viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">{exam.duration} Min Session</span>
                     </div>
                   </div>
                   
                   <button 
-                    onClick={() => !profile?.is_exam_locked && onStartExam(exam)} 
-                    disabled={profile?.is_exam_locked}
-                    className={`w-full py-4 px-6 rounded-2xl font-black tracking-wide flex items-center justify-center gap-2 transition-all duration-300 ${
-                      profile?.is_exam_locked 
-                        ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed border-2 border-slate-400/20' 
-                        : 'bg-primary-600 hover:bg-primary-500 text-white shadow-xl shadow-primary-600/30 hover:scale-[1.02] active:scale-95'
-                    }`}
+                    onClick={() => onStartExam(exam)} 
+                    className={`relative z-10 w-full py-5 rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all duration-500 shadow-xl active:scale-95 bg-slate-900 hover:bg-[#A51C30] text-white shadow-slate-900/10 hover:shadow-[#A51C30]/20`}
                   >
-                    {profile?.is_exam_locked ? (
-                      <>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        Access Locked By Admin
-                      </>
-                    ) : (
-                      <>
-                        Start Exam
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                      </>
-                    )}
+                    Initialize Evaluation
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
                   </button>
                 </div>
               ))
@@ -183,60 +170,60 @@ const CandidateDashboard = ({ exams, onStartExam, profile, user }) => {
 
         {/* Completed Assessments Section */}
         <section>
-          <h2 className="text-2xl font-black tracking-tight text-[color:var(--text-dark)] mb-8 flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </span>
-            Archived Submissions
-          </h2>
+          <div className="mb-10 pb-6 border-b border-slate-100">
+             <h2 className="text-3xl font-black tracking-tight text-[#1e293b] font-serif flex items-center gap-4">
+               {/* Academic Transcript Label Removed */}
+             </h2>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {loadingResults ? (
               <div className="col-span-full py-12 flex justify-center">
-                <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-12 h-12 border-4 border-[#A51C30] border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : submissions.length === 0 ? (
-               <div className="col-span-full py-16 flex flex-col items-center justify-center border-2 border-dashed rounded-3xl" style={{ borderColor: 'var(--glass-border)' }}>
-                 <p className="text-[color:var(--text-light)] font-bold text-lg">Your submission history is empty.</p>
+               <div className="col-span-full py-24 flex flex-col items-center justify-center bg-white rounded-[3.5rem] border border-slate-50 shadow-sm">
+                 <p className="text-slate-400 font-serif text-xl">Your evaluation history is currently vacant.</p>
                </div>
             ) : (
               submissions.map((sub, i) => (
                 <div 
                   key={sub.id} 
-                  className={`glass-card-saas p-8 flex flex-col transition-all duration-300 animate-slide-up hover:-translate-y-1 hover:shadow-lg ${
-                    (!sub.is_released || profile?.is_exam_locked) ? 'opacity-85' : 'opacity-100 border-l-4 border-emerald-500'
+                  className={`relative bg-white p-10 rounded-[3rem] shadow-xl border border-slate-50 transition-all duration-700 animate-slide-up hover:-translate-y-1 hover:shadow-2xl flex flex-col ${
+                    (sub.is_released) ? 'border-t-8 border-t-[#22c55e]' : 'border-t-8 border-t-[#C49619]'
                   }`}
                   style={{ animationDelay: `${(i % 10) * 100}ms` }}
                 >
-                  <h4 className="text-xl font-bold text-[color:var(--text-dark)] mb-2 line-clamp-2">{sub.exams?.title}</h4>
-                  <p className="text-sm font-medium text-[color:var(--text-light)] mb-8">
-                    Submitted: {new Date(sub.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric'})}
+                  <h4 className="text-xl font-black text-[#1e293b] font-serif mb-3 line-clamp-2 leading-tight">{sub.exams?.title}</h4>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-10">
+                    Concluded: {new Date(sub.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric'})}
                   </p>
                   
-                  <div className="mt-auto p-5 rounded-2xl border" style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--input-border)' }}>
-                    <div className="flex items-end justify-between">
+                  <div className="mt-auto p-6 rounded-[2rem] bg-slate-50 border border-slate-100">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--text-light)] mb-1">Evaluation Status</p>
-                        <p className={`font-black flex items-center gap-1.5 ${(sub.is_released && !profile?.is_exam_locked) ? 'text-emerald-500' : 'text-amber-500'}`}>
-                          {(sub.is_released && !profile?.is_exam_locked) ? (
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Intellectual Integrity</p>
+                        <div className={`flex items-center gap-2 font-black text-[11px] uppercase tracking-widest ${(sub.is_released) ? 'text-[#22c55e]' : 'text-[#C49619]'}`}>
+                          {(sub.is_released) ? (
                             <>
-                              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                               Validated
                             </>
                           ) : (
                             <>
-                              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/></svg>
-                              Classified
+                              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                              Pending
                             </>
                           )}
-                        </p>
+                        </div>
                       </div>
                       
-                      {(sub.is_released && !profile?.is_exam_locked) && (
+                      {(sub.is_released) && (
                         <div className="text-right">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--text-light)] mb-1">Final Score</p>
-                          <p className="text-3xl font-black tracking-tight text-primary-500">
+                          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Final Merit</p>
+                          <p className="text-3xl font-black tracking-tight text-[#A51C30] font-serif">
                             {sub.admin_score_override !== null ? sub.admin_score_override : sub.score}
-                            <span className="text-sm font-bold text-slate-400 ml-1">/{sub.total_questions * 5}</span>
+                            <span className="text-sm font-black text-slate-300 ml-1 font-sans">/{sub.total_questions * 5}</span>
                           </p>
                         </div>
                       )}
@@ -249,6 +236,7 @@ const CandidateDashboard = ({ exams, onStartExam, profile, user }) => {
         </section>
       </div>
     </div>
+
     </>
   );
 };

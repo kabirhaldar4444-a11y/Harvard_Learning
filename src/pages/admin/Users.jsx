@@ -149,26 +149,27 @@ const Users = ({ user, profile: activeProfile }) => {
   );
 
   return (
-    <div className="min-h-screen relative overflow-hidden font-sans selection:bg-primary-500/30 pt-10">
-      <div className="absolute top-0 -left-4 w-96 h-96 bg-primary-600/10 rounded-full blur-[128px] animate-blob pointer-events-none"></div>
-      <div className="absolute bottom-0 -right-4 w-96 h-96 bg-purple-600/10 rounded-full blur-[128px] animate-blob animation-delay-2000 pointer-events-none"></div>
+    <div className="min-h-screen relative overflow-hidden font-sans selection:bg-[#A51C30]/10 pt-10">
+      {/* Background Ambience - Crimson & Gold */}
+      <div className="absolute top-0 -left-4 w-96 h-96 bg-[#A51C30]/5 rounded-full blur-[128px] animate-blob pointer-events-none"></div>
+      <div className="absolute bottom-0 -right-4 w-96 h-96 bg-[#C49619]/5 rounded-full blur-[128px] animate-blob animation-delay-2000 pointer-events-none"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
 
         {/* ── PAGE HEADER ── */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10 animate-fade-in">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12 animate-fade-in border-b border-slate-200 pb-10">
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight mb-2 text-[color:var(--text-dark)]">
-              {isSuperAdmin ? 'Platform Management' : 'All Candidates'}
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2 text-[#1e293b] font-serif">
+              {isSuperAdmin ? 'Institutional Governance' : 'Scholar Registry'}
             </h1>
-            <p className="text-[color:var(--text-light)] font-medium italic">
-              {isSuperAdmin ? 'Manage administrative staff and student access' : 'View and manage candidate accounts and exam access'}
+            <p className="text-[#A51C30] font-black text-[10px] uppercase tracking-[0.4em]">
+              {isSuperAdmin ? 'Administrative personnel and collegiate access oversight' : 'Comprehensive directory of active scholar accounts'}
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
             {activeTab === 'candidates' && (
               <div className="relative group w-full md:w-80">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary-400 transition-colors">
+                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#A51C30] transition-colors">
                   <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </span>
                 <input
@@ -176,34 +177,33 @@ const Users = ({ user, profile: activeProfile }) => {
                   placeholder="Search by name or email..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-full pl-12 pr-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all backdrop-blur-md"
-                  style={{ backgroundColor: 'var(--input-bg)', border: '1px solid var(--input-border)', color: 'var(--text-dark)' }}
+                  className="input-premium !rounded-full !pl-14 w-full !bg-white shadow-sm"
                 />
               </div>
             )}
-            <Link to="/admin/users/new">
-              <button className="bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-primary-600/20 hover:shadow-primary-600/40 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2 whitespace-nowrap text-sm">
-                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
-                New User
+            <Link to="/admin/users/new" className="w-full sm:w-auto">
+              <button className="btn-premium w-full sm:w-auto !py-3 !px-8">
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Enroll Scholar
               </button>
             </Link>
           </div>
         </div>
 
-        {/* ── TAB NAVIGATION (super admin only) ── */}
+        {/* ── TAB NAVIGATION ── */}
         {isSuperAdmin && (
-          <div className="flex gap-2 mb-10 p-1.5 rounded-2xl w-fit" style={{ backgroundColor: 'var(--input-bg)', border: '1px solid var(--glass-border)' }}>
+          <div className="flex gap-2 mb-12 p-2 rounded-[2rem] w-fit bg-white border border-slate-100 shadow-sm">
             {[
-              { id: 'candidates', label: 'Candidates', icon: <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> },
-              { id: 'roles', label: 'Admin Roles', icon: <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> }
+              { id: 'candidates', label: 'Scholars', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg> },
+              { id: 'roles', label: 'Faculty Access', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.333 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.956 11.956 0 0112 2.714z"/></svg> }
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                className={`flex items-center gap-3 px-8 py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 font-serif ${
                   activeTab === tab.id
-                    ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/30'
-                    : 'text-[color:var(--text-light)] hover:text-[color:var(--text-dark)]'
+                    ? 'bg-[#A51C30] text-white shadow-xl shadow-[#A51C30]/20'
+                    : 'text-slate-400 hover:text-slate-600'
                 }`}
               >
                 {tab.icon}
@@ -213,115 +213,93 @@ const Users = ({ user, profile: activeProfile }) => {
           </div>
         )}
 
-        {/* ── CANDIDATES TAB ── */}
+        {/* ── SCHOLARS TAB ── */}
         {activeTab === 'candidates' && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               {[
-                { label: 'Total Users', value: users.length },
-                { label: 'Active Access', value: users.filter(u => !u.is_exam_locked).length },
-                { label: 'Staff Admins', value: users.filter(u => u.role === 'admin').length }
+                { label: 'Total Registry', value: users.length },
+                { label: 'Administrative Faculty', value: users.filter(u => u.role === 'admin').length },
+                { label: 'Active Scholars', value: users.filter(u => u.role === 'candidate').length }
               ].map((stat, i) => (
-                <div key={i} className="glass-card-saas p-6 border-l-4 border-l-primary-500 flex flex-col gap-1 animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
-                  <span className="text-xs font-bold uppercase tracking-widest text-[color:var(--text-light)]">{stat.label}</span>
-                  <span className="text-4xl font-extrabold tracking-tight text-[color:var(--text-dark)]">{stat.value}</span>
+                <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-50 shadow-xl flex flex-col gap-2 animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
+                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#A51C30]">{stat.label}</span>
+                  <span className="text-4xl font-black tracking-tight text-[#1e293b] font-serif">{stat.value}</span>
                 </div>
               ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {loading ? (
-                <div className="col-span-full py-20 text-center animate-pulse">
-                  <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-slate-400 font-medium">Loading participants...</p>
+                <div className="col-span-full py-24 text-center">
+                  <div className="w-16 h-16 border-4 border-[#A51C30] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                  <p className="text-slate-400 font-serif text-lg">Accessing Registry...</p>
                 </div>
               ) : filteredUsers.length === 0 ? (
-                <div className="col-span-full py-20 text-center glass-card-saas">
-                  <p className="text-slate-400 font-medium">No users found matching your search.</p>
+                <div className="col-span-full py-24 text-center bg-white rounded-[3rem] border border-slate-50">
+                  <p className="text-slate-400 font-serif text-lg">No scholars found matching the criteria.</p>
                 </div>
               ) : (
                 filteredUsers.map((u, i) => (
                   <div
                     key={u.id}
-                    className={`glass-card-saas p-8 flex flex-col gap-6 hover:-translate-y-2 hover:shadow-primary-500/10 animate-slide-up group ${u.is_exam_locked ? 'opacity-60 saturate-50' : 'opacity-100'}`}
+                    className={`group relative bg-white p-10 rounded-[3rem] shadow-xl border border-slate-50 hover:border-[#A51C30]/20 hover:shadow-2xl transition-all duration-700 animate-slide-up flex flex-col gap-8`}
                     style={{ animationDelay: `${(i % 9) * 100}ms` }}
                   >
-                    <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-6">
                       <div className="relative">
-                        <div className="absolute -inset-1 bg-gradient-to-tr from-primary-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                        <div className="relative w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center border border-white/5 overflow-hidden">
+                        <div className="absolute -inset-2 bg-gradient-to-tr from-[#A51C30] to-[#C49619] rounded-[2rem] blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-700"></div>
+                        <div className="relative w-20 h-20 bg-slate-50 rounded-[1.8rem] flex items-center justify-center border border-slate-100 overflow-hidden shadow-inner">
                           {u.profile_photo_url ? (
                             <img src={u.profile_photo_url} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <svg className="w-8 h-8 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path></svg>
+                            <svg className="w-10 h-10 text-slate-200" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path></svg>
                           )}
                         </div>
                       </div>
-                      <div>
-                        <h3 className="text-xl font-bold tracking-tight line-clamp-1 text-[color:var(--text-dark)]">{u.full_name || 'Unnamed'}</h3>
-                        <p className="text-sm font-medium text-[color:var(--text-light)] line-clamp-1">{u.email || 'No email'}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-xl font-black tracking-tight text-[#1e293b] font-serif group-hover:text-[#A51C30] transition-colors truncate">{u.full_name || 'Unnamed Scholar'}</h3>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">{u.email || 'No credentials'}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-3 flex-wrap">
                       {u.role === 'admin' ? (
-                        <div className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-[10px] font-black uppercase tracking-tighter text-purple-400 flex items-center gap-1">
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                          Admin Staff
+                        <div className="px-4 py-1.5 bg-[#A51C30]/5 border border-[#A51C30]/10 rounded-full text-[9px] font-black uppercase tracking-widest text-[#A51C30] flex items-center gap-2">
+                          <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.333 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.956 11.956 0 0112 2.714z"/></svg>
+                          Faculty Personnel
                         </div>
                       ) : (
-                        <div className="px-3 py-1 bg-primary-500/10 border border-primary-500/20 rounded-full text-[10px] font-black uppercase tracking-tighter text-primary-400">
-                          {u.allotted_exam_ids?.length || 0} Assignments
-                        </div>
-                      )}
-                      {u.is_exam_locked && (
-                        <div className="px-3 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full text-[10px] font-black uppercase tracking-tighter text-rose-400">
-                          Locked
+                        <div className="px-4 py-1.5 bg-slate-50 border border-slate-100 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-400">
+                          {u.allotted_exam_ids?.length || 0} Intellectual Assets
                         </div>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: 'var(--glass-border)' }}>
-                      <div className="flex gap-2">
+                    <div className="flex items-center justify-between pt-8 border-t border-slate-100 mt-auto">
+                      <div className="flex gap-3">
                         <button
                           onClick={() => setSelectedUser(u)}
-                          className="p-2.5 rounded-xl hover:text-blue-400 hover:bg-blue-400/10 transition-all duration-300"
-                          style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-light)' }}
-                          title="View Details"
+                          className="w-11 h-11 rounded-[1rem] bg-slate-50 hover:bg-[#A51C30] hover:text-white text-slate-400 transition-all duration-500 flex items-center justify-center shadow-sm"
+                          title="View Records"
                         >
-                          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M2.036 12.322a1.012 1.012 0 010-.644C3.323 8.19 7.303 5.25 12 5.25c4.697 0 8.677 2.94 9.964 6.428.085.23.085.414 0 .644-1.287 3.488-5.267 6.428-9.964 6.428-4.697 0-8.677-2.94-9.964-6.428z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         </button>
                         <button
                           onClick={() => navigate(`/admin/users/edit/${u.id}`)}
-                          className="p-2.5 rounded-xl hover:text-amber-400 hover:bg-amber-400/10 transition-all duration-300"
-                          style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-light)' }}
-                          title="Edit"
+                          className="w-11 h-11 rounded-[1rem] bg-slate-50 hover:bg-[#C49619] hover:text-white text-slate-400 transition-all duration-500 flex items-center justify-center shadow-sm"
+                          title="Modify Record"
                         >
-                          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/></svg>
                         </button>
                         <button
                           onClick={() => handleDeleteUser(u)}
-                          className="p-2.5 rounded-xl hover:text-rose-400 hover:bg-rose-400/10 transition-all duration-300"
-                          style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-light)' }}
-                          title="Delete User"
+                          className="w-11 h-11 rounded-[1rem] bg-slate-50 hover:bg-rose-500 hover:text-white text-slate-400 transition-all duration-500 flex items-center justify-center shadow-sm"
+                          title="Archive Account"
                         >
-                          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
                         </button>
                       </div>
-
-                      <button
-                        onClick={() => handleToggleExamLock(u)}
-                        className={`p-2.5 rounded-xl transition-all duration-300 ${u.is_exam_locked ? 'bg-rose-500/10 text-rose-400' : 'bg-primary-500/10 text-primary-400'}`}
-                        title={u.is_exam_locked ? 'Unlock Access' : 'Lock Access'}
-                      >
-                        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          {u.is_exam_locked ? (
-                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                          ) : (
-                            <path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/>
-                          )}
-                        </svg>
-                      </button>
                     </div>
                   </div>
                 ))
@@ -330,81 +308,59 @@ const Users = ({ user, profile: activeProfile }) => {
           </>
         )}
 
-        {/* ── ADMIN ROLES TAB ── */}
+        {/* ── FACULTY ACCESS TAB ── */}
         {activeTab === 'roles' && isSuperAdmin && (
           <div className="animate-fade-in">
-            {/* Roles summary banner */}
-            <div className="glass-card-saas p-8 mb-8">
-              <div className="flex flex-col md:flex-row md:items-center gap-6 justify-between">
-                <div>
-                  <h2 className="text-2xl font-black text-[color:var(--text-dark)] mb-1 flex items-center gap-3">
-                    <span className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-500">
-                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </span>
-                    Admin Access Control
-                  </h2>
-                  <p className="text-sm font-medium text-[color:var(--text-light)]">Toggle admin privileges for any user. A confirmation is required before every change.</p>
-                </div>
-                <div className="flex flex-wrap gap-4 items-center shrink-0">
-                  <div className="flex gap-3 text-center">
-                    <div className="px-5 py-3 rounded-2xl bg-purple-500/10 border border-purple-500/20">
-                      <div className="text-2xl font-black text-purple-500">{users.filter(u => u.role === 'admin' && u.email !== 'info@harvardlearning.com').length}</div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-purple-400 mt-0.5">Staff Admins</div>
+            <div className="bg-white p-12 md:p-16 rounded-[3.5rem] shadow-2xl border border-slate-50 border-t-8 border-t-[#C49619] mb-12">
+               <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
+                  <div className="max-w-2xl">
+                    <h2 className="text-4xl font-black text-[#1e293b] font-serif mb-4 flex items-center gap-4">
+                      Faculty Governance
+                    </h2>
+                    <p className="text-slate-400 font-medium text-lg leading-relaxed">Commission collegiate personnel with administrative authority. Precise oversight of institutional permissions is paramount.</p>
+                  </div>
+                  <div className="shrink-0 flex gap-6">
+                    <div className="text-center">
+                      <div className="text-4xl font-black text-[#A51C30] font-serif">{users.filter(u => u.role === 'admin' && u.email !== 'info@harvardlearning.com').length}</div>
+                      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">Staff Faculty</div>
                     </div>
-                    <div className="px-5 py-3 rounded-2xl bg-slate-500/10 border border-slate-300/30">
-                      <div className="text-2xl font-black text-[color:var(--text-dark)]">{users.filter(u => u.role === 'candidate').length}</div>
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-[color:var(--text-light)] mt-0.5">Candidates</div>
+                    <div className="text-center">
+                      <div className="text-4xl font-black text-[#1e293b] font-serif">{users.filter(u => u.role === 'candidate').length}</div>
+                      <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">Active Scholars</div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => setShowCreateAdmin(true)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 px-6 rounded-full shadow-lg shadow-purple-600/20 hover:shadow-purple-600/40 hover:scale-105 active:scale-95 transition-all duration-300 text-sm whitespace-nowrap"
-                  >
-                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
-                    Add New Admin
-                  </button>
-                </div>
-              </div>
+               </div>
             </div>
 
             {/* Search bar */}
-            <div className="relative group w-full md:w-96 mb-6">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-500 transition-colors">
-                <svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <div className="relative group w-full md:w-96 mb-10">
+              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#A51C30] transition-colors">
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               </span>
               <input
                 type="text"
-                placeholder="Search users by name or email..."
+                placeholder="Locate personnel by name or ID..."
                 value={roleSearchQuery}
                 onChange={e => setRoleSearchQuery(e.target.value)}
-                className="w-full rounded-full pl-12 pr-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all"
-                style={{ backgroundColor: 'var(--input-bg)', border: '1px solid var(--input-border)', color: 'var(--text-dark)' }}
+                className="input-premium !rounded-full !pl-16 w-full !bg-white shadow-sm"
               />
             </div>
 
             {/* Role toggle list */}
             {loading ? (
-              <div className="py-20 text-center">
-                <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="font-medium" style={{ color: 'var(--text-light)' }}>Loading users...</p>
-              </div>
+               <div className="py-24 text-center">
+                  <div className="w-16 h-16 border-4 border-[#A51C30] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                  <p className="text-slate-400 font-serif text-lg">Accessing Records...</p>
+               </div>
             ) : filteredRoleUsers.length === 0 ? (
-              <div className="py-16 text-center glass-card-saas">
-                <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-purple-500">
-                  <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div className="py-24 text-center bg-white rounded-[3rem] border border-slate-50 flex flex-col items-center">
+                <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 mb-8">
+                  <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.333 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751A11.956 11.956 0 0112 2.714z"/></svg>
                 </div>
-                <p className="font-bold text-[color:var(--text-dark)] mb-1">No staff admins yet</p>
-                <p className="text-sm font-medium text-[color:var(--text-light)] mb-4">Click "Add New Admin" to create your first staff administrator.</p>
-                <button
-                  onClick={() => setShowCreateAdmin(true)}
-                  className="inline-flex items-center gap-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 font-bold py-2.5 px-6 rounded-full transition-all text-sm"
-                >
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
-                  Add New Admin
-                </button>
+                <p className="text-slate-400 font-serif text-xl">No administrative personnel registered.</p>
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-1 gap-6">
                 {filteredRoleUsers.map((u, i) => {
                   const isAdmin = u.role === 'admin';
                   const isToggling = togglingId === u.id;
@@ -412,69 +368,40 @@ const Users = ({ user, profile: activeProfile }) => {
                   return (
                     <div
                       key={u.id}
-                      className="glass-card-saas px-6 py-4 flex items-center gap-5 hover:shadow-lg transition-all duration-300 animate-slide-up"
-                      style={{ animationDelay: `${i * 40}ms` }}
+                      className="group bg-white p-8 rounded-[2.5rem] flex items-center gap-8 shadow-xl border border-slate-50 hover:border-[#A51C30]/20 transition-all duration-700 animate-slide-up"
+                      style={{ animationDelay: `${i * 100}ms` }}
                     >
-                      {/* Avatar */}
                       <div className="relative shrink-0">
-                        <div className={`absolute -inset-1 rounded-xl blur-sm transition-all duration-500 ${isAdmin ? 'bg-gradient-to-br from-purple-400 to-indigo-500 opacity-40' : 'opacity-0'}`}></div>
-                        <div className="relative w-11 h-11 rounded-xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: 'var(--input-bg)', border: '1px solid var(--glass-border)' }}>
+                        <div className="relative w-16 h-16 bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center shadow-inner">
                           {u.profile_photo_url ? (
                             <img src={u.profile_photo_url} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: 'var(--text-light)' }}><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <svg className="w-8 h-8 text-slate-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
                           )}
                         </div>
                       </div>
 
-                      {/* Name & email */}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-sm text-[color:var(--text-dark)] truncate">{u.full_name || 'Unnamed User'}</h3>
-                        <p className="text-xs text-[color:var(--text-light)] truncate">{u.email}</p>
+                        <h3 className="text-lg font-black text-[#1e293b] font-serif truncate group-hover:text-[#A51C30] transition-colors">{u.full_name || 'Anonymous User'}</h3>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">{u.email}</p>
                       </div>
 
-                      {/* Role pill */}
-                      <div className={`hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
-                        isAdmin
-                          ? 'bg-purple-500/10 border-purple-500/30 text-purple-500'
-                          : 'border-[color:var(--glass-border)] text-[color:var(--text-light)]'
-                      }`} style={isAdmin ? {} : { backgroundColor: 'var(--input-bg)' }}>
-                        {isAdmin ? (
-                          <><svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin</>
-                        ) : (
-                          <><svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>User</>
-                        )}
-                      </div>
-
-                      {/* Toggle group */}
-                      <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-xs font-semibold hidden sm:block select-none" style={{ color: 'var(--text-light)' }}>Admin Access</span>
-                        {/* Pill toggle */}
-                        <button
-                          onClick={() => handleToggleRole(u)}
-                          disabled={isToggling}
-                          title={isAdmin ? 'Revoke Admin Access' : 'Grant Admin Access'}
-                          aria-pressed={isAdmin}
-                          className={`relative inline-flex w-14 h-7 rounded-full items-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-60 disabled:cursor-not-allowed ${
-                            isAdmin ? 'bg-purple-500 shadow-lg shadow-purple-500/30' : ''
-                          }`}
-                          style={isAdmin ? {} : { backgroundColor: 'var(--glass-border)' }}
-                        >
-                          <span
-                            className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center transition-all duration-300 ease-in-out ${isAdmin ? 'translate-x-7' : 'translate-x-0'}`}
-                          >
-                            {isToggling ? (
-                              <svg className="animate-spin w-3 h-3 text-purple-500" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                              </svg>
-                            ) : isAdmin ? (
-                              <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" className="text-purple-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            ) : (
-                              <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" className="text-slate-400"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            )}
-                          </span>
-                        </button>
+                      <div className="flex items-center gap-10">
+                         <div className="hidden lg:flex flex-col items-end">
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Authorization Status</span>
+                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] mt-1 ${isAdmin ? 'text-[#A51C30]' : 'text-slate-400'}`}>{isAdmin ? 'Faculty Privileges' : 'Scholar Credentials'}</span>
+                         </div>
+                         <button
+                            onClick={() => handleToggleRole(u)}
+                            disabled={isToggling}
+                            className={`relative inline-flex h-9 w-16 items-center rounded-full transition-all duration-700 focus:outline-none ${isAdmin ? 'bg-[#A51C30] shadow-lg shadow-[#A51C30]/30' : 'bg-slate-100'}`}
+                         >
+                            <span className={`inline-block h-7 w-7 transform rounded-full bg-white shadow-xl transition-all duration-700 ${isAdmin ? 'translate-x-8' : 'translate-x-1'}`}>
+                               {isToggling && (
+                                 <svg className="animate-spin h-3 w-3 text-[#A51C30] m-2" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>
+                               )}
+                            </span>
+                         </button>
                       </div>
                     </div>
                   );
@@ -484,6 +411,9 @@ const Users = ({ user, profile: activeProfile }) => {
           </div>
         )}
       </div>
+
+      {/* CREATE ADMIN MODAL & OTHER VIEWS REMAIN... */}
+
 
       {/* ── CREATE ADMIN MODAL ── */}
       {showCreateAdmin && (

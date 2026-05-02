@@ -2,49 +2,55 @@ import React from 'react';
 
 const Profile = ({ profile }) => {
   return (
-    <div className="min-h-[calc(100vh-80px)] relative overflow-hidden font-sans flex items-center justify-center p-6">
-      {/* Background Blobs */}
-      <div className="absolute top-1/4 -left-12 w-96 h-96 bg-primary-600/10 rounded-full blur-[128px] animate-blob pointer-events-none"></div>
-      <div className="absolute bottom-1/4 -right-12 w-96 h-96 bg-purple-600/10 rounded-full blur-[128px] animate-blob animation-delay-2000 pointer-events-none"></div>
+    <div className="min-h-[calc(100vh-80px)] relative overflow-hidden font-sans flex items-center justify-center p-6 selection:bg-[#A51C30]/10">
+      {/* Background Ambience - Harvard Crimson & Gold */}
+      <div className="absolute top-1/4 -left-12 w-[35rem] h-[35rem] bg-[#A51C30]/5 rounded-full blur-[160px] animate-blob pointer-events-none"></div>
+      <div className="absolute bottom-1/4 -right-12 w-[35rem] h-[35rem] bg-[#C49619]/5 rounded-full blur-[160px] animate-blob animation-delay-4000 pointer-events-none"></div>
 
       <div className="relative z-10 w-full max-w-2xl animate-slide-up">
-        <div className="glass-card-saas p-10 md:p-16 flex flex-col items-center text-center">
+        <div className="bg-white p-12 md:p-20 flex flex-col items-center text-center rounded-[4rem] shadow-2xl border border-slate-100 border-t-8 border-t-[#A51C30]">
           {/* Avatar Section */}
-          <div className="relative mb-8 group">
-            <div className="absolute -inset-2 bg-gradient-to-tr from-primary-500 to-purple-600 rounded-full blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
-            <div className="relative w-32 h-32 rounded-full border-4 flex items-center justify-center text-5xl font-black shadow-2xl" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--glass-border)', color: 'var(--text-dark)' }}>
-              {profile?.full_name?.charAt(0) || 'C'}
+          <div className="relative mb-10 group">
+            <div className="absolute -inset-4 bg-gradient-to-tr from-[#A51C30] to-[#C49619] rounded-[2.5rem] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
+            <div className="relative w-40 h-40 rounded-[2.5rem] border-4 border-white flex items-center justify-center text-6xl font-black shadow-2xl bg-slate-900 text-white font-serif transform group-hover:rotate-3 transition-transform duration-500">
+              {profile?.full_name?.charAt(0) || 'S'}
+            </div>
+            <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-[#C49619] rounded-2xl border-4 border-white flex items-center justify-center shadow-lg">
+               <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
             </div>
           </div>
 
           {/* Name & Title */}
-          <div className="mb-10">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-2 bg-gradient-to-r bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, var(--text-dark), var(--text-light))' }}>
-              {profile?.full_name || 'Candidate Name'}
+          <div className="mb-14">
+            <p className="text-[#A51C30] font-black text-[10px] uppercase tracking-[0.5em] mb-3">Scholar Profile</p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-[#1e293b] font-serif">
+              {profile?.full_name || 'Academic Scholar'}
             </h2>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-500/10 border border-primary-500/20 rounded-full text-xs font-bold uppercase tracking-widest text-primary-400">
-              Verified Candidate Account
+            <div className="inline-flex items-center gap-3 px-6 py-2 bg-slate-50 border border-slate-100 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-[#C49619]">
+              <span className="w-2 h-2 rounded-full bg-[#C49619] animate-pulse"></span>
+              Accredited Institutional Identity
             </div>
           </div>
           
           {/* Info Details */}
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-            <div className="p-6 border rounded-2xl space-y-1" style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--input-border)' }}>
-              <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-light)' }}>Email Address</label>
-              <p className="text-lg font-bold truncate" style={{ color: 'var(--text-dark)' }}>{profile?.email || 'N/A'}</p>
+          <div className="w-full grid grid-cols-1 gap-6 text-left">
+            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-2 group hover:bg-white hover:shadow-xl hover:border-[#A51C30]/10 transition-all duration-500">
+              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Institutional Email</label>
+              <p className="text-xl font-black text-[#1e293b] font-serif truncate">{profile?.email || 'unassigned@harvard.edu'}</p>
             </div>
-            <div className="p-6 border rounded-2xl space-y-1" style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--input-border)' }}>
-              <label className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-light)' }}>Access Role</label>
-              <p className="text-lg font-bold capitalize" style={{ color: 'var(--text-dark)' }}>{profile?.role || 'candidate'}</p>
+            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-2 group hover:bg-white hover:shadow-xl hover:border-[#A51C30]/10 transition-all duration-500">
+              <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Governance Role</label>
+              <p className="text-xl font-black text-[#A51C30] font-serif capitalize tracking-widest">{profile?.role || 'scholar'}</p>
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t w-full" style={{ borderColor: 'var(--glass-border)' }}>
-            <p className="text-sm italic" style={{ color: 'var(--text-light)' }}>Account secured by Harvard Learning Infrastructure</p>
+          <div className="mt-16 pt-10 border-t border-slate-100 w-full">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">Identity protected by Harvard Institutional Governance</p>
           </div>
         </div>
       </div>
     </div>
+
   );
 };
 
