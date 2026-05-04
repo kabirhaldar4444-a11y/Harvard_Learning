@@ -56,10 +56,10 @@ const Header = ({ isAdmin, isCandidate, onLogout, isExamActive, onSubmitExam }) 
             {isExamActive ? (
               <button 
                 onClick={onSubmitExam} 
-                className="btn-premium !py-2.5 !px-6 !text-xs"
+                className="bg-[#22c55e] hover:bg-[#1db954] text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-green-500/20 transition-all active:scale-95"
               >
-                Finalize Session
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                SUBMIT EXAM
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="4" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
               </button>
             ) : (isAdmin || isCandidate) ? (
               <button 
