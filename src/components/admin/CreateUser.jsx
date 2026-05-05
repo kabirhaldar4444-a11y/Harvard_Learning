@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import supabase from '../../utils/supabase';
+import MultiSelectExams from './MultiSelectExams';
 import { useToast } from '../common/AlertProvider';
 
 const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
@@ -11,6 +12,17 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
   const [role, setRole] = useState(initialRole);
   const [isCreating, setIsCreating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [exams, setExams] = useState([]);
+  const [allottedExamIds, setAllottedExamIds] = useState([]);
+
+  React.useEffect(() => {
+    fetchExams();
+  }, []);
+
+  const fetchExams = async () => {
+    const { data } = await supabase.from('exams').select('id, title').order('title');
+    if (data) setExams(data);
+  };
 
   const isSuperAdmin = user?.email === 'info@harvardlearning.com';
 
@@ -71,6 +83,7 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
         email: emailToCreate,
         full_name: nameToCreate,
         role: role,
+        allotted_exam_ids: role === 'candidate' ? allottedExamIds : [],
         profile_completed: false
       });
 
@@ -83,6 +96,7 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
       setCandidateEmail('');
       setCandidatePassword('');
       setCandidateName('');
+      setAllottedExamIds([]);
     } catch (err) {
       toast(err.message, 'error');
     } finally {
@@ -203,6 +217,20 @@ const CreateUser = ({ user, profile, initialRole = 'candidate' }) => {
               </div>
             </div>
           </div>
+
+          {role === 'candidate' && (
+            <div className="pt-2 relative z-[60]">
+              <MultiSelectExams 
+                exams={exams}
+                selectedIds={allottedExamIds}
+                onToggle={(id) => {
+                  setAllottedExamIds(prev => 
+                    prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+                  );
+                }}
+              />
+            </div>
+          )}
 
           <div className="pt-6 mt-4 border-t" style={{ borderColor: 'var(--glass-border)' }}>
             <button

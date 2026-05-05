@@ -1,5 +1,6 @@
 import React from 'react';
 import UserSubmissions from './UserSubmissions';
+import MultiSelectExams from './MultiSelectExams';
 
 const CandidateInspection = ({ candidate, onClose, exams = [], onToggleExam, isSuperAdmin }) => {
   if (!candidate) return null;
@@ -155,37 +156,14 @@ const CandidateInspection = ({ candidate, onClose, exams = [], onToggleExam, isS
             </section>
 
             {/* ALLOCATED EXAMINATIONS */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-900">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 002-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                </div>
-                <h3 className="text-lg font-black text-slate-900">Allocated Examinations</h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {exams.map(exam => {
-                  const isAssigned = candidate.allotted_exam_ids?.includes(exam.id);
-                  return (
-                    <button
-                      key={exam.id}
-                      onClick={() => onToggleExam(exam.id)}
-                      className={`flex items-center justify-between p-6 rounded-2xl border transition-all ${
-                        isAssigned 
-                          ? 'bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-900/10' 
-                          : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'
-                      }`}
-                    >
-                      <span className="text-sm font-bold tracking-tight">{exam.title}</span>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        isAssigned ? 'bg-white border-white text-slate-900' : 'border-slate-200'
-                      }`}>
-                        {isAssigned && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M5 13l4 4L19 7"/></svg>}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+            <section className="space-y-6 relative z-[60]">
+              <MultiSelectExams 
+                exams={exams}
+                selectedIds={candidate.allotted_exam_ids || []}
+                onToggle={onToggleExam}
+                label="Allocated Examinations"
+                readOnly={true}
+              />
             </section>
 
             {/* Performance & Exam Data Section */}

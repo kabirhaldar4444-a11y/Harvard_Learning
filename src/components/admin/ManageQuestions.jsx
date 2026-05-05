@@ -15,6 +15,8 @@ const ManageQuestions = ({ exam, onBack }) => {
     explanation: ''
   });
   const [isUploading, setIsUploading] = useState(false);
+  const [showJsonModal, setShowJsonModal] = useState(false);
+  const [jsonInput, setJsonInput] = useState('');
 
   useEffect(() => {
     fetchQuestions();
@@ -205,6 +207,98 @@ const ManageQuestions = ({ exam, onBack }) => {
     reader.readAsArrayBuffer(file);
   };
 
+  const handleJsonInject = async () => {
+    try {
+      if (!jsonInput.trim()) {
+        toast('Please paste some JSON', 'warning');
+        return;
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(jsonInput);
+      } catch (e) {
+        throw new Error('Invalid JSON format: ' + e.message);
+      }
+
+      const items = Array.isArray(parsed) ? parsed : [parsed];
+      
+      let successCount = 0;
+      let skipCount = 0;
+
+      const questionsToInsert = items.map((item) => {
+        // Smart mapping logic
+        const questionText = (item.question || item.question_text || item.text || '').trim();
+        let options = [];
+        
+        if (Array.isArray(item.options)) {
+          options = item.options.map(opt => String(opt || '').trim());
+        } else {
+          // Check for opt1, opt2 etc
+          options = [
+            item.opt1 || item.option1 || item.a || '',
+            item.opt2 || item.option2 || item.b || '',
+            item.opt3 || item.option3 || item.c || '',
+            item.opt4 || item.option4 || item.d || ''
+          ].map(opt => String(opt || '').trim());
+        }
+
+        const explanation = (item.explanation || item.description || item.desc || item.solution || '').trim();
+        
+        if (!questionText || options.filter(o => o).length < 2) {
+          skipCount++;
+          return null;
+        }
+
+        // Correct option detection
+        let correctIdx = 0;
+        const rawAns = item.correctOption !== undefined ? item.correctOption : 
+                     (item.correct_option !== undefined ? item.correct_option : 
+                     (item.answer !== undefined ? item.answer : item.ans));
+
+        if (rawAns !== undefined && rawAns !== null) {
+          const cleanAns = String(rawAns).trim();
+          const upperAns = cleanAns.toUpperCase();
+
+          if (['A', '1'].includes(upperAns)) correctIdx = 0;
+          else if (['B', '2'].includes(upperAns)) correctIdx = 1;
+          else if (['C', '3'].includes(upperAns)) correctIdx = 2;
+          else if (['D', '4'].includes(upperAns)) correctIdx = 3;
+          else if (!isNaN(parseInt(cleanAns))) {
+            correctIdx = parseInt(cleanAns);
+            // Handle 1-indexed vs 0-indexed
+            if (correctIdx >= 1 && correctIdx <= 4) correctIdx -= 1;
+          } else {
+            const matchIdx = options.findIndex(opt => opt.toLowerCase() === cleanAns.toLowerCase());
+            correctIdx = matchIdx !== -1 ? matchIdx : 0;
+          }
+        }
+
+        successCount++;
+        return {
+          exam_id: exam.id,
+          question_text: questionText,
+          options: options.slice(0, 4),
+          correct_option: correctIdx,
+          explanation: explanation
+        };
+      }).filter(q => q !== null);
+
+      if (questionsToInsert.length > 0) {
+        const { error } = await supabase.from('questions').insert(questionsToInsert);
+        if (error) throw error;
+        toast(`Injected ${successCount} questions.${skipCount > 0 ? ` Skipped ${skipCount} invalid objects.` : ''}`, 'success');
+        setJsonInput('');
+        setShowJsonModal(false);
+        fetchQuestions();
+      } else {
+        toast('No valid questions found in JSON', 'warning');
+      }
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  };
+
   return (
     <div className="manage-questions animate-fade-in relative z-10 w-full min-h-[500px]">
       {/* Header Container */}
@@ -223,11 +317,21 @@ const ManageQuestions = ({ exam, onBack }) => {
           </h2>
         </div>
         
-        <label className="btn-premium flex items-center justify-center gap-2 cursor-pointer w-full md:w-auto mt-4 md:mt-0 !px-8 !py-4 h-14">
-          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-          {isUploading ? 'Uploading...' : 'Upload Excel'}
-          <input type="file" accept=".xlsx, .xls" onChange={handleExcelUpload} style={{ display: 'none' }} disabled={isUploading} />
-        </label>
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <label className="btn-premium flex items-center justify-center gap-2 cursor-pointer !px-8 !py-4 h-14 flex-1 sm:flex-none">
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+            {isUploading ? 'Uploading...' : 'Upload Excel'}
+            <input type="file" accept=".xlsx, .xls" onChange={handleExcelUpload} style={{ display: 'none' }} disabled={isUploading} />
+          </label>
+
+          <button 
+            onClick={() => setShowJsonModal(true)}
+            className="flex items-center justify-center gap-2 !px-8 !py-4 h-14 rounded-2xl bg-[#0F172A] text-white hover:bg-[#1E293B] transition-all font-bold shadow-xl border border-white/10"
+          >
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>
+            Paste JSON
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative max-w-full">
@@ -414,6 +518,58 @@ const ManageQuestions = ({ exam, onBack }) => {
           </div>
         </div>
       </div>
+
+      {/* JSON Injection Modal */}
+      {showJsonModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="glass-card-saas w-full max-w-2xl overflow-hidden animate-slide-up shadow-2xl border-white/20">
+            <div className="p-6 border-b border-white/10 flex justify-between items-center">
+              <div>
+                <h3 className="text-2xl font-black tracking-tight" style={{ color: 'var(--text-dark)' }}>Direct Code Injection</h3>
+                <p className="text-sm font-medium opacity-60" style={{ color: 'var(--text-light)' }}>Paste your JSON question array below</p>
+              </div>
+              <button 
+                onClick={() => setShowJsonModal(false)}
+                className="p-2 hover:bg-black/5 rounded-full transition-colors"
+              >
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="relative">
+                <textarea
+                  value={jsonInput}
+                  onChange={(e) => setJsonInput(e.target.value)}
+                  placeholder={`[\n  {\n    "question": "Sample Question?",\n    "options": ["Opt 1", "Opt 2", "Opt 3", "Opt 4"],\n    "correctOption": 1\n  }\n]`}
+                  className="w-full h-80 bg-slate-50/50 border-2 border-slate-200/50 rounded-2xl p-6 font-mono text-sm focus:border-primary-500/50 outline-none transition-all resize-none shadow-inner"
+                  style={{ color: '#334155' }}
+                />
+              </div>
+
+              <div className="bg-blue-500/5 border border-blue-500/10 rounded-2xl p-4 flex gap-4">
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <div>
+                  <h4 className="font-black text-blue-600 text-[10px] uppercase tracking-[0.2em] mb-1">Smarter Mapping Engine</h4>
+                  <p className="text-[11px] font-medium opacity-70" style={{ color: 'var(--text-light)' }}>
+                    Auto-detects: question/text, options/opt1, correctOption/ans. 1-indexed and 0-indexed values are handled automatically.
+                  </p>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleJsonInject}
+                className="w-full !py-4 rounded-2xl bg-[#0F172A] text-white hover:bg-[#1E293B] transition-all font-black tracking-widest flex items-center justify-center gap-3 group shadow-xl"
+              >
+                INJECT CODE INTO DATABASE
+                <svg className="group-hover:translate-x-1 transition-transform" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

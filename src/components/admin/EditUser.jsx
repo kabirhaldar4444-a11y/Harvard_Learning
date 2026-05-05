@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import supabase from '../../utils/supabase';
 import UserSubmissions from './UserSubmissions';
+import MultiSelectExams from './MultiSelectExams';
 import { useToast } from '../common/AlertProvider';
 
 const DocumentPreview = ({ title, url, isSuperAdmin }) => {
@@ -276,33 +277,13 @@ const EditUser = ({ user, profile }) => {
           </div>
 
           {/* Exam Allocation Grid */}
-          <div className="animate-slide-up animation-delay-200">
-            <h2 className="text-2xl font-black mb-8 tracking-tight flex items-center gap-3 text-[color:var(--text-dark)]">
-              <span className="w-10 h-10 bg-primary-500/10 rounded-xl flex items-center justify-center text-primary-400">
-                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 002-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-              </span>
-              Allotted Examinations
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {exams.map(exam => (
-                <label 
-                  key={exam.id} 
-                  className={`relative group cursor-pointer glass-card-saas p-6 transition-all duration-300 ${editUser.allotted_exam_ids?.includes(exam.id) ? 'border-primary-500 bg-primary-500/5 ring-1 ring-primary-500' : 'hover:border-primary-500/30'}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <input 
-                      type="checkbox" 
-                      checked={editUser.allotted_exam_ids?.includes(exam.id)}
-                      onChange={() => toggleExamSelection(exam.id)}
-                      className="w-5 h-5 rounded-md border-slate-700 bg-slate-800 text-primary-500 focus:ring-offset-slate-900 transition-all cursor-pointer"
-                    />
-                    <span className={`font-bold transition-colors ${editUser.allotted_exam_ids?.includes(exam.id) ? 'text-[color:var(--text-dark)]' : 'text-[color:var(--text-light)] group-hover:text-[color:var(--text-dark)]'}`}>
-                      {exam.title}
-                    </span>
-                  </div>
-                </label>
-              ))}
-            </div>
+          <div className="animate-slide-up animation-delay-200 relative z-[60]">
+            <MultiSelectExams 
+              exams={exams}
+              selectedIds={editUser.allotted_exam_ids || []}
+              onToggle={toggleExamSelection}
+              label="Allotted Examinations"
+            />
           </div>
 
           {/* User Submissions / Marks Release */}
