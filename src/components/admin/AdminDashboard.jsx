@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import supabase from '../../utils/supabase';
 import CreateUser from './CreateUser';
 import ManageQuestions from './ManageQuestions';
+import AdmissionsManagement from './AdmissionsManagement';
 
-const AdminDashboard = ({ user, profile, exams, addExam, deleteExam, onRefresh }) => {
-  const [activeTab, setActiveTab] = useState('exams');
+const AdminDashboard = ({ user, profile, exams, addExam, deleteExam, onRefresh, defaultTab = 'admissions' }) => {
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const isSuperAdmin = user?.email === 'support@harvardlearning.in' || user?.email === 'kabirhaldar4444@gmail.com';
   const [newTitle, setNewTitle] = useState('');
   const [newDuration, setNewDuration] = useState('');
@@ -49,16 +50,23 @@ const AdminDashboard = ({ user, profile, exams, addExam, deleteExam, onRefresh }
 
         {/* Tab Switcher - Academic Registry Style */}
         <div className="flex flex-col md:flex-row justify-center md:justify-start mb-16">
-          <div className="flex p-2 rounded-[2rem] border bg-white shadow-xl border-slate-100">
+          <div className="flex p-2 rounded-[2rem] border bg-white shadow-xl border-slate-100 flex-wrap gap-2">
+            <button
+              onClick={() => setActiveTab('admissions')}
+              className={`relative px-8 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'admissions' ? 'bg-[#0f172a] text-white shadow-2xl shadow-slate-900/20' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              Admissions
+            </button>
+
             <button
               onClick={() => setActiveTab('exams')}
-              className={`relative px-10 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'exams' ? 'bg-[#A51C30] text-white shadow-2xl shadow-[#A51C30]/20' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`relative px-8 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'exams' ? 'bg-[#A51C30] text-white shadow-2xl shadow-[#A51C30]/20' : 'text-slate-400 hover:text-slate-600'}`}
             >
               Curriculum
             </button>
             <button
               onClick={() => setActiveTab('candidates')}
-              className={`relative px-10 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'candidates' ? 'bg-[#A51C30] text-white shadow-2xl shadow-[#A51C30]/20' : 'text-slate-400 hover:text-slate-600'}`}
+              className={`relative px-8 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'candidates' ? 'bg-[#A51C30] text-white shadow-2xl shadow-[#A51C30]/20' : 'text-slate-400 hover:text-slate-600'}`}
             >
               Create Records
             </button>
@@ -66,7 +74,7 @@ const AdminDashboard = ({ user, profile, exams, addExam, deleteExam, onRefresh }
             {isSuperAdmin && (
               <button
                 onClick={() => setActiveTab('staff')}
-                className={`relative px-10 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'staff' ? 'bg-[#A51C30] text-white shadow-2xl shadow-[#A51C30]/20' : 'text-slate-400 hover:text-slate-600'}`}
+                className={`relative px-8 py-4 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 font-serif ${activeTab === 'staff' ? 'bg-[#A51C30] text-white shadow-2xl shadow-[#A51C30]/20' : 'text-slate-400 hover:text-slate-600'}`}
               >
                 Master Registry
               </button>
@@ -76,7 +84,11 @@ const AdminDashboard = ({ user, profile, exams, addExam, deleteExam, onRefresh }
 
         {/* Dynamic Content Views */}
         <div className="transition-all duration-700 relative">
-          {activeTab === 'exams' ? (
+          {activeTab === 'admissions' ? (
+            <div className="admissions-tab animate-slide-up">
+              <AdmissionsManagement user={user} profile={profile} />
+            </div>
+          ) : activeTab === 'exams' ? (
             <div className="exams-tab animate-slide-up">
               {/* Creation Module */}
               <div className="glass-card-saas p-10 md:p-14 mb-16 border-t-8 border-t-[#A51C30] relative overflow-hidden group">

@@ -172,11 +172,18 @@ const Login = ({ onLoginSuccess }) => {
               )}
             </button>
 
-            <div className="text-center">
+            <div className="text-center space-y-3 pt-2">
+              <button 
+                type="button"
+                onClick={() => navigate('/admission')}
+                className="w-full bg-[#A51C30]/10 hover:bg-[#A51C30]/20 text-[#A51C30] font-black py-3 px-4 rounded-2xl text-[11px] uppercase tracking-[0.15em] transition-all border border-[#A51C30]/20"
+              >
+                📝 New Candidate? Apply For Admission
+              </button>
               <button 
                 type="button"
                 onClick={() => navigate('/master-recovery')}
-                className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-[#A51C30] transition-colors"
+                className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-[#A51C30] transition-colors block mx-auto"
               >
                 Forgot Password? Master Recovery
               </button>

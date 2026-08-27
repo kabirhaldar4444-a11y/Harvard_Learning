@@ -14,6 +14,7 @@ import CompleteProfile from './pages/candidate/CompleteProfile';
 import TermsAndConditions from './pages/TermsAndConditions';
 import MasterRecovery from './pages/MasterRecovery';
 import ResetPassword from './pages/ResetPassword';
+import Admission from './pages/Admission';
 import supabase from './utils/supabase';
 import { useToast } from './components/common/AlertProvider';
 import './index.css';
@@ -153,6 +154,7 @@ function App() {
   }, []);
 
   const isLoginRoute = location.pathname === '/login' || 
+                       location.pathname === '/admission' || 
                        location.pathname === '/complete-profile' || 
                        location.pathname === '/master-recovery' || 
                        location.pathname === '/reset-password';
@@ -176,6 +178,7 @@ function App() {
       )}
       <main className={isLoginRoute ? 'p-0 max-w-none' : ''}>
         <Routes>
+          <Route path="/admission" element={<Admission />} />
           <Route path="/login" element={
             user ? (
               !loading && !profile ? (
@@ -221,7 +224,13 @@ function App() {
           } />
           <Route path="/admin" element={
             profile?.role === 'admin' ? (
-              <AdminDashboard user={user} profile={profile} exams={exams} addExam={addExam} deleteExam={deleteExam} onRefresh={fetchExams} />
+              <AdminDashboard user={user} profile={profile} exams={exams} addExam={addExam} deleteExam={deleteExam} onRefresh={fetchExams} defaultTab="admissions" />
+            ) : <Navigate to="/login" />
+          } />
+
+          <Route path="/admin/admissions" element={
+            profile?.role === 'admin' ? (
+              <AdminDashboard user={user} profile={profile} exams={exams} addExam={addExam} deleteExam={deleteExam} onRefresh={fetchExams} defaultTab="admissions" />
             ) : <Navigate to="/login" />
           } />
 

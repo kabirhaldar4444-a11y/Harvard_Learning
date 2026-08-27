@@ -30,6 +30,9 @@ const Header = ({ isAdmin, isCandidate, onLogout, isExamActive, onSubmitExam }) 
           <nav className="flex-2 flex justify-center items-center gap-3 md:gap-6">
             {!isExamActive && isAdminRoute && (
               <>
+                <Link to="/admin/admissions" className={navLinkClass('/admin/admissions')}>
+                  Admissions
+                </Link>
                 <Link to="/admin/users" className={navLinkClass('/admin/users')}>
                   Scholars
                 </Link>
