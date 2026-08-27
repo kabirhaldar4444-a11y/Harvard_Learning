@@ -1,0 +1,9 @@
+{
+  "name": "harvard-learning-app",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

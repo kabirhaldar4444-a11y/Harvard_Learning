@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #A51C30; /* Harvard Crimson */
+  --secondary-color: #7F1D1D; /* Darker Crimson */
+  --accent-color: #C49619; /* Harvard Gold */
+  --gold-gradient: linear-gradient(135deg, #C49619 0%, #D4AF37 100%);
+  --crimson-gradient: linear-gradient(135deg, #A51C30 0%, #7F1D1D 100%);
+}
+
+[data-theme='dark'] {
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+  --blob-opacity: 0.15;
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-border: rgba(165, 28, 48, 0.2);
+  --text-dark: #f8fafc;
+  --text-light: #94a3b8;
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --input-bg: rgba(0, 0, 0, 0.2);
+  --input-border: rgba(165, 28, 48, 0.3);
+  --logo-island-bg: #ffffff;
+}
+
+[data-theme='light'] {
+  --bg-gradient: linear-gradient(135deg, #fffcf9 0%, #f8f1e9 100%);
+  --blob-opacity: 0.08;
+  --glass-bg: rgba(255, 255, 255, 0.98);
+  --glass-border: rgba(165, 28, 48, 0.15);
+  --text-dark: #1e293b;
+  --text-light: #64748b;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --input-bg: #ffffff;
+  --input-border: rgba(196, 150, 25, 0.2);
+  --logo-island-bg: #ffffff;
+}
+
+/* Base resets & typography */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(165, 28, 48, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(165, 28, 48, 0.4);
+}
+
+/* Glassmorphism Classes */
+.glass-navbar {
+  @apply sticky top-0 z-50 transition-all duration-500 border-t-4 border-t-[#A51C30];
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--glass-border);
+  box-shadow: 0 10px 40px rgba(165, 28, 48, 0.05);
+}
+
+.glass-card-saas {
+  @apply backdrop-blur-md rounded-3xl shadow-xl transition-all duration-500;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card-saas:hover {
+  border-color: rgba(196, 150, 25, 0.3);
+}
+
+/* Input Styles */
+.input-premium {
+  @apply rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-[#A51C30]/30 transition-all duration-300;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-dark);
+}
+
+/* Premium Button Utility */
+.btn-premium {
+  @apply rounded-2xl px-10 py-4 font-black tracking-widest flex items-center justify-center gap-3 transition-all duration-500 shadow-xl active:scale-95 uppercase text-sm;
+  background: var(--crimson-gradient);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-premium:hover {
+  @apply scale-[1.02] shadow-2xl;
+  box-shadow: 0 20px 40px -10px rgba(165, 28, 48, 0.3);
+  border-color: var(--accent-color);
+}
+
+/* Specific Animations for Harvard Brand */
+@keyframes gold-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.gold-text {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+}
+
