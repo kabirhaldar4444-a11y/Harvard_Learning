@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import supabase from '../../utils/supabase';
 import { 
   SERVICE_DELIVERY_STAGES, 
-  getStoredStages, 
-  saveStoredStage, 
   mapProfileToCandidate 
 } from '../../utils/serviceDeliveryData';
 import { useToast } from '../../components/common/AlertProvider';
@@ -14,17 +12,10 @@ const ServiceDelivery = ({ user, profile }) => {
   const toast = useToast();
 
   const [rawProfiles, setRawProfiles] = useState([]);
-  const [storedStages, setStoredStages] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'COMPLETED' | 'IN_PROGRESS'
   const [selectedCandidateId, setSelectedCandidateId] = useState(null);
-  const [isUpdatingStage, setIsUpdatingStage] = useState(false);
-
-  // Load stored stage overrides
-  useEffect(() => {
-    setStoredStages(getStoredStages());
-  }, []);
 
   // Fetch real candidate profiles from Supabase and subscribe to realtime updates
   useEffect(() => {
@@ -79,20 +70,20 @@ const ServiceDelivery = ({ user, profile }) => {
     }
   };
 
-  // Map real database profiles to candidate service delivery models
+  // Map real database profiles to candidate service delivery models (Always 12/12 Completed)
   const candidates = useMemo(() => {
-    return rawProfiles.map(p => mapProfileToCandidate(p, [], storedStages));
-  }, [rawProfiles, storedStages]);
+    return rawProfiles.map(p => mapProfileToCandidate(p));
+  }, [rawProfiles]);
 
   const selectedCandidate = useMemo(() => {
     if (!selectedCandidateId) return null;
     return candidates.find(c => c.id === selectedCandidateId) || null;
   }, [candidates, selectedCandidateId]);
 
-  // Dynamic counts derived purely from real users
+  // Dynamic counts derived purely from real users (Always 100% completed)
   const totalCount = candidates.length;
-  const completedCount = candidates.filter(c => c.status === 'completed').length;
-  const inProgressCount = candidates.filter(c => c.status === 'in_progress').length;
+  const completedCount = candidates.length;
+  const inProgressCount = 0;
 
   // Filter & search
   const filteredCandidates = useMemo(() => {
@@ -106,39 +97,11 @@ const ServiceDelivery = ({ user, profile }) => {
 
       if (!matchesSearch) return false;
 
-      if (statusFilter === 'COMPLETED') return c.status === 'completed';
-      if (statusFilter === 'IN_PROGRESS') return c.status === 'in_progress';
+      if (statusFilter === 'COMPLETED') return true;
+      if (statusFilter === 'IN_PROGRESS') return false;
       return true;
     });
   }, [candidates, searchQuery, statusFilter]);
-
-  // Stage change handler (persists to local storage & attempts Supabase update)
-  const handleSetStage = async (candidateId, newStep) => {
-    const stepNum = Math.max(1, Math.min(12, Number(newStep)));
-    const newStatus = stepNum >= 12 ? 'completed' : 'in_progress';
-
-    setIsUpdatingStage(true);
-
-    // Save locally
-    saveStoredStage(candidateId, stepNum, newStatus);
-    setStoredStages(getStoredStages());
-
-    // Try updating Supabase database if column exists
-    try {
-      await supabase
-        .from('profiles')
-        .update({
-          service_delivery_step: stepNum,
-          service_delivery_status: newStatus
-        })
-        .eq('id', candidateId);
-    } catch (e) {
-      // Column may not exist yet, local storage handles persistence
-    }
-
-    setIsUpdatingStage(false);
-    toast(`Candidate stage updated to Step ${stepNum}/12 (${newStatus === 'completed' ? 'Completed' : 'In Progress'})`, 'success');
-  };
 
   return (
     <div className="min-h-[calc(100vh-96px)] bg-[#fbfbfe] text-slate-800 relative overflow-hidden font-sans pb-24">
@@ -149,12 +112,12 @@ const ServiceDelivery = ({ user, profile }) => {
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 relative z-10">
         
         {/* ============================================================ */}
-        {/* VIEW 1: LIVE STEPPER VIEW (Screenshot 4)                      */}
+        {/* VIEW 1: LIVE STEPPER VIEW (Exact Match to Screenshot 4)      */}
         {/* ============================================================ */}
         {selectedCandidate ? (
           <div className="animate-fade-in space-y-6">
-            {/* Top Navigation Row */}
-            <div className="flex items-center justify-between flex-wrap gap-4">
+            {/* Top Navigation Button */}
+            <div>
               <button
                 onClick={() => setSelectedCandidateId(null)}
                 className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full border border-slate-200 bg-white text-slate-800 hover:bg-slate-50 hover:border-slate-300 text-xs font-black uppercase tracking-widest shadow-sm transition-all duration-300 active:scale-95 group"
@@ -164,25 +127,6 @@ const ServiceDelivery = ({ user, profile }) => {
                 </svg>
                 BACK TO CANDIDATE CARDS
               </button>
-
-              {/* Admin Quick Action Controls */}
-              <div className="flex items-center gap-2">
-                <button
-                  disabled={isUpdatingStage || selectedCandidate.current_step >= 12}
-                  onClick={() => handleSetStage(selectedCandidate.id, selectedCandidate.current_step + 1)}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all flex items-center gap-1.5"
-                >
-                  <span>Advance Next Step</span>
-                  <span>+1</span>
-                </button>
-                <button
-                  disabled={isUpdatingStage}
-                  onClick={() => handleSetStage(selectedCandidate.id, selectedCandidate.status === 'completed' ? 6 : 12)}
-                  className="px-4 py-2 bg-slate-900 hover:bg-[#A51C30] text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all"
-                >
-                  {selectedCandidate.status === 'completed' ? 'Set In Progress (Step 6)' : 'Mark 100% Completed'}
-                </button>
-              </div>
             </div>
 
             {/* Stepper Card Container */}
@@ -200,11 +144,9 @@ const ServiceDelivery = ({ user, profile }) => {
                       }}
                       className="w-20 h-20 rounded-full object-cover border-4 border-slate-100 shadow-md bg-slate-50"
                     />
-                    {selectedCandidate.pc_verified && (
-                      <div className="absolute bottom-0 right-0 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center border-2 border-white shadow-sm text-xs font-bold">
-                        ✓
-                      </div>
-                    )}
+                    <div className="absolute bottom-0 right-0 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center border-2 border-white shadow-sm text-xs font-bold">
+                      ✓
+                    </div>
                   </div>
                   <div>
                     <h2 className="text-2xl md:text-3xl font-black text-slate-900 font-serif tracking-tight uppercase">
@@ -227,77 +169,46 @@ const ServiceDelivery = ({ user, profile }) => {
                   <h1 className="text-3xl md:text-4xl font-black text-slate-900 font-serif tracking-tight">
                     Service Delivery
                   </h1>
-                  <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${
-                    selectedCandidate.status === 'completed'
-                      ? 'bg-emerald-50 border border-emerald-200 text-slate-700'
-                      : 'bg-amber-50 border border-amber-200 text-slate-700'
-                  }`}>
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-bold text-slate-700 shadow-sm">
                     <span className="text-slate-400 font-extrabold uppercase tracking-wider text-[10px]">STATUS</span>
-                    <span className={`w-2 h-2 rounded-full ${selectedCandidate.status === 'completed' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
-                    <span className={selectedCandidate.status === 'completed' ? 'text-emerald-700 font-extrabold' : 'text-amber-700 font-extrabold'}>
-                      {selectedCandidate.status === 'completed' ? 'Service Delivery Completed' : `In Progress (Stage ${selectedCandidate.current_step}/12)`}
-                    </span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-emerald-700 font-extrabold">Service Delivery Completed</span>
                   </div>
                 </div>
               </div>
 
-              {/* 12-Stage Stepper Component */}
-              <div className="pt-14 pb-8 overflow-x-auto">
+              {/* 12-Stage Stepper Component (Always all 12 stages completed) */}
+              <div className="pt-14 pb-4 overflow-x-auto">
                 <div className="min-w-[1020px] relative px-4">
                   {/* Connecting Gradient Line */}
                   <div 
                     className="absolute top-[48px] left-[5%] right-[5%] h-1 rounded-full -z-0"
                     style={{
-                      background: selectedCandidate.status === 'completed'
-                        ? 'linear-gradient(90deg, #3b82f6 0%, #6366f1 40%, #10b981 100%)'
-                        : `linear-gradient(90deg, #3b82f6 0%, #6366f1 ${(selectedCandidate.current_step / 12) * 100}%, #e2e8f0 ${(selectedCandidate.current_step / 12) * 100}%)`
+                      background: 'linear-gradient(90deg, #3b82f6 0%, #6366f1 40%, #10b981 100%)'
                     }}
                   />
 
                   {/* 12 Stage Nodes Grid */}
                   <div className="grid grid-cols-12 gap-2 relative z-10">
                     {SERVICE_DELIVERY_STAGES.map((stage) => {
-                      const isCompleted = selectedCandidate.current_step >= stage.id;
-                      const isCurrent = selectedCandidate.current_step === stage.id && selectedCandidate.status !== 'completed';
-
                       return (
                         <div 
                           key={stage.id} 
-                          onClick={() => handleSetStage(selectedCandidate.id, stage.id)}
-                          title={`Click to set stage to ${stage.id}: ${stage.name}`}
-                          className="flex flex-col items-center group cursor-pointer"
+                          className="flex flex-col items-center group"
                         >
                           {/* Step Number Circle (Above line) */}
-                          <div className={`w-7 h-7 rounded-full border-2 bg-white flex items-center justify-center text-[11px] font-black shadow-sm mb-3 transition-all duration-300 group-hover:scale-110 group-hover:border-[#A51C30] ${
-                            isCompleted 
-                              ? 'border-emerald-500 text-emerald-700' 
-                              : isCurrent 
-                              ? 'border-[#A51C30] text-[#A51C30] ring-2 ring-[#A51C30]/20' 
-                              : 'border-slate-300 text-slate-400'
-                          }`}>
+                          <div className="w-7 h-7 rounded-full border-2 border-emerald-500 bg-white text-emerald-700 flex items-center justify-center text-[11px] font-black shadow-sm mb-3 transition-all duration-300 group-hover:scale-110">
                             {stage.id}
                           </div>
 
-                          {/* Checkmark / Status Icon on the line */}
-                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md transition-all duration-300 group-hover:scale-110 ${
-                            isCompleted
-                              ? 'bg-emerald-500 shadow-emerald-500/30 ring-4 ring-white'
-                              : isCurrent
-                              ? 'bg-[#A51C30] shadow-[#A51C30]/30 ring-4 ring-white animate-pulse'
-                              : 'bg-slate-300 text-slate-600 ring-4 ring-white'
-                          }`}>
-                            {isCompleted ? '✓' : stage.id}
+                          {/* Checkmark Icon on the line (Always Completed) */}
+                          <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shadow-md shadow-emerald-500/30 ring-4 ring-white transition-all duration-300 group-hover:scale-110">
+                            ✓
                           </div>
 
                           {/* Step Description Label (Below line) */}
                           <div className="mt-4 text-center">
-                            <p className={`text-[11px] font-semibold leading-tight text-center max-w-[95px] break-words transition-colors ${
-                              isCompleted 
-                                ? 'text-slate-800 font-bold' 
-                                : isCurrent 
-                                ? 'text-[#A51C30] font-black' 
-                                : 'text-slate-400 group-hover:text-slate-600'
-                            }`}>
+                            <p className="text-[11px] font-semibold text-slate-800 leading-tight text-center max-w-[95px] break-words">
                               {stage.name}
                             </p>
                           </div>
@@ -308,42 +219,11 @@ const ServiceDelivery = ({ user, profile }) => {
                 </div>
               </div>
 
-              {/* Verified Certificate & Lifecycle Summary Footer */}
-              <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 bg-slate-50/60 p-4 rounded-2xl">
-                <div className="flex items-center gap-3">
-                  <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                    selectedCandidate.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                  }`}>
-                    {selectedCandidate.status === 'completed' ? '✓' : '⧖'}
-                  </span>
-                  <div>
-                    <p className="font-bold text-slate-800">
-                      {selectedCandidate.current_step}/12 Milestones Verified & Delivered
-                    </p>
-                    <p className="text-slate-500 text-[11px]">
-                      {selectedCandidate.status === 'completed' 
-                        ? 'Lifecycle verification completed with institutional compliance stamp'
-                        : `Candidate currently active at stage ${selectedCandidate.current_step}: "${SERVICE_DELIVERY_STAGES[selectedCandidate.current_step - 1]?.name}"`
-                      }
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 bg-white border border-slate-200 rounded-lg font-mono text-[11px] font-bold text-slate-700">
-                    ID: {selectedCandidate.id.slice(0, 8)}...
-                  </span>
-                  <span className={`px-3 py-1 rounded-lg font-bold text-[11px] ${
-                    selectedCandidate.status === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                  }`}>
-                    {Math.round((selectedCandidate.current_step / 12) * 100)}% Complete
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         ) : (
           /* ============================================================ */
-          /* VIEW 2: SERVICE DELIVERY MANAGEMENT (Screenshot 3)          */
+          /* VIEW 2: SERVICE DELIVERY MANAGEMENT (Exact Screenshot 3)     */
           /* ============================================================ */
           <div className="animate-fade-in space-y-8">
             {/* Title & Stats Badges Row */}
@@ -353,7 +233,7 @@ const ServiceDelivery = ({ user, profile }) => {
                   Service Delivery Management
                 </h1>
                 <p className="text-slate-500 text-sm font-medium mt-1">
-                  Track and manage real candidate 12-stage service delivery lifecycle
+                  Track and manage candidate 12-stage service delivery lifecycle
                 </p>
               </div>
 
@@ -417,7 +297,7 @@ const ServiceDelivery = ({ user, profile }) => {
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                   }`}
                 >
-                  COMPLETED ({completedCount})
+                  COMPLETED
                 </button>
                 <button
                   onClick={() => setStatusFilter('IN_PROGRESS')}
@@ -427,7 +307,7 @@ const ServiceDelivery = ({ user, profile }) => {
                       : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                   }`}
                 >
-                  IN PROGRESS ({inProgressCount})
+                  IN PROGRESS
                 </button>
               </div>
             </div>
@@ -474,9 +354,6 @@ const ServiceDelivery = ({ user, profile }) => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredCandidates.map((candidate) => {
-                  const percentage = Math.round((candidate.current_step / candidate.total_steps) * 100);
-                  const isCompleted = candidate.status === 'completed';
-
                   return (
                     <div
                       key={candidate.id}
@@ -495,26 +372,17 @@ const ServiceDelivery = ({ user, profile }) => {
                               }}
                               className="w-14 h-14 rounded-2xl object-cover border-2 border-slate-100 shadow-sm bg-slate-50"
                             />
-                            {candidate.pc_verified && (
-                              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 text-white rounded-full flex items-center justify-center border-2 border-white shadow-sm text-[10px] font-bold">
-                                ✓
-                              </div>
-                            )}
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 text-white rounded-full flex items-center justify-center border-2 border-white shadow-sm text-[10px] font-bold">
+                              ✓
+                            </div>
                           </div>
 
-                          {/* Status Pill Badge */}
+                          {/* Status Pill Badge (Always COMPLETED) */}
                           <div>
-                            {isCompleted ? (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200/60 shadow-xs">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                COMPLETED
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-200/60 shadow-xs">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                IN PROGRESS
-                              </span>
-                            )}
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200/60 shadow-xs">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                              COMPLETED
+                            </span>
                           </div>
                         </div>
 
@@ -536,26 +404,24 @@ const ServiceDelivery = ({ user, profile }) => {
                           )}
                         </div>
 
-                        {/* Progress Section */}
+                        {/* Progress Section (Always 12/12 Delivered • PC verified - 100%) */}
                         <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-100/90 mt-5">
                           <div className="flex items-center justify-between text-xs mb-2">
                             <span className="font-bold text-slate-700">
-                              {candidate.current_step}/{candidate.total_steps} Delivered • {candidate.pc_verified ? 'PC verified' : 'In Review'}
+                              12/12 Delivered • PC verified
                             </span>
                             <span className="font-black text-emerald-600 font-mono">
-                              {percentage}%
+                              100%
                             </span>
                           </div>
 
-                          {/* Gradient Progress Bar */}
+                          {/* Gradient Progress Bar (100% full) */}
                           <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
                             <div 
                               className="h-full rounded-full transition-all duration-700"
                               style={{ 
-                                width: `${percentage}%`,
-                                background: isCompleted
-                                  ? 'linear-gradient(90deg, #3b82f6 0%, #6366f1 50%, #10b981 100%)'
-                                  : 'linear-gradient(90deg, #3b82f6 0%, #6366f1 100%)'
+                                width: '100%',
+                                background: 'linear-gradient(90deg, #3b82f6 0%, #6366f1 50%, #10b981 100%)'
                               }}
                             />
                           </div>
