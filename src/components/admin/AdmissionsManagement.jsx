@@ -360,8 +360,12 @@ export default function AdmissionsManagement({ user, profile }) {
                       </h3>
                       <p className="text-sm font-semibold text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
                         <span>{item.email}</span>
-                        <span className="text-slate-300">•</span>
-                        <span>{item.phone}</span>
+                        {item.phone && item.phone !== 'N/A' && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span>{item.phone}</span>
+                          </>
+                        )}
                       </p>
                     </div>
 

@@ -26,7 +26,6 @@ export default function Admission() {
   // Step 1 Form Fields
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [courseName, setCourseName] = useState('');
 
   // Step 2 Form Fields
@@ -34,6 +33,8 @@ export default function Admission() {
   const [stateName, setStateName] = useState('Select State');
   const [cityName, setCityName] = useState('');
   const [address, setAddress] = useState('');
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+  const [pincodeMsg, setPincodeMsg] = useState('');
 
   // Video Recording & Media
   const [videoStream, setVideoStream] = useState(null);
@@ -72,6 +73,51 @@ export default function Admission() {
       .catch(() => setUserIp('Not captured'));
   }, []);
 
+  // India Post PIN Code Lookup Handler
+  const fetchLocationByPincode = async (pin) => {
+    const cleanPin = pin ? pin.toString().replace(/\D/g, '').trim() : '';
+    if (cleanPin.length !== 6) return;
+
+    try {
+      setPincodeLoading(true);
+      setPincodeMsg('');
+      const res = await fetch(`https://api.postalpincode.in/pincode/${cleanPin}`);
+      const data = await res.json();
+      
+      if (Array.isArray(data) && data[0]?.Status === 'Success' && Array.isArray(data[0]?.PostOffice) && data[0].PostOffice.length > 0) {
+        const po = data[0].PostOffice[0];
+        const stateFound = po.State;
+        const districtFound = po.District || po.Block || po.Name;
+
+        if (stateFound) {
+          const matched = indianStates.find(s => s.toLowerCase() === stateFound.toLowerCase());
+          setStateName(matched || stateFound);
+        }
+        if (districtFound) {
+          setCityName(districtFound);
+        }
+        setPincodeMsg(`✓ ${districtFound ? districtFound + ', ' : ''}${stateFound || ''}`);
+      } else {
+        setPincodeMsg('PIN code not found in India Post');
+      }
+    } catch (err) {
+      console.warn('India Post API error:', err);
+      setPincodeMsg('Unable to fetch India Post details');
+    } finally {
+      setPincodeLoading(false);
+    }
+  };
+
+  const handlePincodeChange = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 6);
+    setPincode(val);
+    if (val.length === 6) {
+      fetchLocationByPincode(val);
+    } else {
+      setPincodeMsg('');
+    }
+  };
+
   // Location Auto-Detect Handler
   const handleDetectLocation = () => {
     if ("geolocation" in navigator) {
@@ -83,7 +129,13 @@ export default function Admission() {
             const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
             const data = await res.json();
             if (data) {
-              if (data.postcode) setPincode(data.postcode);
+              if (data.postcode) {
+                const pin = data.postcode.replace(/\D/g, '').slice(0, 6);
+                setPincode(pin);
+                if (pin.length === 6) {
+                  fetchLocationByPincode(pin);
+                }
+              }
               if (data.principalSubdivision) setStateName(data.principalSubdivision);
               if (data.city || data.locality) setCityName(data.city || data.locality);
             }
@@ -262,9 +314,6 @@ export default function Admission() {
 
     if (!fullName.trim()) return setErrorMsg('Please enter your full name.');
     if (!email.trim() || !email.includes('@')) return setErrorMsg('Please enter a valid email address.');
-    
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 10) return setErrorMsg('Please enter a valid 10-digit mobile number.');
     if (!courseName.trim()) return setErrorMsg('Please enter the course name you are applying for.');
 
     setStep(2);
@@ -383,7 +432,7 @@ export default function Admission() {
       const admissionRecord = {
         full_name: fullName.trim(),
         email: email.trim().toLowerCase(),
-        phone: phone.trim(),
+        phone: 'N/A',
         course_name: courseName.trim(),
         pincode: pincode.trim(),
         state: stateName.trim(),
@@ -421,53 +470,574 @@ export default function Admission() {
       existingLocal.unshift({ ...admissionRecord, id: recordId });
       localStorage.setItem('harvard_admissions', JSON.stringify(existingLocal));
 
-      // Backup notification via Web3Forms (Executive Format)
+      // Notification via Web3Forms (Admission Verification Report)
       try {
+        const reportMessage = `----------------------------------------
+ADMISSION VERIFICATION REPORT
+----------------------------------------
+APPLICATION & CANDIDATE DETAILS:
+--------------------------------
+• Application Reference ID: ${recordId}
+• Application Status: Pending Admin Approval
+• Full Name: ${fullName.trim()}
+• Email ID: ${email.trim().toLowerCase()}
+• PIN Code: ${pincode.trim()}
+• Location: ${cityName.trim()}, ${stateName.trim()}
+• Residential Address: ${address.trim() || 'N/A'}
+• IP Address: ${userIp || 'Not captured'}
+
+VERIFICATION STATUS:
+------------------
+• Declaration: CHECKED & ACCEPTED ✓
+• Signature: CAPTURED & VERIFIED ✓
+• Documentation: ALL ASSETS UPLOADED ✓
+
+LEGAL ACKNOWLEDGEMENT & ATTESTATION:
+----------------------------------
+1. IDENTITY VERIFICATION:
+Candidate authorizes live photo capture for identity
+authentication and anti-proxy measures.
+2. EMPLOYMENT DISCLAIMER:
+Candidate acknowledges certification does not guarantee
+employment, placement, or financial increases.
+3. ACADEMIC INTEGRITY:
+Candidate agrees to complete exams independently
+without unauthorized materials or AI assistance.
+4. LIMITATION OF LIABILITY:
+Portal is not liable for technical failures or candidate-side
+connectivity issues during examinations.
+
+FINAL DECLARATION & FULL AGREEMENT:
+----------------------------------
+SERVICE DELIVERY:
+🔎 Step 1: Immediate Admission Confirmation After Payment
+The student onboarding journey begins instantly upon checkout. As
+soon as a transaction clears our secure platform gateways, our
+backend servers trigger an Automated Admission Confirmation Notice.
+Students receive an digital welcome package containing their
+permanent user profile IDs, platform workspace access routes, and an
+overview map of their target educational tracks.
+
+📌 Step 2: Mandatory Document KYC Verification
+In strict compliance with structural risk management policies, all
+enrolled learners must verify their commercial profile data. Students
+are required to securely upload their valid identity documentation
+(such as government-issued photo IDs or institutional cards) to our
+encrypted verification portal. This step ensures that final completion
+documentation matches legal corporate profiles accurately.
+
+🔎 Step 3: Secure Video KYC Authentication
+To prevent platform identity theft, proxy testing, and transaction
+chargeback vectors, students must execute an automated Video KYC
+Verification step. Using an integrated web interface, learners record a
+brief, self-directed biometric identity check matching their uploaded
+documents. This establishes an unalterable audit trail for security
+purposes.
+
+📊 Step 4: System Generation & Delivery of GST Invoice
+Accountability and fiscal transparency are foundational to our services.
+Within 24 hours of successful verification, our accounting systems
+compile a comprehensive, legally compliant Corporate GST Invoice
+detailing the exact service breakdown and tax identifiers. This asset is
+dispatched straight to the studentʼs billing tab for corporate tax
+deduction filing purposes.
+
+🗒 Step 5: Dissemination of Comprehensive PDF Study Material (Strict
+One-Time Release)
+Upon successful verification, the complete independent text registry
+library is unlocked. Students receive high-fidelity, comprehensive PDF
+Study Materials and Text Workbooks tailored strictly to their
+curriculum.
+⚠ Operational Security Notice: In accordance with our digital asset
+protection protocols, all reading materials are shared on a strict one
+time basis only. Students must securely download and save these
+assets immediately upon distribution, as link refreshes or secondary
+file dispatches will not be granted.
+
+🌟 Step 6: Issuance of Formal Training Enrollment Certificate
+Before course modules begin, our records registry generates a formal,
+verifiable Harvard Learning Enrollment Certificate. This initial credential
+serves as an active commercial proof of status, reflecting that the
+individual is currently under training within an active, non-affiliated skill
+development boot camp.
+
+📈 Step 7: Access Provisioning for Video Lecture Sessions (Strict One
+Time Release)
+Learners gain access to their master collection of high-definition, pre
+recorded visual walkthroughs and technical screen-shares. These
+professional Video Lectures contain the entirety of the execution-level
+core methodologies.
+⚠ Operational Security Notice: In line with platform distribution rules,
+access keys to the video lecture sets are shared on a strict one-time
+basis only. Re-sharing, profile splitting, or secondary video deliveries
+are completely restricted to safeguard content parameters.
+
+🗓 Step 8: Distribution of Final Examination Login Credentials
+Once the 10-day, 20-day, or 30-day curriculum timeline has elapsed,
+the student workspace triggers the final evaluation phase. The
+platform outputs unique, encrypted Final Exam Login Credentials
+directly to the student portal, giving them an isolated access window
+to complete their timed, multiple-choice evaluation independently.
+
+✅ Step 9: Final Exam Result Processing & Delivery with Provisional
+Certificate (PC)
+Upon completing the examination, our grading engines parse the
+submission data against metric matrices. The comprehensive Final
+Exam Result Sheet is computed and displayed instantly inside the
+dashboard. Graduates are immediately issued their verified Provisional
+Certificate (PC), closing out the service lifecycle and enabling
+immediate skill deployment in the corporate sector.
+
+TERMS & CONDITIONS:
+📜 TERMS AND CONDITIONS UPDATE: SERVICE FULFILLMENT & NO
+REFUND POLICY
+1. Scope of Independent Vocational Services
+By completing a commercial transaction and registering for any
+training program on Harvard Learning (
+https://www.harvardlearning.info
+), the user
+(hereinafter referred to as the "Student" or "Client") explicitly
+acknowledges and agrees that all services rendered are independent,
+skill-based vocational training programs.
+Harvard Learning functions strictly as an asynchronous educational
+infrastructure platform. Our programs are non-degree, non-diploma
+courses and explicitly do not require or maintain any affiliation,
+accreditation, or licensing from any university, government institute, or
+private educational board. Harvard Learning grants institutional
+"Certificates of Completion" and "Provisional Certificates" based
+solely on independent competency assessments.
+
+2. Asynchronous Delivery Model & Anti-Interactive Clauses
+The Client explicitly understands and accepts that Harvard Learning
+operates on a static digital distribution model:
+Exclusivity of Medium: Training is delivered solely and exclusively via
+pre-recorded, asynchronous video lecture modules and downloadable
+PDF text study workbooks.
+Prohibition of Live Training: Harvard Learning never offers, promises, or
+provides any person-to-person instruction, live classroom training,
+group webinars, real-time mentorship, or interactive tutor sessions.
+Self-Directed Operational Responsibility: The Student bears absolute
+responsibility for navigating the course materials independently within
+the platformʼs self-contained hosting framework. No claims for refunds
+based on the lack of live human interaction will be entertained under
+any circumstances, as the platform explicitly disclaims interactive
+training.
+
+3. Strict 9-Step Service Delivery Protocol & Binding Benchmarks
+Fulfillment of the purchase contract is systematically tracked and
+verified by our backend architecture across nine sequential milestones.
+By enrolling, the Student agrees to comply with the operational
+conditions of each step:
+Admission Confirmation After Payment: Triggered instantly upon
+payment gateway clearance. This marks the commencement of the
+digital contractual relationship.
+Mandatory Document KYC: The Student must securely upload valid
+government-issued photo identification to verify their profile. Failure to
+provide legitimate documentation within the course timeframe will
+result in account suspension without a refund.
+Mandatory Video KYC Authentication: A biometric video check must
+be recorded by the student to verify identity, eliminate fraud, and
+prevent proxy test-taking. Accounts failing the security profile checks
+are immediately locked to preserve system integrity.
+GST Invoice Delivery: A legally compliant Corporate GST Invoice is
+compiled and posted to the student's dashboard within 24 hours of
+successful validation.
+PDF Study Material Dissemination (Strict One-Time Release Clauses):
+Comprehensive text materials are unlocked inside the student portal.
+The Client acknowledges that files are shared on a strict one-time
+basis only. The Student bears the full legal and technical responsibility
+to securely save, download, and backup these digital assets
+immediately upon distribution. Harvard Learning completely denies any
+liability for file loss, hardware failure, or requests for link refreshes
+post-distribution.
+Enrollment Certificate Issuance: A digital record reflecting that the
+individual is actively under training within our independent boot camp
+is instantly generated and delivered.
+Video Lecture Access Provisioning (Strict One-Time Release Clauses):
+Pre-recorded training paths are made accessible to the profile
+workspace.
+Like the text files, access keys to the video streams are delivered on a
+strict one-time basis only. Account sharing, profile splitting, or data
+scraping are prohibited and will trigger automated account bans
+without a refund.
+Final Examination Login Credentials: Upon expiration of the designated
+course duration (10, 20, or 30 days maximum), encrypted examination
+keys are assigned to the portal.
+Final Exam Grading & Provisional Certificate (PC) Delivery: Upon
+submission, grading engines compute results instantly, and a
+provisional credential is issued to close the service loop.
+
+4. Defatigability of Services & Definitive "No-Refund" Policy
+Harvard Learning distributes high-value, proprietary digital intellectual
+property. Due to the digital nature of these assets—which can be
+instantly viewed, saved, or downloaded upon release—all transactions
+executed on 
+https://www.harvardlearning.info
+ are strictly FINAL, NON
+CANCELLABLE, AND NON-REFUNDABLE.
+
+[POLICY PROVISION TABLE]--------------------------------------------------------------------------------------------------------
+| POLICY PROVISION | DESCRIPTION & EXECUTION THRESHOLD | LEGAL IMPACT ON CLIENT |
+| :--- | :--- | :--- |
+| Instant Fulfillment Waiver | Triggered immediately upon Step 1 (Payment Clearance) and Step 5 (PDF Study Material Dissemination). | The Client explicitly waives any right to an operational "cooling-off period" or transaction cancellation once assets are deployed. |
+| One-Time Sharing Indemnification | Established upon execution of the "Strict One-Time Release" protocols in Step 5 and Step 7. | The platform is completely indemnified against student complaints regarding data loss, user error, device incompatibility, or platform lockouts resulting from a breach of user rules. |
+| KYC Refusal Forfeiture | Triggered if a user refuses or fails Step 2 (Document KYC) or Step 3 (Video KYC). | The user's account will be permanently banned for a security breach. All paid registration fees are entirely forfeited to cover administrative processing costs. |
+| Dispute & Chargeback Mitigation | Triggered when a client files a dispute, credit card chargeback, or payment reversal claim. | Treated legally as a breach of contract. The platform will submit this policy and server logs to banks to aggressively deny the claim. |
+--------------------------------------------------------------------------------------------------------
+• Instant Fulfillment Waiver: Triggered immediately upon Step 1 (Payment Clearance) and Step 5 (PDF Study Material Dissemination). The Client explicitly waives any right to an operational "cooling-off period" or transaction cancellation once assets are deployed.
+• One-Time Sharing Indemnification: Established upon execution of the "Strict One-Time Release" protocols in Step 5 and Step 7. The platform is completely indemnified against student complaints regarding data loss, user error, device incompatibility, or platform lockouts resulting from a breach of user rules.
+• KYC Refusal Forfeiture: Triggered if a user refuses or fails Step 2 (Document KYC) or Step 3 (Video KYC). The user's account will be permanently banned for a security breach. All paid registration fees are entirely forfeited to cover administrative processing costs.
+• Dispute & Chargeback Mitigation: Triggered when a client files a dispute, credit card chargeback, or payment reversal claim. Treated legally as a breach of contract. The platform will submit this policy and server logs to banks to aggressively deny the claim.
+
+5. Acceptance of Terms
+By scrolling past this screen, clicking "I Agree," or processing a training
+fee payment on our network domains, you explicitly declare that you
+have read, understood, and agreed to be legally bound by this Service
+Delivery Framework and No-Refund Policy. If you do not accept these
+asynchronous, un-affiliated delivery constraints, you must exit our
+platform immediately and refrain from purchasing any services.
+
+PRIVACY POLICY:
+1. Introduction & Scope
+This Privacy Policy governs the data collection, storage, processing,
+and security practices of Harvard Learning (operating through its
+asynchronous educational infrastructure platform at
+https://www.harvardlearning.info
+).
+To deliver independent vocational training programs, identity
+verification services, and verifiable institutional credentials, Harvard
+Learning must handle specific personal and biometric data. By
+registering an account, making a purchase, or completing the security
+verification steps, you explicitly consent to the collection, processing,
+and retention practices outlined in this policy.
+
+2. Information We Collect
+Harvard Learning processes information through various stages of your
+onboarding, verification, and educational journey:
+A. Personal Identification Data
+Registration & Contact Information: Full legal name, billing address,
+and corporate email address collected during checkout
+or sign-up.
+Fiscal Identity: Information required to generate corporate accounts,
+including corporate entity names and specific tax identifiers.
+B. Mandatory KYC & Security Verification Data
+Documentary Identity (Document KYC): Images or digital files of valid
+government-issued photo identification cards or institutional credential
+badges uploaded securely to our portal.
+Biometric Identity (Video KYC): Self-directed, brief video records
+processed through an integrated web interface to execute facial
+matching against submitted documentation and to eliminate proxy
+testing.
+C. Academic & Technical Workspace Logs
+Evaluation Records: Answers, responses, submission timestamps, and
+performance metrics parsed by our grading matrices during
+automated final examinations.
+System & Backend Server Logs: Unique workspace access keys,
+internet protocol (IP) address mapping, browser data, and precise file
+download timestamps related to the release of text libraries and video
+lecture elements.
+
+3. How We Use Your Data
+Your information is processed strictly to maintain platform safety and
+complete the structural service loop:
+Identity Verification & Anti-Fraud: Cross-referencing your biometric
+Video KYC data with your submitted physical document profile to
+establish an unalterable audit trail, eliminating proxy test-taking and
+financial transaction theft.
+Service Fulfillment: Provisioning individual profiles with unique access
+keys to streaming lecture workspaces, digital text repositories, and
+encrypted final examination modules.
+Credential Issuance: Generating accurate legal profiles for formal,
+verifiable documents, including initial Enrollment Certificates and final
+Provisional Certificates (PC).
+Compliance & Legal Accountability: Compiling and posting legally
+compliant Corporate GST Invoices straight to your workspace within
+24 hours of successful validation.
+
+4. Data Protection, Sharing, and Disclosure
+A. Strict Third-Party Restrictions
+Harvard Learning treats proprietary and personal data with high security.
+We do not sell, rent, trade, or share your personal, documentary, or
+biometric data with external third-party marketing networks or
+unrelated data brokers.
+B. Conditional Sharing Framework
+Data is shared exclusively under the following strict conditions:
+Payment Processing: Financial details are managed securely via
+encrypted, external payment gateways during checkout to clear
+transactions safely.
+Dispute and Chargeback Defense: In alignment with our Terms and
+Conditions, if a user files a transaction dispute, credit card
+chargeback, or payment reversal claim, Harvard Learning will submit
+backend server logs (such as download metrics and KYC verification
+markers) to the involved financial institutions to defend against the
+claim.
+Legal Enforcement: Data may be disclosed if required by an official
+court order, applicable government statutory body, or prevailing
+regulatory legal framework.
+
+5. Security & Technical Safeguards
+We implement a multi-layered security infrastructure to shield your
+files and identity profiles:
+Data Encryption: Document uploads, video files, and financial invoice
+generation are processed and stored over secure, encrypted network
+connections.
+Workspace Automated Bans: Automated behavioral system
+parameters track multi-location concurrent logins. Profiles attempting
+unauthorized concurrent access, scraping attempts via scripts, or
+distributing video access streams are banned to ensure ecosystem
+security.
+
+6. Data Retention Policies
+Operational Files: Personal profile structures, exam transcripts, and
+credential verification links are kept for as long as your workspace
+account remains active or to fulfill tax, corporate accounting, or
+institutional tracking standards.
+KYC Security Profiles: Biometric checks and government identification
+logs are preserved securely to maintain an unalterable transaction
+audit trail, serving as definitive evidence of contractual compliance.
+
+7. Acceptance & Acknowledgement
+Interacting with the platform, completing registrations, or inputting
+identity vectors implies explicit and dynamic acknowledgement of this
+Privacy Policy. If you do not accept these data handling rules, you must
+immediately halt data submission and exit the platform.
+
+REFUND POLICY:
+1. Executive Summary & Legal Framework of Services
+By completing a commercial financial transaction, processing a
+payment gateway fee, or registering for any independent skill-based
+training program on the Harvard Learning network domains, the user
+(hereinafter legally referred to as the "Student", "Client", or "User")
+explicitly acknowledges, understands, and binds themselves to this
+comprehensive, non-negotiable Service Fulfillment and No-Refund
+Policy.
+Harvard Learning functions strictly and exclusively as an independent,
+asynchronous educational infrastructure platform. The digital training
+pathways, core methodologies, and instructional material hosted on
+the platform are structured solely as non-degree, non-diploma
+vocational training programs aimed at execution-level corporate skill
+development.
+
+Independent Status Notice:
+The Client explicitly recognizes that Harvard Learning does not maintain,
+require, or claim any affiliation, accreditation, licensing, or oversight
+from any university, government institute, statutory educational body,
+or private educational board. All institutional credentials, including
+"Certificates of Completion" and "Provisional Certificates (PC)", are
+granted based entirely on independent competency assessments
+managed internally by the platformʼs grading matrices. Consequently,
+normal academic withdrawal policies, student tuition protection
+schemes, or traditional institutional refund metrics are wholly
+inapplicable to transactions executed with this platform.
+
+2. Asynchronous Delivery Model & Anti-Interactive Clauses
+A fundamental pillar of this refund policy is the nature of the service
+delivery itself. Harvard Learning operates on a static digital distribution
+model. The commercial valuation of the program is tied directly to the
+ingestion of proprietary digital intellectual property rather than live
+human instruction.
+Exclusivity of Medium:
+All vocational training curricula are delivered solely and exclusively via
+pre-recorded, asynchronous video lecture modules and downloadable
+PDF text study workbooks.
+Prohibition of Live Training:
+The platform never offers, promises, schedules, or provides any form
+of person-to-person instruction, live virtual classroom training,
+synchronous group webinars, real-time mentorship, or interactive
+tutor-led question-and-answer sessions.
+Self-Directed Operational Responsibility:
+The Student bears absolute, sole, and un-delegable responsibility for
+independently navigating, reading, viewing, and completing the course
+materials within the platformʼs self-contained hosting framework.
+BINDING CLAUSE: No claims, complaints, demands, or legal petitions
+for refunds based on a purported lack of live human interaction, lack of
+custom feedback, or dissatisfaction with the self-guided nature of the
+platform will be entertained under any circumstances. The platform
+explicitly disclaims interactive training prior to purchase, and
+registration constitutes a complete waiver of claims regarding
+structural isolation during the learning process.
+
+3. The Strict 9-Step Service Delivery Protocol
+Fulfillment of the digital purchase contract is systematically tracked,
+timestamped, and verified by the platform's automated backend server
+log database. Contractual execution is broken down into nine
+sequential milestones. By enrolling, the Student agrees that the
+completion of these milestones constitutes definitive operational
+execution of the service loop:
+[Step 1: Payment & Instant Admission] ➡ [Step 2: Document KYC] ➡ [Step 3: Biometric Video KYC]
+⬇
+[Step 6: Enrollment Certificate] ⬅ [Step 5: One-Time PDF Release] ⬅ [Step 4: Corporate GST Invoice]
+⬇
+[Step 7: One-Time Video Release] ➡ [Step 8: Exam Key Distribution] ➡ [Step 9: Grading & Provisional Cert]
+
+Step 1: Immediate Admission Confirmation After Payment
+This step is triggered instantly upon payment gateway clearance. As
+soon as the transaction clears, our backend architecture outputs an
+Automated Admission Confirmation Notice containing permanent user
+profile IDs, platform workspace access routes, and an educational
+track overview map. This instantaneous action marks the official
+commencement of the binding digital contractual relationship.
+
+Step 2: Mandatory Document KYC Verification
+In strict compliance with commercial risk management, students are
+required to securely upload valid government-issued photo
+identification to our encrypted verification portal. This ensures final
+documentation matches legal corporate profiles. Failure to upload
+legitimate documentation within the selected course timeframe results
+in account suspension without refund eligibility.
+
+Step 3: Secure Video KYC Authentication
+To prevent identity theft, proxy test-taking, and transaction
+chargeback vectors, students must execute an automated, self
+directed biometric identity check via an integrated web interface.
+Accounts failing or refusing this profile check are immediately locked
+to preserve system integrity, causing immediate forfeiture of fees.
+
+Step 4: System Generation & Delivery of GST Invoice
+Accountability and fiscal transparency are verified through the
+automated compilation of a legally compliant Corporate GST Invoice
+detailing the exact service breakdown and tax identifiers. This asset is
+dispatched straight to the studentʼs billing tab within 24 hours of
+validation for corporate tax deduction purposes.
+
+Step 5: Dissemination of Comprehensive PDF Study Material (Strict
+One-Time Release)
+Upon successful validation, the comprehensive text registry library is
+unlocked, allowing the student to view high-fidelity PDF Study
+Materials and Text Workbooks.
+The One-Time Release Clause: Files are shared on a strict one-time
+basis only. The Student bears full legal and technical responsibility to
+securely save, download, and backup these digital assets immediately
+upon distribution. Harvard Learning completely denies any liability for file
+loss, hardware failure, or requests for link refreshes post-distribution.
+
+Step 6: Issuance of Formal Training Enrollment Certificate
+The records registry automatically generates a formal, verifiable Harvard Learning
+Enrollment Certificate. Delivered straight to the portal
+dashboard, this initial credential serves as active commercial proof of
+status, reflecting that the individual is currently under training within an
+active, non-affiliated skill development boot camp.
+
+Step 7: Access Provisioning for Video Lecture Sessions (Strict One
+Time Release)
+The student profile is provisioned with access keys to the master
+collection of pre-recorded visual walkthroughs and technical screen
+shares containing execution-level core methodologies.
+The One-Time Video Stream Clause: Like the text files, access keys to
+the video streams are delivered on a strict one-time basis only.
+Account sharing, profile splitting, or data scraping are prohibited and
+will trigger automated account bans without a refund.
+
+Step 8: Distribution of Final Examination Login Credentials
+Upon the expiration of the designated course duration matrix (10, 20,
+or 30 days maximum), the student workspace automatically triggers
+the evaluation phase by outputting unique, encrypted Final Exam Login
+Credentials directly to the student portal. This provides an isolated
+access window to complete the timed, multiple-choice evaluation
+independently.
+
+Step 9: Final Exam Result Processing & Delivery with Provisional
+Certificate (PC)
+Upon submission, grading engines parse the submission data against
+metric matrices instantly. The comprehensive Final Exam Result Sheet
+is computed and displayed inside the dashboard, and graduates are
+immediately issued their verified Provisional Certificate (PC), closing
+out the service lifecycle.
+
+4. Defatigability of Services & Definitive "No-Refund" Core Policy
+Harvard Learning distributes high-value, proprietary digital intellectual
+property. Due to the digital nature of these assets—which can be
+instantly viewed, saved, cached, screenshotted, or downloaded
+immediately upon release—all transactions executed on
+https://www.harvardlearning.info
+ are strictly FINAL, NON-CANCELLABLE, AND
+NON-REFUNDABLE.
+
+[POLICY PROVISION TABLE]--------------------------------------------------------------------------------------------------------
+| POLICY PROVISION | DESCRIPTION & EXECUTION THRESHOLD | LEGAL IMPACT ON CLIENT |
+| :--- | :--- | :--- |
+| Instant Fulfillment Waiver | Triggered immediately upon Step 1 (Payment Clearance) and Step 5 (PDF Study Material Dissemination). | The Client explicitly waives any right to an operational "cooling-off period" or transaction cancellation once assets are deployed. |
+| One-Time Sharing Indemnification | Established upon execution of the "Strict One-Time Release" protocols in Step 5 and Step 7. | The platform is completely indemnified against student complaints regarding data loss, user error, device incompatibility, or platform lockouts resulting from a breach of user rules. |
+| KYC Refusal Forfeiture | Triggered if a user refuses or fails Step 2 (Document KYC) or Step 3 (Video KYC). | The user's account will be permanently banned for a security breach. All paid registration fees are entirely forfeited to cover administrative processing costs. |
+| Dispute & Chargeback Mitigation | Triggered when a client files a dispute, credit card chargeback, or payment reversal claim. | Treated legally as a breach of contract. The platform will submit this policy and server logs to banks to aggressively deny the claim. |
+--------------------------------------------------------------------------------------------------------
+• Instant Fulfillment Waiver: Triggered immediately upon Step 1 (Payment Clearance) and Step 5 (PDF Study Material Dissemination). The Client explicitly waives any right to an operational "cooling-off period" or transaction cancellation once assets are deployed.
+• One-Time Sharing Indemnification: Established upon execution of the "Strict One-Time Release" protocols in Step 5 and Step 7. The platform is completely indemnified against student complaints regarding data loss, user error, device incompatibility, or platform lockouts resulting from a breach of user rules.
+• KYC Refusal Forfeiture: Triggered if a user refuses or fails Step 2 (Document KYC) or Step 3 (Video KYC). The user's account will be permanently banned for a security breach. All paid registration fees are entirely forfeited to cover administrative processing costs.
+• Dispute & Chargeback Mitigation: Triggered when a client files a dispute, credit card chargeback, or payment reversal claim. Treated legally as a breach of contract. The platform will submit this policy and server logs to banks to aggressively deny the claim.
+
+5. Exhaustive Legal Provisos & Operational Enforcement
+A. Technical Incompatibility & Device Disclaimers
+The platform distributes standardized PDF formats and encrypted
+video stream wrappers. It is the sole technical responsibility of the
+Client to ensure that their personal hardware devices (desktop, laptop,
+mobile, or tablet), operating systems, and internet service providers
+meet the baseline operational requirements needed to stream video
+data and open PDF document repositories. No refunds will be granted
+based on technical limitations, outdated user browsers, local firewall
+blocks, network latency, ISP restrictions, or general device
+incompatibility.
+
+B. Unilateral Account Revocation for Security Violations
+Harvard Learning maintains strict automated behavioral tracking
+parameters across its workspace dashboards. The platform reserves
+the right to terminate any user profile instantly, without warning, and
+without the obligation of financial reimbursement or refund, if the
+backend system logs detect any of the following unauthorized
+activities:- Concurrent multi-location IP logins indicating profile sharing or
+account splitting.- Attempted injection of automated data-scraping scripts, download
+managers, or unauthorized stream-ripping software designed to
+duplicate proprietary video lectures.- The uploading of corrupted data packages, malware, or fraudulent
+identity documentation during Step 2 (Document KYC) or Step 3
+(Video KYC) protocols.
+
+C. Program Modification and Discontinuance Indemnity
+Harvard Learning reserves the right to modify, adjust, update, or re
+sequence any portion of its pre-recorded instructional modules, PDF
+workbooks, grading metrics, or exam platforms at any time to preserve
+current corporate relevance. The execution of a curriculum update
+does not entitle the Client to a retrofitted refund, platform credit, or
+course exchange.
+
+6. Acceptance of Terms & Dynamic Acknowledgement
+By scrolling past presentation screens, checking an "I Agree"
+checkbox, interacting with any workspace element, or processing a
+training fee payment on our network domains, you explicitly declare
+that you have read, understood, and agreed to be legally bound by this
+Service Delivery Framework and No-Refund Policy.
+If you do not accept these asynchronous, un-affiliated delivery
+constraints, or if you maintain any reservation regarding the definitive
+finality of commercial transactions executed on this domain, you must
+exit our platform immediately and refrain from purchasing any
+services.
+
+ACCEPTED BY CANDIDATE: YES ✓
+----------------------------------------
+SUPPORTING EVIDENCE:
+--------------------
+• IP Address: ${userIp || 'Not captured'}
+• Live Video Statement:
+${formatDocLink(photoUrl)}
+• Aadhaar Card (Front):
+${formatDocLink(frontUrl)}
+• Aadhaar Card (Back): ${formatDocLink(backUrl)}
+• PAN Card: ${formatDocLink(panUrl)}
+• Digital Signature: ${formatDocLink(signUrl)}
+
+By proceeding, the candidate electronically signs and agrees to all
+terms above.
+----------------------------------------
+Submitted via Harvard Learning Exam Portal`;
+
         await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            access_key: '71d5ef87-88ee-4b57-9315-1340e1a9350e',
-            subject: `NEW Harvard Learning Admission Application — ${fullName}`,
+            access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || '71d5ef87-88ee-4b57-9315-1340e1a9350e',
+            subject: `Admission Form Submitted — ${fullName.trim()}`,
             from_name: `Harvard Learning Admission Portal`,
-            email: email,
-            recipient: 'support@harvardlearning.in',
-            message: `============================================================
-           HARVARD LEARNING ADMISSION NOTIFICATION
-============================================================
-
-Dear Admissions Committee,
-
-A new candidate admission application has been submitted on the Harvard Learning Portal.
-
-------------------------------------------------------------
-CANDIDATE PROFILE DETAILS
-------------------------------------------------------------
-• Application ID : ${recordId}
-• Full Name      : ${fullName.trim()}
-• Email Address  : ${email.trim().toLowerCase()}
-• Phone Number   : ${phone.trim()}
-• Enrolled Course: ${courseName.trim()}
-
-------------------------------------------------------------
-RESIDENTIAL & NETWORK VERIFICATION
-------------------------------------------------------------
-• Address  : ${address.trim() || 'N/A'}
-• Location : ${cityName.trim()}, ${stateName.trim()} - ${pincode.trim()}
-• IP Address : ${userIp || 'Not captured'}
-
-------------------------------------------------------------
-VERIFICATION DOCUMENTS & RECORDINGS (DIRECT LINKS)
-------------------------------------------------------------
-• Live Video Statement : ${formatDocLink(photoUrl)}
-• Aadhaar Card (Front) : ${formatDocLink(frontUrl)}
-• Aadhaar Card (Back)  : ${formatDocLink(backUrl)}
-• PAN Card             : ${formatDocLink(panUrl)}
-• Digital Signature    : ${formatDocLink(signUrl)}
-
-============================================================
-       Harvard Learning Academic Governance System
-============================================================`
+            email: email.trim().toLowerCase(),
+            message: reportMessage
           })
         });
       } catch (e) {
@@ -603,23 +1173,6 @@ VERIFICATION DOCUMENTS & RECORDINGS (DIRECT LINKS)
                       onChange={(e) => setEmail(e.target.value)}
                       className={inputClass}
                     />
-                  </div>
-
-                  <div>
-                    <label className={labelClass}>PHONE NUMBER *</label>
-                    <div className="flex gap-3">
-                      <span className="bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3.5 text-xs font-bold text-slate-600 flex items-center">
-                        +91
-                      </span>
-                      <input 
-                        type="tel"
-                        required
-                        placeholder="10-digit number"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className={inputClass}
-                      />
-                    </div>
                   </div>
 
                   <div>
@@ -765,10 +1318,10 @@ VERIFICATION DOCUMENTS & RECORDINGS (DIRECT LINKS)
                         </h5>
                         <div className="bg-white p-5 rounded-2xl border border-slate-200 text-slate-700 text-xs leading-relaxed font-medium shadow-sm space-y-3">
                           <p>
-                            "My name is <strong className="text-[#A51C30]">{fullName || 'test'}</strong>, and my registered email address is <strong className="text-[#A51C30]">{email || 'test@gmail.com'}</strong>. I purposely recorded this video statement to verify my profile, confirm my identity, and acknowledge my enrollment in Elite Toolistic's professional training program (available at elitetoolistic.com)."
+                            "My name is <strong className="text-[#A51C30]">{fullName || 'test'}</strong>, and my registered email address is <strong className="text-[#A51C30]">{email || 'test@gmail.com'}</strong>. I purposely recorded this video statement to verify my profile, confirm my identity, and acknowledge my enrollment in Harvard Learning's professional training program (available at harvardlearning.info)."
                           </p>
                           <p>
-                            "I am purchasing this course for personal skill enhancement, professional development, and career growth. I fully accept and understand that Elite Toolistic is only an educational skills-based course training provider and never offers a job promise, job placement assurance, or particular career assurances upon course completion."
+                            "I am purchasing this course for personal skill enhancement, professional development, and career growth. I fully accept and understand that Harvard Learning is only an educational skills-based course training provider and never offers a job promise, job placement assurance, or particular career assurances upon course completion."
                           </p>
                           <p>
                             "Furthermore, I certify that I will not file any chargebacks or complaints regarding this transaction in the future. I also promise not to share or distribute any copyrighted course materials supplied to me throughout this program. &ldquo;This statement is made freely, knowingly, and without pressure.&rdquo;"
@@ -785,10 +1338,10 @@ VERIFICATION DOCUMENTS & RECORDINGS (DIRECT LINKS)
                         </h5>
                         <div className="bg-white p-5 rounded-2xl border border-slate-200 text-slate-700 text-xs leading-relaxed font-medium shadow-sm space-y-3">
                           <p>
-                            "मेरा नाम <strong className="text-emerald-700">{fullName || 'test'}</strong> है और मेरा रजिस्टर्ड ईमेल एड्रेस <strong className="text-emerald-700">{email || 'test@gmail.com'}</strong> है। मैंने यह वीडियो स्टेटमेंट जान-बूझकर रिकॉर्ड किया है ताकि मैं अपनी प्रोफ़ाइल वेरिफ़ाई कर सकूँ, अपनी पहचान कन्फ़र्म कर सकूँ और Elite Toolistic के प्रोफ़ेशनल ट्रेनिंग प्रोग्राम (जो elitetoolistic.com पर उपलब्ध है) में अपने एनरोलमेंट की पुष्टि कर सकूँ।"
+                            "मेरा नाम <strong className="text-emerald-700">{fullName || 'test'}</strong> है और मेरा रजिस्टर्ड ईमेल एड्रेस <strong className="text-emerald-700">{email || 'test@gmail.com'}</strong> है। मैंने यह वीडियो स्टेटमेंट जान-बूझकर रिकॉर्ड किया है ताकि मैं अपनी प्रोफ़ाइल वेरिफ़ाई कर सकूँ, अपनी पहचान कन्फ़र्म कर सकूँ और Harvard Learning के प्रोफ़ेशनल ट्रेनिंग प्रोग्राम (जो harvardlearning.info पर उपलब्ध है) में अपने एनरोलमेंट की पुष्टि कर सकूँ।"
                           </p>
                           <p>
-                            "मैं यह कोर्स अपनी पर्सनल स्किल बढ़ाने, प्रोफ़ेशनल डेवलपमेंट और करियर में आगे बढ़ने के लिए खरीद रहा हूँ। मैं पूरी तरह से मानता और समझता हूँ कि Elite Toolistic सिर्फ़ एक एजुकेशनल स्किल-बेस्ड कोर्स ट्रेनिंग प्रोवाइडर है और कोर्स पूरा होने पर कभी भी नौकरी का वादा, नौकरी मिलने की गारंटी या किसी खास करियर की गारंटी नहीं देता है।"
+                            "मैं यह कोर्स अपनी पर्सनल स्किल बढ़ाने, प्रोफ़ेशनल डेवलपमेंट और करियर में आगे बढ़ने के लिए खरीद रहा हूँ। मैं पूरी तरह से मानता और समझता हूँ कि Harvard Learning सिर्फ़ एक एजुकेशनल स्किल-बेस्ड कोर्स ट्रेनिंग प्रोवाइडर है और कोर्स पूरा होने पर कभी भी नौकरी का वादा, नौकरी मिलने की गारंटी या किसी खास करियर की गारंटी नहीं देता है।"
                           </p>
                           <p>
                             "इसके अलावा, मैं यह सर्टिफ़ाई करता हूँ कि भविष्य में इस ट्रांसैक्शन के बारे में कोई चार्जबैक या शिकायत नहीं करूँगा। मैं यह भी वादा करता हूँ कि इस प्रोग्राम के दौरान मुझे दिए गए किसी भी कॉपीराइट वाले कोर्स मटीरियल को शेयर या डिस्ट्रीब्यूट नहीं करूँगा। &ldquo;यह स्टेटमेंट बिना किसी दबाव के, पूरी जानकारी के साथ और अपनी मर्ज़ी से दिया जा रहा है।&rdquo;"
@@ -814,13 +1367,30 @@ VERIFICATION DOCUMENTS & RECORDINGS (DIRECT LINKS)
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <label className={labelClass}>PIN CODE *</label>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-1">
+                          PIN CODE *
+                        </label>
+                        {pincodeLoading && (
+                          <span className="text-[10px] text-[#A51C30] font-bold flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#A51C30] animate-ping"></span>
+                            Fetching from India Post...
+                          </span>
+                        )}
+                        {!pincodeLoading && pincodeMsg && (
+                          <span className={`text-[10px] font-bold ${pincodeMsg.startsWith('✓') ? 'text-emerald-600' : 'text-amber-600'}`}>
+                            {pincodeMsg}
+                          </span>
+                        )}
+                      </div>
                       <input 
                         type="text" 
                         required
+                        maxLength={6}
                         placeholder="6-digit PIN"
                         value={pincode}
-                        onChange={(e) => setPincode(e.target.value)}
+                        onChange={handlePincodeChange}
+                        onBlur={() => { if (pincode.length === 6) fetchLocationByPincode(pincode); }}
                         className={inputClass}
                       />
                     </div>
@@ -981,13 +1551,19 @@ VERIFICATION DOCUMENTS & RECORDINGS (DIRECT LINKS)
                     ← Back to Step 1
                   </button>
 
-                  <button 
-                    type="submit"
-                    disabled={loading}
-                    className="bg-[#A51C30] hover:bg-[#851626] text-white font-black py-4 px-8 rounded-2xl text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-[#A51C30]/20 flex items-center gap-2"
-                  >
-                    {loading ? (loadingMsg || 'Submitting...') : 'Complete & Submit Admission →'}
-                  </button>
+                  {termsAccepted ? (
+                    <button 
+                      type="submit"
+                      disabled={loading}
+                      className="bg-[#A51C30] hover:bg-[#851626] text-white font-black py-4 px-8 rounded-2xl text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-[#A51C30]/20 flex items-center gap-2 animate-fade-in"
+                    >
+                      {loading ? (loadingMsg || 'Submitting...') : 'Complete & Submit Admission →'}
+                    </button>
+                  ) : (
+                    <div className="text-[11px] font-bold text-slate-400 italic">
+                      Please check the agreement box above to enable submission
+                    </div>
+                  )}
                 </div>
 
               </form>

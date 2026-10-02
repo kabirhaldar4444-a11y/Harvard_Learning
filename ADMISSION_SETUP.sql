@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS public.admissions (
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   full_name text NOT NULL,
   email text NOT NULL,
-  phone text NOT NULL,
+  phone text DEFAULT 'N/A',
   course_name text NOT NULL,
   pincode text,
   state text,
@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS public.admissions (
   remarks text
 );
 
--- Safely add missing columns if table already exists
+-- Safely add missing columns or update constraints if table already exists
+ALTER TABLE public.admissions ALTER COLUMN phone DROP NOT NULL;
 ALTER TABLE public.admissions ADD COLUMN IF NOT EXISTS video_url text;
 ALTER TABLE public.admissions ADD COLUMN IF NOT EXISTS profile_photo_url text;
 ALTER TABLE public.admissions ADD COLUMN IF NOT EXISTS remarks text;
